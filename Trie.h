@@ -2,7 +2,6 @@
 // Created by berg on 13/01/19.
 //
 
-#include <iostream>
 #include <string>
 #include "Node.h"
 
