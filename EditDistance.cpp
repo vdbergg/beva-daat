@@ -30,7 +30,7 @@ void print(int** m, int row, int column) {
     }
 }
 
-int EditDistance::editDistance(string s, string t) {
+int editDistance(string s, string t) {
     s = " " + s;
     t = " " + t;
     int** m = new int *[s.length()];
@@ -43,7 +43,7 @@ int EditDistance::editDistance(string s, string t) {
         m[i][0] = i;
     }
 
-    for (int j = 0; j < t.length(); j++) {
+    for (int j = 1; j < t.length(); j++) {
         m[0][j] = j;
     }
 
@@ -56,11 +56,13 @@ int EditDistance::editDistance(string s, string t) {
         }
     }
 
+    int editDistance = m[s.length() - 1][t.length() - 1];
+
     // free
     for (int i = 0; i < s.length(); ++i) {
         delete [] m[i];
     }
     delete [] m;
 
-    return m[s.length() - 1][t.length() - 1];
+    return editDistance;
 }

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "Trie.h"
+#include "EditDistance.h"
 
 Trie::Trie() {
     this->root = new Node();
@@ -31,16 +32,29 @@ Node* search(string key, Node* root) {
     return root;
 }
 
-void getSuggestions(string query, Node* node) {
+void getSuggestions(string queryOriginal, string query, int tau, Node* node) {
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        getSuggestions(query + i->value, i);
+        getSuggestions(queryOriginal, query + i->value, tau, i);
     }
 
-    if (node->isEndOfWord) cout << query + "\n";
+    if (node->isEndOfWord && node->editDistance <= tau) {
+        cout << query + "\n";
+    }
+}
+
+void setEditDistance(string queryOriginal, string query, Node* node) {
+    node->editDistance = editDistance(queryOriginal, query);
+
+    for (auto &i : node->children) {
+        if (i == nullptr) continue;
+        setEditDistance(queryOriginal, query + i->value, i);
+    }
 }
 
 void Trie::autocomplete(string query) {
-    Node* node = search(query, this->root);
-    if (node != nullptr) getSuggestions(query, node);
+    string empty = "" + this->root->value;
+    setEditDistance(query, empty, this->root);
+    int tau = 3;
+    getSuggestions(query, empty, tau, this->root);
 }

@@ -8,10 +8,6 @@
 
 using namespace std;
 
-class EditDistance {
-public:
-    int tau;
-    int editDistance(string, string);
-};
+int editDistance(string, string);
 
 #endif //BEVA_EDITDISTANCE_H

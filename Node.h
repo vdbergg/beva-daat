@@ -14,7 +14,7 @@ public:
     char value;
     int editDistance;
 
-    Node(char value = '\0');
+    Node(char value = (char) 0);
 };
 
 #endif //BEVA_NODE_H
