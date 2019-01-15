@@ -32,31 +32,28 @@ Node* search(string key, Node* root) {
     return root;
 }
 
-void getSuggestions(string queryOriginal, string query, EditDistance* editDistance, int tau, Node* node) {
+void getSuggestions(string queryOriginal, string query, int tau, Node* node) {
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        getSuggestions(queryOriginal, query + i->value, editDistance, tau, i);
+        getSuggestions(queryOriginal, query + i->value, tau, i);
     }
 
-    if (node->isEndOfWord && editDistance->editDistance(queryOriginal, query) <= tau) {
+    if (node->isEndOfWord && node->editDistance <= tau) {
         cout << query + "\n";
     }
 }
 
-void setEditDistance(string queryOriginal, string query, EditDistance* editDistance, Node* node) {
-    node->editDistance = editDistance->editDistance(queryOriginal, query);
+void setEditDistance(string queryOriginal, string query, Node* node) {
+    node->editDistance = editDistance(queryOriginal, query);
 
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        setEditDistance(queryOriginal, query + i->value, editDistance, i);
+        setEditDistance(queryOriginal, query + i->value, i);
     }
 }
 
-void Trie::autocomplete(string query) {
-    EditDistance* editDistance = new EditDistance();
-
-    setEditDistance(query, "" + this->root->value, editDistance, this->root);
-    Node* node = search(query, this->root);
-    int tau = 3;
-    if (node != nullptr) getSuggestions(query, query, editDistance, tau, node);
+void Trie::autocomplete(string query, int tau) {
+    string empty = "" + this->root->value;
+    setEditDistance(query, empty, this->root);
+    getSuggestions(query, empty, tau, this->root);
 }

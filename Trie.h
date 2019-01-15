@@ -17,7 +17,7 @@ public:
     Trie();
 
     void insert(string);
-    void autocomplete(string);
+    void autocomplete(string, int);
 };
 
 #endif //BEVA_TRIE_H
