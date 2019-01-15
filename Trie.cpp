@@ -52,9 +52,8 @@ void setEditDistance(string queryOriginal, string query, Node* node) {
     }
 }
 
-void Trie::autocomplete(string query) {
+void Trie::autocomplete(string query, int tau) {
     string empty = "" + this->root->value;
     setEditDistance(query, empty, this->root);
-    int tau = 3;
     getSuggestions(query, empty, tau, this->root);
 }

@@ -18,7 +18,7 @@ int main() {
     cout << "Insert your query:";
     cin >> query;
 
-    trie->autocomplete(query);
+    trie->autocomplete(query, 3);
 
     return 0;
 }
