@@ -56,11 +56,13 @@ int EditDistance::editDistance(string s, string t) {
         }
     }
 
+    int editDistance = m[s.length() - 1][t.length() - 1];
+
     // free
     for (int i = 0; i < s.length(); ++i) {
         delete [] m[i];
     }
     delete [] m;
 
-    return m[s.length() - 1][t.length() - 1];
+    return editDistance;
 }

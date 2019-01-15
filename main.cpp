@@ -17,8 +17,6 @@ int main() {
 
     cout << "Insert your query:";
     cin >> query;
-    EditDistance* editDistance = new EditDistance();
-    cout << editDistance->editDistance("bala", "bolq") << "\n";
 
     trie->autocomplete(query);
 
