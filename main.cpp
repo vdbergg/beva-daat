@@ -37,10 +37,14 @@ int main() {
         trie->insert(key);
     }
 
-    cout << "Insert your query:";
-    cin >> query;
+    while (true) {
+        cout << "Insert your query: " + query;
+        string temp;
+        cin >> temp;
+        query += temp;
 
-    trie->autocomplete(query, 3);
+        trie->autocomplete(query, 2);
+    }
 
     return 0;
 }
