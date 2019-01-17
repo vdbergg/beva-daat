@@ -51,17 +51,23 @@ void searchSuggestions(string queryOriginal, string query, int tau, Node *node) 
     }
 }
 
-void setEditDistance(string queryOriginal, string query, Node* node) {
+void setEditDistance(string queryOriginal, string query, int tau, Node* node) {
     node->editDistance = editDistance(queryOriginal, query);
+
+    if ((query.length() == queryOriginal.length() || node->isEndOfWord) && node->editDistance <= tau) {
+        return;
+    }
 
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        setEditDistance(queryOriginal, query + i->value, i);
+        setEditDistance(queryOriginal, query + i->value, tau, i);
     }
 }
 
 void Trie::autocomplete(string query, int tau) {
     string empty = "" + this->root->value;
-    setEditDistance(query, empty, this->root);
+    cout << "setEditDistance() \n";
+    setEditDistance(query, empty, tau, this->root);
+    cout << "searchSuggestions() \n";
     searchSuggestions(query, empty, tau, this->root);
 }
