@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
 #include "Trie.h"
 #include "EditDistance.h"
 
@@ -21,30 +22,39 @@ void readData(string& filename, vector<string>& recs) {
 }
 
 int main() {
-    string datasetFile = "/home/vdberg/Mestrado/beva/dataset/aol/aol.txt";
-    string queryFile = "/home/vdberg/Mestrado/beva/dataset/aol/aol_queries/q7.txt";
+    string datasetFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol.txt";
+    string queryFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
 
-//    readData(datasetFile, records);
-//    readData(queryFile, queries);
+    cout << "indexing... \n";
+    auto start = chrono::high_resolution_clock::now();
+    readData(datasetFile, records);
+    readData(queryFile, queries);
 
     Trie* trie = new Trie();
 
-    string query; // = "battleships us 2";
+    string query = "cezling";
 
-    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
+//    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
 
-    for (string key: keys) {
+    for (string key: records) {
         trie->insert(key);
     }
 
-    while (true) {
-        cout << "Insert your query: " + query;
-        string temp;
-        cin >> temp;
-        query += temp;
+    auto done = chrono::high_resolution_clock::now();
+    cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 
+//    while (true) {
+//        cout << "Insert your query: " + query;
+//        string temp;
+//        cin >> temp;
+//        query += temp;
+
+        start = chrono::high_resolution_clock::now();
         trie->autocomplete(query, 2);
-    }
+        done = chrono::high_resolution_clock::now();
+
+        cout << "<<<Process time: " << chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
+//    }
 
     return 0;
 }

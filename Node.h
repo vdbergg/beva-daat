@@ -10,7 +10,7 @@
 class Node {
 public:
     bool isEndOfWord;
-    Node* children[CHAR_SIZE]; // children
+    Node* children[CHAR_SIZE];
     char value;
     int editDistance;
 

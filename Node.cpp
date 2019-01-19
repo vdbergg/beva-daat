@@ -10,4 +10,5 @@ Node::Node(char value) {
         this->children[i] = nullptr;
     }
     this->value = value;
+    this->editDistance = 5;
 }

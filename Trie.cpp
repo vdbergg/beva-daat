@@ -32,17 +32,17 @@ Node* search(string key, Node* root) {
     return root;
 }
 
-void printSuggestions(string queryOriginal, string query, int tau, Node *node) {
+void printSuggestions(string queryOriginal, string query, Node *node) {
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        printSuggestions(queryOriginal, query + i->value, tau, i);
+        printSuggestions(queryOriginal, query + i->value, i);
     }
     if (node->isEndOfWord) cout << query + "\n";
 }
 
 void searchSuggestions(string queryOriginal, string query, int tau, Node *node) {
     if ((query.length() == queryOriginal.length() || node->isEndOfWord) && node->editDistance <= tau) {
-        printSuggestions(queryOriginal, query, tau, node);
+        printSuggestions(queryOriginal, query, node);
     } else {
         for (auto &i : node->children) {
             if (i == nullptr) continue;
@@ -51,23 +51,23 @@ void searchSuggestions(string queryOriginal, string query, int tau, Node *node) 
     }
 }
 
-void setEditDistance(string queryOriginal, string query, int tau, Node* node) {
-    node->editDistance = editDistance(queryOriginal, query);
+void setEditDistance(string queryOriginal, string query, int queryPrefixLength, int tau, Node* node) {
+    if (query.length() >= (queryPrefixLength - tau) && query.length() <= (queryPrefixLength + tau)) {
+        node->editDistance = editDistance(queryOriginal, query);
+    }
 
-    if ((query.length() == queryOriginal.length() || node->isEndOfWord) && node->editDistance <= tau) {
+    if ((query.length() >= queryOriginal.length() || node->isEndOfWord) && node->editDistance > tau) {
         return;
     }
 
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        setEditDistance(queryOriginal, query + i->value, tau, i);
+        setEditDistance(queryOriginal, query + i->value, queryPrefixLength, tau, i);
     }
 }
 
 void Trie::autocomplete(string query, int tau) {
     string empty = "" + this->root->value;
-    cout << "setEditDistance() \n";
-    setEditDistance(query, empty, tau, this->root);
-    cout << "searchSuggestions() \n";
+    setEditDistance(query, empty, query.length(), tau, this->root);
     searchSuggestions(query, empty, tau, this->root);
 }
