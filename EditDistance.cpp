@@ -10,35 +10,75 @@
 
 using namespace std;
 
-int min(int a, int b, int c) {
-    return min(min(a, b), c);
-}
-
-void print(int** m, int row, int column) {
-    for (int i = 0; i < row; ++i) {
-        for(int j = 0; j < column; ++j) {
-            cout << m[i][j] << " ";
+void print(int** D, int m, int n) {
+    for (int i = 0; i < m; ++i) {
+        for(int j = 0; j < n; ++j) {
+            cout << D[i][j] << " ";
         }
         cout << "\n";
     }
 }
 
-int editDistance(string s, string t) {
-    s = " " + s;
-    t = " " + t;
-    long m = s.length();
-    long n = t.length();
+EditDistance::EditDistance(int m, int n) {
+    this->m = m + 1;
+    this->n = n + 1;
+    this->isFilled = false;
+    this->editDistance = 30;
 
-    int D[m][n];
+    this->D = new int *[this->m];
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            if (i == 0) D[i][j] = j;
-            else if (j == 0) D[i][j] = i;
-            else if (t.at(j) == s.at(i)) D[i][j] = D[i - 1][j - 1];
-            else D[i][j] = min(D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]) + 1;
-        }
+    for (int i = 0; i < this->m; i++) {
+        this->D[i] = new int[this->n]; // columns
+    }
+}
+
+EditDistance::EditDistance(EditDistance* editDistance, int n) {
+    this->m = editDistance->m;
+    this->n = n + 1;
+    this->isFilled = editDistance->isFilled;
+    this->editDistance = editDistance->editDistance;
+
+    int** temp = editDistance->D;
+    this->D = new int *[this->m];
+
+    for (int i = 0; i < this->m; i++) {
+        this->D[i] = new int[this->n]; // columns
     }
 
-    return D[m - 1][n - 1];
+    for (int i = 0; i < this->m; i++) {
+        for (int j = 0; j < this->n; j++) {
+            this->D[i][j] = temp[i][j];
+        }
+    }
+}
+
+EditDistance::~EditDistance() {
+    for (int i = 0; i < this->m; ++i) {
+        delete [] this->D[i];
+    }
+    delete [] this->D;
+}
+
+int min(int a, int b, int c) {
+    return min(min(a, b), c);
+}
+
+void EditDistance::calculate(string s, string t) {
+    int temp = 0;
+    if (this->isFilled) temp = this->n - 1;
+    else isFilled = true;
+
+    for (int i = 0; i < this->m; i++) {
+        for (int j = temp; j < this->n; j++) {
+            if (i == 0) this->D[i][j] = j;
+            else if (j == 0) this->D[i][j] = i;
+            else if (t.at(j - 1) == s.at(i - 1)) this->D[i][j] = this->D[i - 1][j - 1];
+            else this->D[i][j] = min(this->D[i - 1][j - 1], this->D[i - 1][j], this->D[i][j - 1]) + 1;
+        }
+    }
+    this->editDistance = this->D[this->m - 1][this->n - 1];
+}
+
+int EditDistance::getEditDistance() {
+    return this->editDistance;
 }

@@ -5,16 +5,22 @@
 #ifndef BEVA_NODE_H
 #define BEVA_NODE_H
 
+#include "EditDistance.h"
+
 #define CHAR_SIZE 128
 
 class Node {
 public:
-    bool isEndOfWord;
+    Node* parent;
     Node* children[CHAR_SIZE];
-    char value;
-    int editDistance;
+    EditDistance* editDistance;
 
-    Node(char value = (char) 0);
+    bool isEndOfWord;
+    char value;
+
+    Node(char value = (char) 0, Node* = nullptr);
+    int getEditDistance();
+    void calculateEditDistance(string, string);
 };
 
 #endif //BEVA_NODE_H

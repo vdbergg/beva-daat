@@ -32,7 +32,7 @@ int main() {
 
     Trie* trie = new Trie();
 
-    string query = "cezling";
+    string query = "cezling h";
 
 //    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
 
@@ -50,7 +50,8 @@ int main() {
 //        query += temp;
 
         start = chrono::high_resolution_clock::now();
-        trie->autocomplete(query, 2);
+        int editDistanceThreshold = 3;
+        trie->autocomplete(query, editDistanceThreshold);
         done = chrono::high_resolution_clock::now();
 
         cout << "<<<Process time: " << chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";

@@ -8,6 +8,20 @@
 
 using namespace std;
 
-int editDistance(string, string);
+class EditDistance {
+public:
+    int** D;
+    int m;
+    int n;
+    int editDistance;
+    bool isFilled;
+
+    EditDistance(int, int);
+    EditDistance(EditDistance*, int);
+    ~EditDistance();
+
+    void calculate(string, string);
+    int getEditDistance();
+};
 
 #endif //BEVA_EDITDISTANCE_H
