@@ -16,8 +16,10 @@ bool isOutsideActiveNodeZone(string query, int queryOriginalLength, int editDist
 }
 
 bool isToPrint(string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
-    return (query.length() == queryOriginalLength || node->isEndOfWord)
-           && node->editDistance != nullptr && node->getEditDistance() <= editDistanceThreshold;
+    return (query.length() == queryOriginalLength || node->isEndOfWord
+           || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold) // já alcançado
+           && (node->editDistance != nullptr && node->getEditDistance() != 30)
+           && node->getEditDistance() <= editDistanceThreshold;
 }
 
 Trie::Trie() {
