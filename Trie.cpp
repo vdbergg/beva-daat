@@ -5,20 +5,21 @@
 #include <iostream>
 #include "Trie.h"
 #include "EditDistance.h"
+#include "utils.h"
 #include <chrono>
 
 bool isOutsideActiveNodeZone(string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
     return query.length() >= queryOriginalLength
-            || node->isEndOfWord
-            || (node->editDistance != nullptr && node->getEditDistance() != 30
-            && (node->getEditDistance() - (queryOriginalLength - query.length()) > editDistanceThreshold // fora de alcance
-               || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold)); // já alcançado
+           || node->isEndOfWord
+           || (node->editVector != nullptr && node->getEditDistance() != utils::MARKER
+               && (node->getEditDistance() - (queryOriginalLength - query.length()) > editDistanceThreshold // fora de alcance
+                   || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold)); // já alcançado
 }
 
 bool isToPrint(string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
     return (query.length() == queryOriginalLength || node->isEndOfWord
-           || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold) // já alcançado
-           && (node->editDistance != nullptr && node->getEditDistance() != 30)
+            || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold) // já alcançado
+           && (node->editVector != nullptr && node->getEditDistance() != utils::MARKER)
            && node->getEditDistance() <= editDistanceThreshold;
 }
 
@@ -73,7 +74,7 @@ void searchSuggestions(string queryOriginal, string query, int editDistanceThres
 }
 
 void setEditDistance(string queryOriginal, string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
-    node->calculateEditDistance(queryOriginal, query);
+    node->calculateEditDistance(queryOriginal, query, editDistanceThreshold);
 
     if (isToPrint(query, queryOriginalLength, editDistanceThreshold, node)) {
         printSuggestions(queryOriginal, query, node);

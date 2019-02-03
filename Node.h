@@ -6,6 +6,7 @@
 #define BEVA_NODE_H
 
 #include "EditDistance.h"
+#include "EditVector.h"
 
 #define CHAR_SIZE 128
 
@@ -14,13 +15,14 @@ public:
     Node* parent;
     Node* children[CHAR_SIZE];
     EditDistance* editDistance;
+    EditVector* editVector;
 
     bool isEndOfWord;
     char value;
 
     Node(char value = (char) 0, Node* = nullptr);
     int getEditDistance();
-    void calculateEditDistance(string, string);
+    void calculateEditDistance(string, string, int);
 };
 
 #endif //BEVA_NODE_H
