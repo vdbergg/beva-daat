@@ -73,10 +73,11 @@ void searchSuggestions(string queryOriginal, string query, int editDistanceThres
     }
 }
 
-void setEditDistance(string queryOriginal, string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
+void Trie::setEditDistance(string queryOriginal, string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
     node->calculateEditDistance(queryOriginal, query, editDistanceThreshold);
 
     if (isToPrint(query, queryOriginalLength, editDistanceThreshold, node)) {
+        this->currentActiveNodes.push_back(new ActiveNode(node, query));
         printSuggestions(queryOriginal, query, node);
         return;
     }
@@ -92,6 +93,22 @@ void setEditDistance(string queryOriginal, string query, int queryOriginalLength
 }
 
 void Trie::autocomplete(string query, int editDistanceThreshold) {
-    string empty = "" + this->root->value;
-    setEditDistance(query, empty, (int) query.length(), editDistanceThreshold, this->root);
+    string data;
+
+    if (this->currentActiveNodes.empty()) {
+        data = "" + this->root->value;
+        setEditDistance(query, data, (int) query.length(), editDistanceThreshold, this->root);
+    } else {
+        vector<ActiveNode*> oldActiveNodes;
+
+        for (ActiveNode* activeNode : this->currentActiveNodes) {
+            oldActiveNodes.push_back(activeNode);
+        }
+        this->currentActiveNodes.clear();
+
+        for (ActiveNode* activeNode : oldActiveNodes) {
+            data = activeNode->data;
+            setEditDistance(query, data, (int) query.length(), editDistanceThreshold, activeNode->node);
+        }
+    }
 }

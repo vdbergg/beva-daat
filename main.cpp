@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <thread>
 #include "Trie.h"
 #include "EditDistance.h"
 
@@ -32,7 +33,8 @@ int main() {
 
     Trie* trie = new Trie();
 
-    string query = "cezling h";
+    string query = "cez";
+    string queryRemaining = "ling heigh";
 
 //    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
 
@@ -43,19 +45,26 @@ int main() {
     auto done = chrono::high_resolution_clock::now();
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 
-//    while (true) {
-//        cout << "Insert your query: " + query;
+    int count = 0;
+    int editDistanceThreshold = 2;
+
+    while (query.length() <= 13) {
+        cout << "Query: " + query + "\n";
 //        string temp;
 //        cin >> temp;
 //        query += temp;
 
         start = chrono::high_resolution_clock::now();
-        int editDistanceThreshold = 3;
         trie->autocomplete(query, editDistanceThreshold);
         done = chrono::high_resolution_clock::now();
 
-        cout << "<<<Process time: " << chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
-//    }
+        cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
+        this_thread::sleep_for(chrono::seconds(1));
+
+        query += queryRemaining[count];
+        query += queryRemaining[count + 1];
+        count += 2;
+    }
 
     return 0;
 }
