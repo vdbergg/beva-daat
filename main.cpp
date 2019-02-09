@@ -5,6 +5,7 @@
 #include <thread>
 #include "Trie.h"
 #include "EditDistance.h"
+#include "EditVectorAutomaton.h"
 
 using namespace std;
 
@@ -46,7 +47,10 @@ int main() {
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 
     int count = 0;
-    int editDistanceThreshold = 2;
+    int editDistanceThreshold = 1;
+
+//    EditVectorAutomaton* editVectorAutomaton = new EditVectorAutomaton(editDistanceThreshold);
+//    editVectorAutomaton->buildAutomaton();
 
     while (query.length() <= 13) {
         cout << "Query: " + query + "\n";

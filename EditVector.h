@@ -23,8 +23,9 @@ public:
     bool isInitial;
     bool isFinal;
 
-    void buildInitialEditVector(string, string);
+    void buildInitialEditVector();
     void buildEditVector(string, string);
+    void buildEditVectorWithBitmap(string);
     void calculateEditDistance(string, string);
     int getEditDistance();
     void setEditDistance(string, string);
