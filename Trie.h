@@ -19,8 +19,8 @@ public:
 
     Trie();
 
-    void insert(string);
-    void autocomplete(string, int);
+    void insert(string, int);
+    vector<ActiveNode*> autocomplete(string, int);
     void setEditDistance(string, string, int, int, Node*);
 };
 

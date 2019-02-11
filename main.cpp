@@ -23,6 +23,15 @@ void readData(string& filename, vector<string>& recs) {
     }
 }
 
+void printOutput(vector<ActiveNode*> currentActiveNodes) {
+    for (ActiveNode* activeNode : currentActiveNodes) {
+        vector<int> recordsId = activeNode->node->recordsId;
+        for (int recordId : recordsId) {
+            cout << records.at(recordId) << "\n";
+        }
+    }
+}
+
 int main() {
     string datasetFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol.txt";
     string queryFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
@@ -39,8 +48,10 @@ int main() {
 
 //    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
 
-    for (string key: records) {
-        trie->insert(key);
+    int recordId = 0;
+    for (string record: records) {
+        trie->insert(record, recordId);
+        recordId++;
     }
 
     auto done = chrono::high_resolution_clock::now();
@@ -59,7 +70,8 @@ int main() {
 //        query += temp;
 
         start = chrono::high_resolution_clock::now();
-        trie->autocomplete(query, editDistanceThreshold);
+        vector<ActiveNode*> activeNodes = trie->autocomplete(query, editDistanceThreshold);
+        printOutput(activeNodes);
         done = chrono::high_resolution_clock::now();
 
         cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";

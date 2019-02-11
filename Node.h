@@ -5,6 +5,7 @@
 #ifndef BEVA_NODE_H
 #define BEVA_NODE_H
 
+#include <vector>
 #include "EditDistance.h"
 #include "EditVector.h"
 
@@ -19,6 +20,7 @@ public:
 
     bool isEndOfWord;
     char value;
+    vector<int> recordsId;
 
     Node(char value = (char) 0, Node* = nullptr);
     int getEditDistance();

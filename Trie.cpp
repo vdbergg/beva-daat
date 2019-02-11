@@ -27,50 +27,18 @@ Trie::Trie() {
     this->root = new Node();
 }
 
-void Trie::insert(string key) {
+void Trie::insert(string record, int recordId) {
     Node* root = this->root;
 
-    for (char i : key) {
+    for (char i : record) {
         if (root->children[i] == nullptr) {
             root->children[i] = new Node(i, root);
         }
+        root->children[i]->recordsId.push_back(recordId);
         root = root->children[i];
     }
 
     root->isEndOfWord = true;
-}
-
-Node* search(string key, Node* root) {
-    for (char i : key) {
-        root = root->children[i];
-        if (root == nullptr) return nullptr;
-    }
-
-    return root;
-}
-
-void printSuggestions(string queryOriginal, string query, Node *node) {
-    for (auto &i : node->children) {
-        if (i == nullptr) continue;
-        printSuggestions(queryOriginal, query + i->value, i);
-    }
-    if (node->isEndOfWord) cout << query + "\n";
-}
-
-void searchSuggestions(string queryOriginal, string query, int editDistanceThreshold, Node *node) {
-    if ((query.length() == queryOriginal.length() || node->isEndOfWord)
-        && node->editDistance != nullptr && node->getEditDistance() <= editDistanceThreshold) {
-        printSuggestions(queryOriginal, query, node);
-    } else {
-        if (isOutsideActiveNodeZone(query, (int) queryOriginal.length(), editDistanceThreshold, node)) {
-            return;
-        }
-
-        for (auto &i : node->children) {
-            if (i == nullptr) continue;
-            searchSuggestions(queryOriginal, query + i->value, editDistanceThreshold, i);
-        }
-    }
 }
 
 void Trie::setEditDistance(string queryOriginal, string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
@@ -78,7 +46,6 @@ void Trie::setEditDistance(string queryOriginal, string query, int queryOriginal
 
     if (isToPrint(query, queryOriginalLength, editDistanceThreshold, node)) {
         this->currentActiveNodes.push_back(new ActiveNode(node, query));
-        printSuggestions(queryOriginal, query, node);
         return;
     }
 
@@ -92,7 +59,7 @@ void Trie::setEditDistance(string queryOriginal, string query, int queryOriginal
     }
 }
 
-void Trie::autocomplete(string query, int editDistanceThreshold) {
+vector<ActiveNode*> Trie::autocomplete(string query, int editDistanceThreshold) {
     string data;
 
     if (this->currentActiveNodes.empty()) {
@@ -111,4 +78,5 @@ void Trie::autocomplete(string query, int editDistanceThreshold) {
             setEditDistance(query, data, (int) query.length(), editDistanceThreshold, activeNode->node);
         }
     }
+    return this->currentActiveNodes;
 }
