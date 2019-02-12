@@ -20,7 +20,7 @@ public:
     Trie();
 
     void insert(string, int);
-    vector<ActiveNode*> autocomplete(string, int);
+    vector<ActiveNode*> autocomplete(string, int, vector<ActiveNode*>);
     void setEditDistance(string, string, int, int, Node*);
 };
 

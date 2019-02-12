@@ -59,21 +59,16 @@ void Trie::setEditDistance(string queryOriginal, string query, int queryOriginal
     }
 }
 
-vector<ActiveNode*> Trie::autocomplete(string query, int editDistanceThreshold) {
+vector<ActiveNode*> Trie::autocomplete(string query, int editDistanceThreshold, vector<ActiveNode*> activeNodes) {
     string data;
 
-    if (this->currentActiveNodes.empty()) {
+    if (activeNodes.empty()) {
         data = "" + this->root->value;
         setEditDistance(query, data, (int) query.length(), editDistanceThreshold, this->root);
     } else {
-        vector<ActiveNode*> oldActiveNodes;
-
-        for (ActiveNode* activeNode : this->currentActiveNodes) {
-            oldActiveNodes.push_back(activeNode);
-        }
         this->currentActiveNodes.clear();
 
-        for (ActiveNode* activeNode : oldActiveNodes) {
+        for (ActiveNode* activeNode : activeNodes) {
             data = activeNode->data;
             setEditDistance(query, data, (int) query.length(), editDistanceThreshold, activeNode->node);
         }
