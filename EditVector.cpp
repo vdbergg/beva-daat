@@ -78,8 +78,8 @@ void EditVector::buildEditVector(string query, string data) {
 }
 
 void EditVector::buildEditVectorWithBitmap(string bitmap) {
-    cout << bitmap << "\n";
-    utils::printVector(this->previousEditVector->vector, this->previousEditVector->size);
+//    cout << bitmap << "\n";
+//    utils::printVector(this->previousEditVector->vector, this->previousEditVector->size);
     this->isFinal = true;
     for (int i = 0; i < this->size; i++) {
         int temp = bitmap[i] - '0';
@@ -94,8 +94,8 @@ void EditVector::buildEditVectorWithBitmap(string bitmap) {
         }
     }
     this->editDistance = this->vector[this->size - 1];
-    utils::printVector(this->vector, this->size);
-    cout << "\n";
+//    utils::printVector(this->vector, this->size);
+//    cout << "\n";
 }
 
 int EditVector::getEditDistance() {

@@ -5,17 +5,17 @@
 using namespace std;
 
 int main() {
+    int editDistanceThreshold = 1;
 
-    Framework* framework = new Framework();
+    Framework* framework = new Framework(editDistanceThreshold);
 
     string query = "cez";
     string queryRemaining = "ling heigh";
 
     int count = 0;
-    int editDistanceThreshold = 1;
 
     while (query.length() <= 13) {
-        framework->process(query, editDistanceThreshold);
+        framework->process(query, Framework::BEVA);
 
         query += queryRemaining[count];
         query += queryRemaining[count + 1];

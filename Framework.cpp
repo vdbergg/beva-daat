@@ -10,13 +10,12 @@
 #include <chrono>
 #include <thread>
 #include "Trie.h"
-#include "EditDistance.h"
-#include "EditVectorAutomaton.h"
 
 using namespace std;
 
-Framework::Framework() {
+Framework::Framework(int editDistanceThreshold) {
     this->trie = nullptr;
+    this->editDistanceThreshold = editDistanceThreshold;
 
     index();
 }
@@ -37,32 +36,41 @@ void readData(string& filename, vector<string>& recs) {
 }
 
 void Framework::index() {
-    string datasetFile = "/home/vdberg/Mestrado/workspace/beva/dataset/aol/aol.txt";
-    string queryFile = "/home/vdberg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
+    string datasetFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol.txt";
+//    string queryFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
 
     cout << "indexing... \n";
     auto start = chrono::high_resolution_clock::now();
     readData(datasetFile, this->records);
-    readData(queryFile, this->queries);
+//    readData(queryFile, this->queries);
 
    this->trie = new Trie();
 
     int recordId = 0;
     for (string record: this->records) {
-        trie->insert(record, recordId);
+        this->trie->insert(record, recordId);
         recordId++;
     }
+
+    this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
-void Framework::process(string query, int editDistanceThreshold) {
+void Framework::process(string query, int algorithm) {
     cout << "Query: " + query + "\n";
 
     auto start = chrono::high_resolution_clock::now();
-    this->activeNodes = this->trie->autocomplete(query, editDistanceThreshold, this->activeNodes);
+
+    switch (algorithm) {
+        case Framework::BEVA:
+            this->activeNodes = this->beva->process(query, this->activeNodes);
+        default:
+            this->activeNodes = this->beva->process(query, this->activeNodes);
+    }
     output();
+
     auto done = chrono::high_resolution_clock::now();
 
     cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";

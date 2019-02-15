@@ -9,6 +9,7 @@
 #include <string>
 #include "ActiveNode.h"
 #include "Trie.h"
+#include "Beva.h"
 
 using namespace std;
 
@@ -18,14 +19,19 @@ public:
     vector<string> records;
     vector<string> queries;
     vector<ActiveNode*> activeNodes;
+    int editDistanceThreshold;
 
-    Framework();
+    Beva* beva;
+
+    static const int BEVA = 0;
+
+    Framework(int);
 
     void index();
     void process(string, int);
     void output();
 
-    virtual ~Framework();
+    ~Framework();
 };
 
 
