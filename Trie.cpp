@@ -4,14 +4,13 @@
 
 #include <iostream>
 #include "Trie.h"
-#include "EditDistance.h"
-#include "utils.h"
+#include "C.h"
 #include <chrono>
 
 bool isOutsideActiveNodeZone(string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
     return query.length() >= queryOriginalLength
            || node->isEndOfWord
-           || (node->editVector != nullptr && node->getEditDistance() != utils::MARKER
+           || (node->editVector != nullptr && node->getEditDistance() != C::MARKER
                && (node->getEditDistance() - (queryOriginalLength - query.length()) > editDistanceThreshold // fora de alcance
                    || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold)); // já alcançado
 }
@@ -19,7 +18,7 @@ bool isOutsideActiveNodeZone(string query, int queryOriginalLength, int editDist
 bool isToPrint(string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
     return (query.length() == queryOriginalLength || node->isEndOfWord
             || node->getEditDistance() + (queryOriginalLength - query.length()) <= editDistanceThreshold) // já alcançado
-           && (node->editVector != nullptr && node->getEditDistance() != utils::MARKER)
+           && (node->editVector != nullptr && node->getEditDistance() != C::MARKER)
            && node->getEditDistance() <= editDistanceThreshold;
 }
 
@@ -41,21 +40,21 @@ void Trie::insert(string record, int recordId) {
     root->isEndOfWord = true;
 }
 
-void Trie::setEditDistance(string queryOriginal, string query, int queryOriginalLength, int editDistanceThreshold, Node* node) {
-    node->calculateEditDistance(queryOriginal, query, editDistanceThreshold);
+void Trie::setEditDistance(string query, string data, int queryOriginalLength, int editDistanceThreshold, Node* node) {
+    node->calculateEditDistance(query, data, editDistanceThreshold);
 
-    if (isToPrint(query, queryOriginalLength, editDistanceThreshold, node)) {
-        this->currentActiveNodes.push_back(new ActiveNode(node, query));
+    if (isToPrint(data, queryOriginalLength, editDistanceThreshold, node)) {
+        this->currentActiveNodes.push_back(new ActiveNode(node, data));
         return;
     }
 
-    if (isOutsideActiveNodeZone(query, queryOriginalLength, editDistanceThreshold, node)) {
+    if (isOutsideActiveNodeZone(data, queryOriginalLength, editDistanceThreshold, node)) {
         return;
     }
 
     for (auto &i : node->children) {
         if (i == nullptr) continue;
-        setEditDistance(queryOriginal, query + i->value, queryOriginalLength, editDistanceThreshold, i);
+        setEditDistance(query, data + i->value, queryOriginalLength, editDistanceThreshold, i);
     }
 }
 

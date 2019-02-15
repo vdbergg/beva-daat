@@ -23,8 +23,6 @@ public:
 
     Beva* beva;
 
-    static const int BEVA = 0;
-
     Framework(int);
 
     void index();

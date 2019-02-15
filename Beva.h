@@ -6,13 +6,13 @@
 #define BEVA_BEVA_H
 
 
-#include "EditVectorAutomaton.h"
+#include "EditVectorAutomata.h"
 #include "Trie.h"
 
 class Beva {
 public:
     Trie* trie;
-    EditVectorAutomaton* editVectorAutomaton;
+    EditVectorAutomata* editVectorAutomata;
     int editDistanceThreshold;
 
     Beva(Trie*, int);

@@ -3,4 +3,4 @@ project(beva)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(beva main.cpp Node.cpp Node.h Trie.cpp Trie.h EditVector.cpp EditVector.h utils.cpp utils.h ActiveNode.cpp ActiveNode.h EditVectorAutomaton.cpp EditVectorAutomaton.h State.cpp State.h Framework.cpp Framework.h Beva.cpp Beva.h)
+add_executable(beva main.cpp Node.cpp Node.h Trie.cpp Trie.h EditVector.cpp EditVector.h utils.cpp utils.h ActiveNode.cpp ActiveNode.h EditVectorAutomata.cpp EditVectorAutomata.h State.cpp State.h Framework.cpp Framework.h Beva.cpp Beva.h C.h)

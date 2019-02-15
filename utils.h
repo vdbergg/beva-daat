@@ -7,7 +7,6 @@
 
 class utils {
 public:
-    static const int MARKER = 50;
     static int min(int, int, int);
     static void printVector(int*, int);
 };

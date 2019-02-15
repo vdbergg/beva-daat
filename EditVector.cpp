@@ -5,12 +5,13 @@
 #include <iostream>
 #include "EditVector.h"
 #include "utils.h"
+#include "C.h"
 
 EditVector::EditVector(int editDistanceThreshold, EditVector* previousEditVector) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->size = (2 * this->editDistanceThreshold) + 1;
     this->vector = new int[this->size];
-    this->editDistance = utils::MARKER;
+    this->editDistance = C::MARKER;
     this->previousEditVector = previousEditVector;
     this->isInitial = false;
     this->isFinal = false;
@@ -43,7 +44,7 @@ void EditVector::buildInitialEditVector() {
             countPositive++;
         }
     }
-    this->editDistance = utils::MARKER;
+    this->editDistance = C::MARKER;
 
     this->isInitial = true;
 }
@@ -63,11 +64,11 @@ void EditVector::buildEditVector(string query, string data) {
             int temp = query.at(indexQuery) == data.at(this->jColumn) ? 0 : 1;
             this->vector[i] = utils::min(
                     this->previousEditVector->vector[i] + temp,
-                    i + 1 >= this->previousEditVector->size ? utils::MARKER : this->previousEditVector->vector[i + 1] + 1,
-                    i - 1 < 0 ? utils::MARKER : this->vector[i - 1] + 1
+                    i + 1 >= this->previousEditVector->size ? C::MARKER : this->previousEditVector->vector[i + 1] + 1,
+                    i - 1 < 0 ? C::MARKER : this->vector[i - 1] + 1
             );
         } else {
-            this->vector[i] = utils::MARKER;
+            this->vector[i] = C::MARKER;
         }
 
         if (this->vector[i] <= this->editDistanceThreshold) {
@@ -86,8 +87,8 @@ void EditVector::buildEditVectorWithBitmap(string bitmap) {
         temp = temp == 0 ? 1 : 0; // In edit vector construction the ith bitmap is denied
         this->vector[i] = utils::min(
                 this->previousEditVector->vector[i] + temp,
-                i + 1 >= this->previousEditVector->size ? utils::MARKER : this->previousEditVector->vector[i + 1] + 1,
-                i - 1 < 0 ? utils::MARKER : this->vector[i - 1] + 1
+                i + 1 >= this->previousEditVector->size ? C::MARKER : this->previousEditVector->vector[i + 1] + 1,
+                i - 1 < 0 ? C::MARKER : this->vector[i - 1] + 1
         );
         if (this->vector[i] <= this->editDistanceThreshold) {
             this->isFinal = false;
@@ -107,6 +108,6 @@ void EditVector::setEditDistance(string query, string data) {
         && query.length() <= data.length() + this->editDistanceThreshold) {
         this->editDistance = this->vector[(this->editDistanceThreshold + 1 + (query.length() - data.length())) - 1];
     } else {
-        this->editDistance = utils::MARKER;
+        this->editDistance = C::MARKER;
     }
 }

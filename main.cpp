@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Framework.h"
+#include "C.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ int main() {
     int count = 0;
 
     while (query.length() <= 13) {
-        framework->process(query, Framework::BEVA);
+        framework->process(query, C::BEVA);
 
         query += queryRemaining[count];
         query += queryRemaining[count + 1];

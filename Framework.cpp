@@ -10,6 +10,7 @@
 #include <chrono>
 #include <thread>
 #include "Trie.h"
+#include "C.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void readData(string& filename, vector<string>& recs) {
 }
 
 void Framework::index() {
-    string datasetFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol.txt";
+    string datasetFile = "/home/vdberg/Mestrado/workspace/beva/dataset/aol/aol.txt";
 //    string queryFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
 
     cout << "indexing... \n";
@@ -64,7 +65,7 @@ void Framework::process(string query, int algorithm) {
     auto start = chrono::high_resolution_clock::now();
 
     switch (algorithm) {
-        case Framework::BEVA:
+        case C::BEVA:
             this->activeNodes = this->beva->process(query, this->activeNodes);
         default:
             this->activeNodes = this->beva->process(query, this->activeNodes);

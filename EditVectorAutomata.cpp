@@ -5,19 +5,19 @@
 #include <queue>
 #include <math.h>
 #include <bitset>
-#include "EditVectorAutomaton.h"
+#include "EditVectorAutomata.h"
 #include "utils.h"
 
-EditVectorAutomaton::EditVectorAutomaton(int editDistanceThreshold) {
+EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->initialState = nullptr;
     this->finalState = nullptr;
     this->size = 0;
 }
 
-EditVectorAutomaton::~EditVectorAutomaton() = default;
+EditVectorAutomata::~EditVectorAutomata() = default;
 
-State* EditVectorAutomaton::setTransition(State* state, string bitmap) {
+State* EditVectorAutomata::setTransition(State* state, string bitmap) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
     editVector->buildEditVectorWithBitmap(bitmap);
 
@@ -38,7 +38,7 @@ string getVetValue(State* state, int editDistanceThreshold) {
     return vetValue;
 }
 
-void EditVectorAutomaton::buildAutomaton() {
+void EditVectorAutomata::buildAutomaton() {
     map<string, int> states;
 
     EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);

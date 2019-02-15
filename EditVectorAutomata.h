@@ -8,16 +8,16 @@
 
 #include "State.h"
 
-class EditVectorAutomaton {
+class EditVectorAutomata {
 public:
     State* initialState;
     State* finalState;
     int editDistanceThreshold;
     int size;
 
-    EditVectorAutomaton(int);
+    EditVectorAutomata(int);
 
-    ~EditVectorAutomaton();
+    ~EditVectorAutomata();
 
     State* setTransition(State *state, string bitmap);
     void buildAutomaton();

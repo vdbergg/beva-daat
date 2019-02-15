@@ -10,8 +10,8 @@ using namespace std;
 Beva::Beva(Trie *trie, int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->trie = trie;
-    this->editVectorAutomaton = new EditVectorAutomaton(this->editDistanceThreshold);
-    this->editVectorAutomaton->buildAutomaton();
+    this->editVectorAutomata = new EditVectorAutomata(this->editDistanceThreshold);
+    this->editVectorAutomata->buildAutomaton();
 }
 
 Beva::~Beva() {

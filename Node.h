@@ -6,7 +6,6 @@
 #define BEVA_NODE_H
 
 #include <vector>
-#include "EditDistance.h"
 #include "EditVector.h"
 
 #define CHAR_SIZE 128
@@ -15,7 +14,6 @@ class Node {
 public:
     Node* parent;
     Node* children[CHAR_SIZE];
-    EditDistance* editDistance;
     EditVector* editVector;
 
     bool isEndOfWord;
