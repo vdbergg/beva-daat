@@ -18,3 +18,15 @@ void utils::printVector(int* vector, int size) {
     }
     cout << "\n";
 }
+
+void utils::printTransition(int* from, int sizeFrom, int* to, int sizeTo, string bitmap) {
+    cout << "f([ ";
+    for(int i = 0; i < sizeFrom; ++i) {
+        cout << from[i] << " ";
+    }
+    cout << "], " + bitmap + ") = [ ";
+    for(int i = 0; i < sizeTo; ++i) {
+        cout << to[i] << " ";
+    }
+    cout << "]\n";
+}

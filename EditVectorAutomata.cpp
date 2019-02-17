@@ -7,6 +7,7 @@
 #include <bitset>
 #include "EditVectorAutomata.h"
 #include "utils.h"
+#include <utility>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
@@ -17,36 +18,31 @@ EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
 
 EditVectorAutomata::~EditVectorAutomata() = default;
 
-State* EditVectorAutomata::setTransition(State* state, string bitmap) {
+State* EditVectorAutomata::setTransition(State* state, string bitmap, string initialStateValue,
+        map<string, State*> states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
-    editVector->buildEditVectorWithBitmap(bitmap);
+    editVector->buildEditVectorWithBitmap(bitmap, move(initialStateValue));
 
-    State* newState = new State(editVector, this->size);
-    state->transitions[bitmap] = newState;
-
-    return newState;
-}
-
-string getVetValue(State* state, int editDistanceThreshold) {
-    string vetValue = "";
-    int* vet = state->editVector->vector;
-
-    for (int i = 0; i < state->editVector->size; i++) {
-        vetValue += vet[i] > editDistanceThreshold ? "#" : to_string(vet[i]);
+    State* newState;
+    if (states.find(editVector->value) == states.end()) { // if not exists state in automaton
+        newState = new State(editVector, this->size);
+        state->transitions[bitmap] = newState;
+        return newState;
+    } else {
+        newState = states[editVector->value];
+        state->transitions[bitmap] = newState;
+        return nullptr;
     }
-
-    return vetValue;
 }
 
 void EditVectorAutomata::buildAutomaton() {
-    map<string, int> states;
+    map<string, State*> states;
 
     EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);
     editVector->buildInitialEditVector();
     this->initialState = new State(editVector, this->size);
 
-    string editVectorValue = getVetValue(this->initialState, this->editDistanceThreshold);
-    states[editVectorValue] = this->initialState->id;
+    states[editVector->value] = this->initialState;
     this->size++;
 
     queue<State*> queue;
@@ -65,11 +61,10 @@ void EditVectorAutomata::buildAutomaton() {
             string bitmap = bitset<16>(count).to_string();
             bitmap = bitmap.substr(bitmap.length() - bitmapSize);
 
-            State* newState = this->setTransition(state, bitmap);
-            editVectorValue = getVetValue(newState, this->editDistanceThreshold);
+            State* newState = this->setTransition(state, bitmap, this->initialState->editVector->value, states);
 
-            if (states.find(editVectorValue) == states.end()) { // if not exists state in automaton
-                states[editVectorValue] = newState->id;
+            if (newState != nullptr) { // if not exists state in automaton
+                states[newState->editVector->value] = newState;
                 this->size++;
                 queue.push(newState);
 

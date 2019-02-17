@@ -17,19 +17,14 @@ public:
     EditVector* previousEditVector;
     int* vector;
     int editDistanceThreshold;
-    int editDistance;
     int size;
-    int jColumn;
     bool isInitial;
     bool isFinal;
+    string value;
 
     void buildInitialEditVector();
-    void buildEditVector(string, string);
-    void buildEditVectorWithBitmap(string);
-    void calculateEditDistance(string, string);
-    int getEditDistance();
-    void setEditDistance(string, string);
+    void buildEditVectorWithBitmap(string, string);
+    int getEditDistance(string, string);
 };
-
 
 #endif //BEVA_EDITVECTOR_H

@@ -10,8 +10,8 @@ int main() {
 
     Framework* framework = new Framework(editDistanceThreshold);
 
-    string query = "cez";
-    string queryRemaining = "ling heigh";
+    string query = "c";
+    string queryRemaining = "ezling heigh";
 
     int count = 0;
 
@@ -19,8 +19,7 @@ int main() {
         framework->process(query, C::BEVA);
 
         query += queryRemaining[count];
-        query += queryRemaining[count + 1];
-        count += 2;
+        count++;
     }
 
     return 0;

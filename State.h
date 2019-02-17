@@ -14,6 +14,7 @@ class State {
 public:
     State(EditVector*, int);
     ~State();
+    int getEditDistance(string, string);
 
     EditVector* editVector;
     map<string, State*> transitions;

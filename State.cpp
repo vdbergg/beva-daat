@@ -3,6 +3,7 @@
 //
 
 #include "State.h"
+#include <utility>
 
 State::State(EditVector *editVector, int id) {
     this->editVector = editVector;
@@ -12,3 +13,7 @@ State::State(EditVector *editVector, int id) {
 }
 
 State::~State() = default;
+
+int State::getEditDistance(string query, string data) {
+    return this->editVector->getEditDistance(move(query), move(data));
+}

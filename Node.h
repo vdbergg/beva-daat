@@ -7,22 +7,20 @@
 
 #include <vector>
 #include "EditVector.h"
+#include "State.h"
 
 #define CHAR_SIZE 128
 
 class Node {
 public:
-    Node* parent;
     Node* children[CHAR_SIZE];
-    EditVector* editVector;
+    State* state;
 
     bool isEndOfWord;
     char value;
     vector<int> recordsId;
 
-    Node(char value = (char) 0, Node* = nullptr);
-    int getEditDistance();
-    void calculateEditDistance(string, string, int);
+    Node(char value = (char) 0, State* = nullptr);
 };
 
 #endif //BEVA_NODE_H
