@@ -4,6 +4,7 @@
 
 #include <utility>
 #include <iostream>
+#include <bitset>
 #include "Beva.h"
 #include "C.h"
 #include "ActiveNode.h"
@@ -18,6 +19,13 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
     this->editVectorAutomata = new EditVectorAutomata(this->editDistanceThreshold);
     this->editVectorAutomata->buildAutomaton();
     this->trie->root->state = this->editVectorAutomata->initialState;
+    this->bitmapZero = utils::convertDecimalToBinaryString(0, this->bitmapSize);
+    this->bitmapOne = utils::convertDecimalToBinaryString(1, this->bitmapSize);
+
+    for (int i = 0; i < this->bitmapSize; i++) {
+        this->bitmapLast += "1";
+    }
+    this->bitmaps['\0'] = this->bitmapLast;
 }
 
 Beva::~Beva() {
@@ -25,6 +33,8 @@ Beva::~Beva() {
 }
 
 vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNodes) {
+    this->updateBitmap(query);
+
     Node* root = this->trie->root;
     string data = root->value + "";
 
@@ -43,46 +53,54 @@ vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNod
     return this->currentActiveNodes;
 }
 
-string Beva::buildBitmap(string query, string data) {
-    query = " " + query;
-    if (query.length() < this->bitmapSize) {
-        for (int i = query.length(); i < this->bitmapSize; i++) {
-            query = " " + query;
+void Beva::updateBitmap(string query) { // query is equivalent to Q' with the last character c
+    char c = query[(int) query.length() - 1];
+
+    for (auto &bitmap : this->bitmaps) {
+        if (bitmap.empty()) continue;
+
+        string newBitmap = utils::shiftBitInBinaryString(bitmap, 1, this->bitmapSize);
+
+        if (newBitmap != this->bitmapZero) {
+            bitmap = newBitmap;
+        } else {
+            bitmap = "";
         }
     }
+    string temp = query;
+    temp.erase(query.length() - 1);
+    if (temp.find(c) != string::npos && !this->bitmaps[c].empty()) { // Are two characters in the string window
+        this->bitmaps[c].replace(this->bitmaps[c].length() - 1, this->bitmaps[c].length(), "1");
+    } else {
+        this->bitmaps[c] = this->bitmaps[c].empty() ? this->bitmapOne : this->bitmaps[c];
+    }
+}
 
-    string bitmap = "";
+string Beva::buildBitmap(string query, string data) {
+    char c = data[(int) data.length() - 1];
+    string bitmap = this->bitmaps[c];
 
-    for (int i = 0; i < this->bitmapSize; i++) {
-        int temp = int (i + (data.length() - 1));
-        if (temp > query.length() - 1) {
-            bitmap += data[data.length() - 1] == ' ' ? "1" : "0";
-        } else {
-            bitmap += data[data.length() - 1] == query[temp] ? "1" : "0";
-        }
+    if (bitmap.empty()) {
+        bitmap = this->bitmapZero;
+    } else {
+        int k = (int) query.length() - (int) data.length();
+
+        bitmap = utils::shiftBitInBinaryString(bitmap, this->editDistanceThreshold - k, this->bitmapSize);
     }
 
     return bitmap;
 }
 
-bool isOutsideActiveNodeZone(string query, string data, int editDistanceThreshold, Node* node) {
-    return data.length() >= query.length() ||
-            node->isEndOfWord ||
-            (node->state->getEditDistance(query, data) - (query.length() - data.length()) > editDistanceThreshold);
-}
-
 void Beva::findActiveNodes(string query, string data, Node *node) {
     if (query.length() == 1) {
-        string bitmap = this->buildBitmap(query, data + " ");
+        string bitmap = this->buildBitmap(query, data);
         node->state = node->state->transitions[bitmap];
 
         if (!node->state->isFinal) {
-            if (node->state->getEditDistance(query, data + " ") <= this->editDistanceThreshold) {
+            if (node->state->getEditDistance(query, data) <= this->editDistanceThreshold) {
                 this->currentActiveNodes.push_back(new ActiveNode(node, data));
             } else {
-                if (isOutsideActiveNodeZone(query, data, this->editDistanceThreshold, node)) {
-                    findActiveNodes(query, data, node);
-                }
+                findActiveNodes(query, data, node);
             }
         }
         return;
@@ -100,9 +118,7 @@ void Beva::findActiveNodes(string query, string data, Node *node) {
             if (i->state->getEditDistance(query, temp) <= this->editDistanceThreshold) {
                 this->currentActiveNodes.push_back(new ActiveNode(i, temp));
             } else {
-                if (isOutsideActiveNodeZone(query, data, this->editDistanceThreshold, i)) {
-                    findActiveNodes(query, temp, i);
-                }
+                findActiveNodes(query, temp, i);
             }
         }
     }

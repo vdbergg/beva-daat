@@ -12,6 +12,8 @@ public:
     static int min(int, int, int);
     static void printVector(int*, int);
     static void printTransition(int*, int, int*, int, string);
+    static string shiftBitInBinaryString(string bitmap, int countShiftBit, int bitmapSize);
+    static string convertDecimalToBinaryString(int, int);
 };
 
 

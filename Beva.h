@@ -10,6 +10,8 @@
 #include "Trie.h"
 #include "ActiveNode.h"
 
+#define CHAR_SIZE 128
+
 class Beva {
 public:
     Trie* trie;
@@ -17,6 +19,10 @@ public:
     int editDistanceThreshold;
     vector<ActiveNode*> currentActiveNodes;
     int bitmapSize;
+    string bitmaps[CHAR_SIZE];
+    string bitmapZero;
+    string bitmapOne;
+    string bitmapLast;
 
     Beva(Trie*, int);
     ~Beva();
@@ -24,6 +30,7 @@ public:
     vector<ActiveNode*> process(string, vector<ActiveNode*>);
     void findActiveNodes(string query, string data, Node *node);
     string buildBitmap(string query, string data);
+    void updateBitmap(string query);
 };
 
 

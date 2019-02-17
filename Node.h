@@ -20,7 +20,7 @@ public:
     char value;
     vector<int> recordsId;
 
-    Node(char value = (char) 0, State* = nullptr);
+    Node(char value = '\0', State* = nullptr);
 };
 
 #endif //BEVA_NODE_H
