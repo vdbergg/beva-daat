@@ -1,23 +1,26 @@
 #include <iostream>
-#include "Trie.h"
+#include <fstream>
+#include "Framework.h"
+#include "C.h"
 
 using namespace std;
 
 int main() {
-    Trie* trie = new Trie();
+    int editDistanceThreshold = 1;
 
-    string query;
+    Framework* framework = new Framework(editDistanceThreshold);
 
-    string keys[10] = {"abelha", "abacaxi", "abacate", "abobora", "arvore", "arco", "ave", "agil", "atrevido", "atraente"};
+    string query = "c";
+    string queryRemaining = "ezling heigh";
 
-    for (string key: keys) {
-        trie->insert(key);
+    int count = 0;
+
+    while (query.length() <= 13) {
+        framework->process(query, C::BEVA);
+
+        query += queryRemaining[count];
+        count++;
     }
-
-    cout << "Insert your query:";
-    cin >> query;
-
-    trie->autocomplete(query);
 
     return 0;
 }

@@ -2,7 +2,6 @@
 // Created by berg on 13/01/19.
 //
 
-#include <iostream>
 #include <string>
 #include "Node.h"
 
@@ -17,8 +16,7 @@ public:
 
     Trie();
 
-    void insert(string);
-    void autocomplete(string);
+    void insert(string, int);
 };
 
 #endif //BEVA_TRIE_H

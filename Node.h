@@ -5,16 +5,22 @@
 #ifndef BEVA_NODE_H
 #define BEVA_NODE_H
 
+#include <vector>
+#include "EditVector.h"
+#include "State.h"
+
 #define CHAR_SIZE 128
 
 class Node {
 public:
-    bool isEndOfWord;
-    Node* children[CHAR_SIZE]; // children
-    char value;
-    int editDistance;
+    Node* children[CHAR_SIZE];
+    State* state;
 
-    Node(char value = '\0');
+    bool isEndOfWord;
+    char value;
+    vector<int> recordsId;
+
+    Node(char value = '\0', State* = nullptr);
 };
 
 #endif //BEVA_NODE_H
