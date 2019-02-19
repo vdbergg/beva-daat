@@ -31,6 +31,7 @@ public:
     void findActiveNodes(string query, string data, Node *node);
     string buildBitmap(string query, string data);
     void updateBitmap(string query);
+    void reset(Trie*);
 };
 
 

@@ -5,21 +5,27 @@
 
 using namespace std;
 
-int main() {
-    int editDistanceThreshold = 1;
+int main(int argc, char** argv) {
 
-    Framework* framework = new Framework(editDistanceThreshold);
+    int editDistanceThreshold = atoi(argv[1]);
+    int algorithmType = atoi(argv[2]);
+    int dataset = atoi(argv[3]);
 
-    string query = "c";
-    string queryRemaining = "ezling heigh";
+    Framework* framework = new Framework(editDistanceThreshold, dataset);
 
-    int count = 0;
+    for (string q : framework->queries) {
 
-    while (query.length() <= 13) {
-        framework->process(query, C::BEVA);
+        string query = q.substr(0, 1);
+        string queryRemaining = q.substr(1);
 
-        query += queryRemaining[count];
-        count++;
+        int count = 0;
+
+        while (query.length() <= q.length()) {
+            framework->process(query, algorithmType, (int) q.length());
+
+            query += queryRemaining[count];
+            count++;
+        }
     }
 
     return 0;

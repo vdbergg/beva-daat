@@ -14,9 +14,10 @@
 
 using namespace std;
 
-Framework::Framework(int editDistanceThreshold) {
+Framework::Framework(int editDistanceThreshold, int dataset) {
     this->trie = nullptr;
     this->editDistanceThreshold = editDistanceThreshold;
+    this->dataset = dataset;
 
     index();
 }
@@ -37,13 +38,33 @@ void readData(string& filename, vector<string>& recs) {
 }
 
 void Framework::index() {
-    string datasetFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol.txt";
-//    string queryFile = "/home/berg/Mestrado/workspace/beva/dataset/aol/aol_queries/q7.txt";
-
     cout << "indexing... \n";
     auto start = chrono::high_resolution_clock::now();
+    
+    string datasetFile = "/datasets/autocompletion/";
+    string queryFile = "/datasets/autocompletion/";
+
+    switch (this->dataset) {
+        case C::AOL:
+            datasetFile += "aol/aol.txt";
+            queryFile += "aol/q13_10.txt";
+            break;
+        case C::MEDLINE:
+            datasetFile += "medline/medline.txt";
+            queryFile += "medline/q13_10.txt";
+            break;
+        case C::USADDR:
+            datasetFile += "usaddr/usaddr.txt";
+            queryFile += "usaddr/q13_10.txt";
+            break;
+        default:
+            datasetFile += "aol/aol.txt";
+            queryFile += "aol/q13_10.txt";
+            break;
+    }
+
     readData(datasetFile, this->records);
-//    readData(queryFile, this->queries);
+    readData(queryFile, this->queries);
 
    this->trie = new Trie();
 
@@ -59,7 +80,7 @@ void Framework::index() {
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
-void Framework::process(string query, int algorithm) {
+void Framework::process(string query, int algorithm, int queryLength) {
     cout << "Query: " + query + "\n";
 
     auto start = chrono::high_resolution_clock::now();
@@ -75,6 +96,11 @@ void Framework::process(string query, int algorithm) {
     output();
 
     auto done = chrono::high_resolution_clock::now();
+
+    if (query.length() == queryLength) {
+        this->activeNodes.clear(); // Clean the active nodes for next query
+        this->beva->reset(this->trie); // Reset the information from previous query
+    }
 
     cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
     this_thread::sleep_for(chrono::seconds(1));

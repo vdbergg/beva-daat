@@ -20,13 +20,14 @@ public:
     vector<string> queries;
     vector<ActiveNode*> activeNodes;
     int editDistanceThreshold;
+    int dataset;
 
     Beva* beva;
 
-    Framework(int);
+    Framework(int, int);
 
     void index();
-    void process(string, int);
+    void process(string, int, int);
     void output();
 
     ~Framework();

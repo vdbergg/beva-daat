@@ -32,7 +32,16 @@ Beva::~Beva() {
 
 }
 
+void Beva::reset(Trie* trie) {
+    this->trie = trie;
+    this->trie->root->state = this->editVectorAutomata->initialState;
+    this->bitmaps->clear();
+    this->bitmaps['\0'] = this->bitmapLast;
+}
+
 vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNodes) {
+    this->currentActiveNodes.clear();
+
     this->updateBitmap(query);
 
     Node* root = this->trie->root;
@@ -42,8 +51,6 @@ vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNod
         if (oldActiveNodes.empty()) {
             findActiveNodes(query, data, root);
         } else {
-            this->currentActiveNodes.clear();
-
             for (ActiveNode* oldActiveNode : oldActiveNodes) {
                 data = oldActiveNode->data;
                 findActiveNodes(query, data, oldActiveNode->node);

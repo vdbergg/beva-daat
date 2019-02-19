@@ -11,6 +11,11 @@ public:
     static const int BEVA = 0;
 
     static const int MARKER = 50;
+
+    static const int AOL = 0;
+    static const int MEDLINE = 1;
+    static const int USADDR = 2;
+
 };
 
 
