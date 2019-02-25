@@ -1,0 +1,7 @@
+cmake-build-debug/
+CMakeFiles/
+beva
+*.cbp
+*.cmake
+CMakeCache.txt
+.idea/
