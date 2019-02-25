@@ -5,3 +5,4 @@ beva
 *.cmake
 CMakeCache.txt
 .idea/
+Makefile
