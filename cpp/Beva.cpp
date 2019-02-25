@@ -5,10 +5,10 @@
 #include <utility>
 #include <iostream>
 #include <bitset>
-#include "Beva.h"
-#include "C.h"
-#include "ActiveNode.h"
-#include "utils.h"
+#include "../header/Beva.h"
+#include "../header/C.h"
+#include "../header/ActiveNode.h"
+#include "../header/utils.h"
 
 using namespace std;
 

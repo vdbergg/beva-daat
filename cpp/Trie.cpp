@@ -2,8 +2,8 @@
 // Created by berg on 13/01/19.
 //
 
-#include "Trie.h"
-#include "C.h"
+#include "../header/Trie.h"
+#include "../header/C.h"
 
 Trie::Trie() {
     this->root = new Node();

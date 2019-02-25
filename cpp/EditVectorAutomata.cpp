@@ -5,8 +5,8 @@
 #include <queue>
 #include <math.h>
 #include <bitset>
-#include "EditVectorAutomata.h"
-#include "utils.h"
+#include "../header/EditVectorAutomata.h"
+#include "../header/utils.h"
 #include <utility>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {

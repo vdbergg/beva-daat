@@ -2,15 +2,15 @@
 // Created by vdberg on 12/02/19.
 //
 
-#include "Framework.h"
+#include "../header/Framework.h"
 
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <chrono>
 #include <thread>
-#include "Trie.h"
-#include "C.h"
+#include "../header/Trie.h"
+#include "../header/C.h"
 
 using namespace std;
 

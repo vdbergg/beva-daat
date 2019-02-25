@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "Framework.h"
-#include "C.h"
+#include "header/Framework.h"
+#include "header/C.h"
 
 using namespace std;
 

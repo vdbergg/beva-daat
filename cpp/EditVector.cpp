@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "EditVector.h"
-#include "utils.h"
-#include "C.h"
+#include "../header/EditVector.h"
+#include "../header/utils.h"
+#include "../header/C.h"
 
 EditVector::EditVector(int editDistanceThreshold, EditVector* previousEditVector) {
     this->editDistanceThreshold = editDistanceThreshold;
