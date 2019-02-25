@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    delete framework;
     return 0;
 }
 

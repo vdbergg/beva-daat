@@ -23,7 +23,9 @@ Framework::Framework(int editDistanceThreshold, int dataset) {
 }
 
 Framework::~Framework() {
-
+    cout << "deleting framework" << endl;
+    delete beva;
+    delete trie;
 }
 
 void readData(string& filename, vector<string>& recs) {
@@ -48,7 +50,7 @@ void Framework::index() {
 
     switch (this->dataset) {
         case C::AOL:
-            datasetFile += "aol/aol.txt";
+            datasetFile += "aol/aol_25.txt";
             queryFile += "aol/q13_10.txt";
             break;
         case C::MEDLINE:
