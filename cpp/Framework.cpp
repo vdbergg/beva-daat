@@ -27,6 +27,8 @@ Framework::~Framework() {
 }
 
 void readData(string& filename, vector<string>& recs) {
+    cout << "reading dataset " << filename << endl;
+
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {

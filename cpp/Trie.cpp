@@ -4,6 +4,7 @@
 
 #include "../header/Trie.h"
 #include "../header/C.h"
+#include "../header/utils.h"
 
 Trie::Trie() {
     this->root = new Node();
