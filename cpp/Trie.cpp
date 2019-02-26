@@ -14,6 +14,11 @@ void Trie::insert(string record, int recordId) {
     Node* root = this->root;
 
     for (char i : record) {
+        if ((int) i == -61) continue;
+        else if ((int) i < 0 || (int) i >= CHAR_SIZE) {
+            i = utils::convertSpecialCharToSimpleChar(i);
+        }
+
         if (root->children[i] == nullptr) {
             root->children[i] = new Node(i);
         }

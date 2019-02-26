@@ -40,6 +40,13 @@ void Beva::reset(Trie* trie) {
 }
 
 vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNodes) {
+    for (char &c : query) {
+        if ((int) c == -61) continue;
+        else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+            c = utils::convertSpecialCharToSimpleChar(c);
+        }
+    }
+
     this->currentActiveNodes.clear();
 
     this->updateBitmap(query);

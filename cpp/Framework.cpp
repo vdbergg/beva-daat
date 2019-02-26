@@ -2,8 +2,6 @@
 // Created by vdberg on 12/02/19.
 //
 
-#include "../header/Framework.h"
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -11,6 +9,7 @@
 #include <thread>
 #include "../header/Trie.h"
 #include "../header/C.h"
+#include "../header/Framework.h"
 
 using namespace std;
 

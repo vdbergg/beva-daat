@@ -14,6 +14,7 @@ public:
     static void printTransition(int*, int, int*, int, string);
     static string shiftBitInBinaryString(string bitmap, int countShiftBit, int bitmapSize);
     static string convertDecimalToBinaryString(int, int);
+    static char convertSpecialCharToSimpleChar(char);
 };
 
 
