@@ -13,12 +13,12 @@
 
 using namespace std;
 
-Framework::Framework(int editDistanceThreshold, int dataset) {
+Framework::Framework(int editDistanceThreshold, int dataset, int sizeType) {
     this->trie = nullptr;
     this->editDistanceThreshold = editDistanceThreshold;
     this->dataset = dataset;
 
-    index();
+    index(sizeType);
 }
 
 Framework::~Framework() {
@@ -40,8 +40,21 @@ void readData(string& filename, vector<string>& recs) {
     }
 }
 
-void Framework::index() {
+void Framework::index(int sizeType) {
     cout << "indexing... \n";
+    string sizeSufix = "";
+    switch (sizeType) {
+        case 0:
+            sizeSufix = "_25";
+            break;
+        case 1:
+            sizeSufix = "_50";
+            break;
+        case 2:
+            sizeSufix = "_75";
+            break;
+    }
+
     auto start = chrono::high_resolution_clock::now();
     
     string datasetFile = "/datasets/autocompletion/";
@@ -49,19 +62,19 @@ void Framework::index() {
 
     switch (this->dataset) {
         case C::AOL:
-            datasetFile += "aol/aol_25.txt";
+            datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q13_10.txt";
             break;
         case C::MEDLINE:
-            datasetFile += "medline/medline.txt";
+            datasetFile += "medline/medline" + sizeSufix + ".txt";
             queryFile += "medline/q13_10.txt";
             break;
         case C::USADDR:
-            datasetFile += "usaddr/usaddr.txt";
+            datasetFile += "usaddr/usaddr" + sizeSufix + ".txt";
             queryFile += "usaddr/q13_10.txt";
             break;
         default:
-            datasetFile += "aol/aol.txt";
+            datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q13_10.txt";
             break;
     }

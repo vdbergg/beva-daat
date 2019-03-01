@@ -24,9 +24,9 @@ public:
 
     Beva* beva;
 
-    Framework(int, int);
+    Framework(int, int, int);
 
-    void index();
+    void index(int);
     void process(string, int, int);
     void output();
 
