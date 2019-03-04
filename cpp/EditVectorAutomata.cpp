@@ -16,7 +16,10 @@ EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->size = 0;
 }
 
-EditVectorAutomata::~EditVectorAutomata() = default;
+EditVectorAutomata::~EditVectorAutomata() {
+    delete this->initialState;
+    delete this->finalState;
+};
 
 State* EditVectorAutomata::setTransition(State* state, string bitmap, string initialStateValue,
         map<string, State*> states) {

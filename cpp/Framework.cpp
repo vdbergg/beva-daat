@@ -6,10 +6,10 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
-#include <thread>
 #include "../header/Trie.h"
 #include "../header/C.h"
 #include "../header/Framework.h"
+#include "../header/utils.h"
 
 using namespace std;
 
@@ -23,8 +23,8 @@ Framework::Framework(int editDistanceThreshold, int dataset, int sizeType) {
 
 Framework::~Framework() {
     cout << "deleting framework" << endl;
-    delete beva;
-    delete trie;
+    delete this->beva;
+    delete this->trie;
 }
 
 void readData(string& filename, vector<string>& recs) {
@@ -82,10 +82,10 @@ void Framework::index(int sizeType) {
     readData(datasetFile, this->records);
     readData(queryFile, this->queries);
 
-   this->trie = new Trie();
+    this->trie = new Trie();
 
     int recordId = 0;
-    for (string record: this->records) {
+    for (string record : this->records) {
         this->trie->insert(record, recordId);
         recordId++;
     }
@@ -100,6 +100,13 @@ void Framework::process(string query, int algorithm, int queryLength) {
     cout << "Query: " + query + "\n";
 
     auto start = chrono::high_resolution_clock::now();
+
+    for (char &c : query) {
+        if ((int) c == -61) continue;
+        else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+            c = utils::convertSpecialCharToSimpleChar(c);
+        }
+    }
 
     switch (algorithm) {
         case C::BEVA:
@@ -119,7 +126,6 @@ void Framework::process(string query, int algorithm, int queryLength) {
     }
 
     cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
-    this_thread::sleep_for(chrono::seconds(1));
 }
 
 void Framework::output() {

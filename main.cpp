@@ -1,3 +1,5 @@
+#include <chrono>
+#include <thread>
 #include <iostream>
 #include <fstream>
 #include "header/Framework.h"
@@ -28,6 +30,7 @@ int main(int argc, char** argv) {
 
             query += queryRemaining[count];
             count++;
+            this_thread::sleep_for(chrono::seconds(1));
         }
     }
 

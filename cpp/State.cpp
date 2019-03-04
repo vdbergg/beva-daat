@@ -12,7 +12,9 @@ State::State(EditVector *editVector, int id) {
     this->id = id;
 }
 
-State::~State() = default;
+State::~State() {
+    delete this->editVector;
+};
 
 int State::getEditDistance(string query, string data) {
     return this->editVector->getEditDistance(move(query), move(data));
