@@ -8,6 +8,7 @@
 #include "../header/EditVectorAutomata.h"
 #include "../header/utils.h"
 #include <utility>
+#include <unordered_map>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
@@ -22,24 +23,23 @@ EditVectorAutomata::~EditVectorAutomata() {
 };
 
 State* EditVectorAutomata::setTransition(State* state, string bitmap, string initialStateValue,
-        map<string, State*> states) {
+        unordered_map<string, State*> states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
     editVector->buildEditVectorWithBitmap(bitmap, move(initialStateValue));
 
-    State* newState;
-    if (states.find(editVector->value) == states.end()) { // if not exists state in automaton
+    State* newState = nullptr;
+    if (state->editVector->value == editVector->value) {
+    } else if (states.find(editVector->value) == states.end()) { // if not exists state in automaton
         newState = new State(editVector, this->size);
-        state->transitions[bitmap] = newState;
-        return newState;
     } else {
         newState = states[editVector->value];
-        state->transitions[bitmap] = newState;
-        return nullptr;
     }
+    state->transitions[bitmap] = newState;
+    return newState;
 }
 
 void EditVectorAutomata::buildAutomaton() {
-    map<string, State*> states;
+    unordered_map<string, State*> states;
 
     EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);
     editVector->buildInitialEditVector();

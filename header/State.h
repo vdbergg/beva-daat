@@ -5,7 +5,7 @@
 #ifndef BEVA_STATE_H
 #define BEVA_STATE_H
 
-#include <map>
+#include <unordered_map>
 #include "EditVector.h"
 
 using namespace std;
@@ -17,7 +17,7 @@ public:
     int getEditDistance(string, string);
 
     EditVector* editVector;
-    map<string, State*> transitions;
+    unordered_map<string, State*> transitions;
     bool isInitial;
     bool isFinal;
     int id;

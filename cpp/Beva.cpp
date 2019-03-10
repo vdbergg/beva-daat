@@ -102,7 +102,11 @@ string Beva::buildBitmap(string query, string data) {
 void Beva::findActiveNodes(string query, string data, Node *node) {
     if (query.length() == 1) {
         string bitmap = this->buildBitmap(query, data);
-        node->state = node->state->transitions[bitmap];
+
+        State* state = node->state->transitions[bitmap];
+        if (state != nullptr) {
+            node->state = state;
+        }
 
         if (!node->state->isFinal) {
             if (node->state->getEditDistance(query, data) <= this->editDistanceThreshold) {
@@ -118,9 +122,14 @@ void Beva::findActiveNodes(string query, string data, Node *node) {
         if (i == nullptr) continue;
 
         string temp = data + i->value;
-
         string bitmap = this->buildBitmap(query, temp);
-        i->state = node->state->transitions[bitmap];
+
+        State* state = node->state->transitions[bitmap];
+        if (state != nullptr) {
+            i->state = state;
+        } else {
+            i->state = node->state;
+        }
 
         if (!i->state->isFinal) {
             if (i->state->getEditDistance(query, temp) <= this->editDistanceThreshold) {

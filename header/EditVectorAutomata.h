@@ -5,6 +5,7 @@
 #ifndef BEVA_EDITVECTORAUTOMATON_H
 #define BEVA_EDITVECTORAUTOMATON_H
 
+#include <unordered_map>
 #include "State.h"
 
 class EditVectorAutomata {
@@ -18,7 +19,7 @@ public:
 
     ~EditVectorAutomata();
 
-    State* setTransition(State*, string, string, map<string, State*>);
+    State* setTransition(State*, string, string, unordered_map<string, State*>);
     void buildAutomaton();
 };
 
