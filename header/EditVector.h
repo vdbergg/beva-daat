@@ -23,8 +23,8 @@ public:
     string value;
 
     void buildInitialEditVector();
-    void buildEditVectorWithBitmap(string, string);
-    int getEditDistance(string, string);
+    void buildEditVectorWithBitmap(string&, string&);
+    int getEditDistance(string&, string&);
 };
 
 #endif //BEVA_EDITVECTOR_H

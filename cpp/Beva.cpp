@@ -40,7 +40,7 @@ void Beva::reset(Trie* trie) {
     this->bitmaps['\0'] = this->bitmapLast;
 }
 
-vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNodes) {
+vector<ActiveNode*> Beva::process(string& query, vector<ActiveNode*>& oldActiveNodes) {
     this->currentActiveNodes.clear();
 
     this->updateBitmap(query);
@@ -61,7 +61,7 @@ vector<ActiveNode*> Beva::process(string query, vector<ActiveNode*> oldActiveNod
     return this->currentActiveNodes;
 }
 
-void Beva::updateBitmap(string query) { // query is equivalent to Q' with the last character c
+void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the last character c
     char c = query[(int) query.length() - 1];
 
     for (auto &bitmap : this->bitmaps) {
@@ -84,7 +84,7 @@ void Beva::updateBitmap(string query) { // query is equivalent to Q' with the la
     }
 }
 
-string Beva::buildBitmap(string query, string data) {
+string Beva::buildBitmap(string& query, string& data) {
     char c = data[(int) data.length() - 1];
     string bitmap = this->bitmaps[c];
 
@@ -99,7 +99,7 @@ string Beva::buildBitmap(string query, string data) {
     return bitmap;
 }
 
-void Beva::findActiveNodes(string query, string data, Node *node) {
+void Beva::findActiveNodes(string& query, string& data, Node* node) {
     if (query.length() == 1) {
         string bitmap = this->buildBitmap(query, data);
 

@@ -20,7 +20,7 @@ void utils::printVector(int* vector, int size) {
     cout << "\n";
 }
 
-void utils::printTransition(int* from, int sizeFrom, int* to, int sizeTo, string bitmap) {
+void utils::printTransition(int* from, int sizeFrom, int* to, int sizeTo, string& bitmap) {
     cout << "f([ ";
     for(int i = 0; i < sizeFrom; ++i) {
         cout << from[i] << " ";
@@ -32,7 +32,7 @@ void utils::printTransition(int* from, int sizeFrom, int* to, int sizeTo, string
     cout << "]\n";
 }
 
-string utils::shiftBitInBinaryString(string bitmap, int countShiftBit, int bitmapSize) {
+string utils::shiftBitInBinaryString(string& bitmap, int countShiftBit, int bitmapSize) {
     int decimal = (int) bitset<16>(bitmap).to_ulong();
     decimal = decimal << countShiftBit; // shifting 1 bit leftwards
     bitmap = bitset<16>(decimal).to_string();

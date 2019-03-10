@@ -27,10 +27,10 @@ public:
     Beva(Trie*, int);
     ~Beva();
 
-    vector<ActiveNode*> process(string, vector<ActiveNode*>);
-    void findActiveNodes(string query, string data, Node *node);
-    string buildBitmap(string query, string data);
-    void updateBitmap(string query);
+    vector<ActiveNode*> process(string&, vector<ActiveNode*>&);
+    void findActiveNodes(string&, string&, Node*);
+    string buildBitmap(string&, string&);
+    void updateBitmap(string&);
     void reset(Trie*);
 };
 

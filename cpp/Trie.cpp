@@ -10,7 +10,7 @@ Trie::Trie() {
     this->root = new Node();
 }
 
-void Trie::insert(string record, int recordId) {
+void Trie::insert(string& record, int recordId) {
     Node* root = this->root;
 
     for (char i : record) {

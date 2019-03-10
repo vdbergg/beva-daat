@@ -39,7 +39,7 @@ void EditVector::buildInitialEditVector() {
     this->isInitial = true;
 }
 
-void EditVector::buildEditVectorWithBitmap(string bitmap, string initialStateValue) {
+void EditVector::buildEditVectorWithBitmap(string& bitmap, string& initialStateValue) {
     this->isFinal = true;
     for (int i = 0; i < this->size; i++) {
         int temp = bitmap[i] - '0';
@@ -60,7 +60,7 @@ void EditVector::buildEditVectorWithBitmap(string bitmap, string initialStateVal
     }
 }
 
-int EditVector::getEditDistance(string query, string data) {
+int EditVector::getEditDistance(string& query, string& data) {
     if ((int) query.length() >= ((int) data.length() - this->editDistanceThreshold)
         && (int) query.length() <= ((int) data.length() + this->editDistanceThreshold)) {
         return this->vector[(this->editDistanceThreshold + 1 + ((int) query.length() - (int) data.length())) - 1];

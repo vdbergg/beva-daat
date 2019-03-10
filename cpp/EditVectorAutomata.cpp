@@ -22,10 +22,10 @@ EditVectorAutomata::~EditVectorAutomata() {
     delete this->finalState;
 };
 
-State* EditVectorAutomata::setTransition(State* state, string bitmap, string initialStateValue,
-        unordered_map<string, State*> states) {
+State* EditVectorAutomata::setTransition(State*& state, string& bitmap, string& initialStateValue,
+        unordered_map<string, State*>& states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
-    editVector->buildEditVectorWithBitmap(bitmap, move(initialStateValue));
+    editVector->buildEditVectorWithBitmap(bitmap, initialStateValue);
 
     State* newState = nullptr;
     if (state->editVector->value == editVector->value) {

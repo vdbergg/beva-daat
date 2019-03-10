@@ -16,7 +16,7 @@ public:
 
     Trie();
 
-    void insert(string, int);
+    void insert(string&, int);
 };
 
 #endif //BEVA_TRIE_H
