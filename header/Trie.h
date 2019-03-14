@@ -16,7 +16,8 @@ public:
 
     Trie();
 
-    void insert(string&, int);
+    void append(const char*, const int);
+    Node* insert(char ch, Node*);
 };
 
 #endif //BEVA_TRIE_H

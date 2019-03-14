@@ -13,7 +13,7 @@
 
 class Node {
 public:
-    Node* children[CHAR_SIZE];
+    vector<Node*> children;
     State* state;
 
     bool isEndOfWord;

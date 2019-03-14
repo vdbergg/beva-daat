@@ -10,21 +10,25 @@ Trie::Trie() {
     this->root = new Node();
 }
 
-void Trie::insert(string& record, int recordId) {
-    Node* root = this->root;
+void Trie::append(const char *str, const int recordId) {
+    Node* node = this->root;
+    while (*str) {
+        node = this->insert(*str, node);
+        node->recordsId.push_back(recordId);
+        ++str;
+    }
+}
 
-    for (char i : record) {
-        if ((int) i == -61) continue;
-        else if ((int) i < 0 || (int) i >= CHAR_SIZE) {
-            i = utils::convertSpecialCharToSimpleChar(i);
-        }
-
-        if (root->children[i] == nullptr) {
-            root->children[i] = new Node(i);
-        }
-        root->children[i]->recordsId.push_back(recordId);
-        root = root->children[i];
+Node* Trie::insert(char ch, Node* node) {
+    auto vit = node->children.begin();
+    for (; vit != node->children.end(); vit++) {
+        if ((*vit)->value == ch) break;
     }
 
-    root->isEndOfWord = true;
+    if (vit == node->children.end()) {
+        Node* newNode = new Node(ch);
+        node->children.push_back(newNode);
+        return newNode;
+    }
+    return *vit;
 }

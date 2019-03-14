@@ -85,8 +85,8 @@ void Framework::index(int sizeType) {
     this->trie = new Trie();
 
     int recordId = 0;
-    for (string record : this->records) {
-        this->trie->insert(record, recordId);
+    for (string& record : this->records) {
+        this->trie->append(record.c_str(), recordId);
         recordId++;
     }
 
@@ -116,7 +116,7 @@ void Framework::process(string query, int algorithm, int queryLength) {
             this->activeNodes = this->beva->process(query, this->activeNodes);
             break;
     }
-    output();
+    //output();
 
     auto done = chrono::high_resolution_clock::now();
 
