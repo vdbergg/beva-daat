@@ -39,13 +39,14 @@ int main(int argc, char** argv) {
 }
 
 void checkParameters(int number, char** values) {
+
     if (number == 4) {
         editDistanceThreshold = atoi(values[1]);
         algorithmType = atoi(values[2]);
         datasetNumber = atoi(values[3]);
         sizeType = 3;
     }
-    if (number == 5) {
+    else if (number == 5) {
         editDistanceThreshold = atoi(values[1]);
         algorithmType = atoi(values[2]);
         datasetNumber = atoi(values[3]);
