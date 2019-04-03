@@ -2,24 +2,26 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <map>
+#include <string>
 #include "header/Framework.h"
 #include "header/C.h"
 
 using namespace std;
 
-int editDistanceThreshold;
-int qryNumber;
-int datasetNumber;
-int sizeType;
-
-void checkParameters(int argc, char** argv);
+map<string,string> config;
+void loadConfig();
 
 int main(int argc, char** argv) {
-    checkParameters(argc,argv);
+
+    loadConfig();
+
     string q, query, queryRemaining;
-    Framework* framework = new Framework(editDistanceThreshold, datasetNumber, sizeType);
+    Framework* framework = new Framework(config);
     int indexMin, indexMax;
     int algorithmType = 0; // = -> BEVA
+    int qryNumber = stoi(config["qry_number"]);
 
     if(qryNumber == -1){
         indexMin = 0;
@@ -50,36 +52,20 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void checkParameters(int number, char** values) {
+void loadConfig() {
 
-    if (number == 4) {
-        editDistanceThreshold = atoi(values[1]);
-        qryNumber = atoi(values[2]);
-        datasetNumber = atoi(values[3]);
-        sizeType = 3;
-    }
-    else if (number == 5) {
-        editDistanceThreshold = atoi(values[1]);
-        qryNumber = atoi(values[2]);
-        datasetNumber = atoi(values[3]);
-        sizeType      = atoi(values[4]);
-    }
-    else {
-        std::cout << "[ERROR] Missing parameters" << std::endl << std::endl;
-        std::cout << "./beva EDIT_DIST QRY_NUMBER DATASET [SIZE_TYPE]" << std::endl;
-        std::cout << "EDIT_DIST -> edit distance number." << std::endl;
-        std::cout << "QRY_NUMBER -> query number starting from 0" << std::endl;
-        std::cout << "\t ALL -> -1" << std::endl;
-        std::cout << "DATASET -> dataset number." << std::endl;
-        std::cout << "\t AOL -> 0" << std::endl;
-        std::cout << "\t MEDLINE -> 1" << std::endl;
-        std::cout << "\t USADDR -> 2" << std::endl;
-        std::cout << "SIZE_TYPE -> percentual of dataset to be loaded." << std::endl;
-        std::cout << "\t 25% -> 0" << std::endl;
-        std::cout << "\t 50% -> 1" << std::endl;
-        std::cout << "\t 75% -> 2" << std::endl;
-        std::cout << "\t 100% -> 3" << std::endl;
+    std::ifstream is_file("path.cfg");
+    std::string line;
 
-        exit(1);
+    while( std::getline(is_file, line) )
+    {
+        std::istringstream is_line(line);
+        std::string key;
+        if( std::getline(is_line, key, '=') )
+        {
+            std::string value;
+            if( std::getline(is_line, value) )
+                config[key] = value;
+        }
     }
 }

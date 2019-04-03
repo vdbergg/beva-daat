@@ -13,12 +13,12 @@
 
 using namespace std;
 
-Framework::Framework(int editDistanceThreshold, int dataset, int sizeType) {
+Framework::Framework(map<string,string> config) {
     this->trie = nullptr;
-    this->editDistanceThreshold = editDistanceThreshold;
-    this->dataset = dataset;
+    this->editDistanceThreshold = stoi(config["edit_distance"]);
+    this->dataset = stoi(config["dataset"]);
 
-    index(sizeType);
+    index(config);
 }
 
 Framework::~Framework() {
@@ -40,10 +40,10 @@ void readData(string& filename, vector<string>& recs) {
     }
 }
 
-void Framework::index(int sizeType) {
+void Framework::index(map<string,string> config) {
     cout << "indexing... \n";
     string sizeSufix = "";
-    switch (sizeType) {
+    switch (stoi(config["size_type"])) {
         case 0:
             sizeSufix = "_25";
             break;
@@ -53,12 +53,14 @@ void Framework::index(int sizeType) {
         case 2:
             sizeSufix = "_75";
             break;
+        case 3:
+            sizeSufix = "";
     }
 
     auto start = chrono::high_resolution_clock::now();
     
-    string datasetFile = "/datasets/autocompletion/";
-    string queryFile = "/datasets/autocompletion/";
+    string datasetFile = config["dataset_basepath"];
+    string queryFile = config["query_basepath"];
 
     switch (this->dataset) {
         case C::AOL:

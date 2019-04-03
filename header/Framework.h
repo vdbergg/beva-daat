@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "ActiveNode.h"
 #include "Trie.h"
 #include "Beva.h"
@@ -24,9 +25,9 @@ public:
 
     Beva* beva;
 
-    Framework(int, int, int);
+    Framework(map<string,string>);
 
-    void index(int);
+    void index(map<string,string>);
     void process(string, int, int);
     void output();
 
