@@ -45,17 +45,9 @@ vector<ActiveNode*> Beva::process(string& query, vector<ActiveNode*>& oldActiveN
 
     this->updateBitmap(query);
 
-    Node* root = this->trie->root;
-    string data = root->value + "";
-
     if (query.length() >= this->editDistanceThreshold) {
-        if (oldActiveNodes.empty()) {
-            findActiveNodes(query, data, root);
-        } else {
-            for (ActiveNode* oldActiveNode : oldActiveNodes) {
-                data = oldActiveNode->data;
-                findActiveNodes(query, data, oldActiveNode->node);
-            }
+        for (ActiveNode* oldActiveNode : oldActiveNodes) {
+            findActiveNodes(query, oldActiveNode->data, oldActiveNode->node);
         }
     }
     return this->currentActiveNodes;
@@ -100,27 +92,7 @@ string Beva::buildBitmap(string& query, string& data) {
 }
 
 void Beva::findActiveNodes(string& query, string& data, Node* node) {
-    if (query.length() == 1) {
-        string bitmap = this->buildBitmap(query, data);
-
-        State* state = node->state->transitions[bitmap];
-        if (state != nullptr) {
-            node->state = state;
-        }
-
-        if (!node->state->isFinal) {
-            if (node->state->getEditDistance(query, data) <= this->editDistanceThreshold) {
-                this->currentActiveNodes.push_back(new ActiveNode(node, data));
-            } else {
-                findActiveNodes(query, data, node);
-            }
-        }
-        return;
-    }
-
     for (auto &i : node->children) {
-        if (i == nullptr) continue;
-
         string temp = data + i->value;
         string bitmap = this->buildBitmap(query, temp);
 

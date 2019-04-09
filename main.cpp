@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
 
     for (int i = indexMin; i < indexMax; ++i) {
         q = framework->queries[i];
-        query = q.substr(0, 1);
-        queryRemaining = q.substr(1);
+        query = "";
+        queryRemaining = q.substr(0);
 
         int count = 0;
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
             query += queryRemaining[count];
             count++;
-            this_thread::sleep_for(chrono::seconds(1));
+            this_thread::sleep_for(chrono::seconds(2));
         }
     }
 

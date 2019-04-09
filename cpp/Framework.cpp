@@ -99,6 +99,11 @@ void Framework::index(map<string,string> config) {
 }
 
 void Framework::process(string query, int algorithm, int queryLength) {
+    if (query.empty()) {
+        this->activeNodes.push_back(new ActiveNode(this->trie->root, ""));
+        return;
+    }
+
     cout << "Query: " + query + "\n";
 
     auto start = chrono::high_resolution_clock::now();
