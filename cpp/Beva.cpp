@@ -30,7 +30,6 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
 
 Beva::~Beva() {
     delete this->editVectorAutomata;
-    delete this->trie;
 }
 
 void Beva::reset(Trie* trie) {

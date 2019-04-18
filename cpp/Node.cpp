@@ -8,4 +8,6 @@ Node::Node(char value, State* state) {
     this->isEndOfWord = false;
     this->value = value;
     this->state = state;
+    this->beginRange = -1;
+    this->endRange = -1;
 }

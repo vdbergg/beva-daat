@@ -16,7 +16,7 @@ public:
 
     Trie();
 
-    void append(const char*, const int);
+    void append(const string&, const int);
     Node* insert(char ch, Node*);
 };
 

@@ -18,7 +18,8 @@ public:
 
     bool isEndOfWord;
     char value;
-    vector<int> recordsId;
+    int beginRange;
+    int endRange;
 
     Node(char value = '\0', State* = nullptr);
 };

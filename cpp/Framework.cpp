@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <algorithm>
 #include "../header/Trie.h"
 #include "../header/C.h"
 #include "../header/Framework.h"
@@ -82,13 +83,14 @@ void Framework::index(map<string,string> config) {
     }
 
     readData(datasetFile, this->records);
+    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
     this->trie = new Trie();
 
     int recordId = 0;
     for (string& record : this->records) {
-        this->trie->append(record.c_str(), recordId);
+        this->trie->append(record, recordId);
         recordId++;
     }
 
@@ -106,14 +108,14 @@ void Framework::process(string query, int algorithm, int queryLength) {
 
     cout << "Query: " + query + "\n";
 
-    auto start = chrono::high_resolution_clock::now();
-
     for (char &c : query) {
         if ((int) c == -61) continue;
         else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
             c = utils::convertSpecialCharToSimpleChar(c);
         }
     }
+
+    auto start = chrono::high_resolution_clock::now();
 
     switch (algorithm) {
         case C::BEVA:
@@ -123,9 +125,10 @@ void Framework::process(string query, int algorithm, int queryLength) {
             this->activeNodes = this->beva->process(query, this->activeNodes);
             break;
     }
-    //output();
 
     auto done = chrono::high_resolution_clock::now();
+
+    //output();
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query
@@ -136,10 +139,19 @@ void Framework::process(string query, int algorithm, int queryLength) {
 }
 
 void Framework::output() {
+    int count = 0;
     for (ActiveNode* activeNode : this->activeNodes) {
-        vector<int> recordsId = activeNode->node->recordsId;
-        for (int recordId : recordsId) {
-            cout << this->records.at(recordId) << "\n";
+        int beginRange = activeNode->node->beginRange;
+        int endRange = activeNode->node->endRange;
+
+        if (beginRange != -1 && endRange != -1) {
+            vector<string> recs(this->records.begin() + beginRange, this->records.begin() + endRange);
+            count += recs.size();
+            for (const string& record : recs) {
+                cout << record << "\n";
+            }
         }
     }
+    cout << "Results length: " + to_string(count) << "\n";
+    cout << "\n";
 }

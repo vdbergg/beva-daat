@@ -10,12 +10,20 @@ Trie::Trie() {
     this->root = new Node();
 }
 
-void Trie::append(const char *str, const int recordId) {
+void Trie::append(const string& rec, const int recordId) {
     Node* node = this->root;
-    while (*str) {
-        node = this->insert(*str, node);
-        node->recordsId.push_back(recordId);
-        ++str;
+    for (char ch : rec) {
+        if ((int) ch == -61) continue;
+        else if ((int) ch < 0 || (int) ch >= CHAR_SIZE) {
+            ch = utils::convertSpecialCharToSimpleChar(ch);
+        }
+
+        node = this->insert(ch, node);
+
+        if (node->beginRange == -1) {
+            node->beginRange = recordId;
+        }
+        node->endRange = recordId + 1;
     }
 }
 
