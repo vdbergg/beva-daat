@@ -48,6 +48,8 @@ vector<ActiveNode*> Beva::process(string& query, vector<ActiveNode*>& oldActiveN
         for (ActiveNode* oldActiveNode : oldActiveNodes) {
             findActiveNodes(query, oldActiveNode->data, oldActiveNode->node);
         }
+    } else {
+        this->currentActiveNodes = oldActiveNodes;
     }
     return this->currentActiveNodes;
 }
@@ -93,6 +95,7 @@ string Beva::buildBitmap(string& query, string& data) {
 void Beva::findActiveNodes(string& query, string& data, Node* node) {
     for (auto &i : node->children) {
         string temp = data + i->value;
+
         string bitmap = this->buildBitmap(query, temp);
 
         State* state = node->state->transitions[bitmap];

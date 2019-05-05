@@ -33,6 +33,8 @@ State* EditVectorAutomata::setTransition(State*& state, string& bitmap, string& 
         newState = new State(editVector, this->size);
     } else {
         newState = states[editVector->value];
+        state->transitions[bitmap] = newState;
+        return nullptr;
     }
     state->transitions[bitmap] = newState;
     return newState;
