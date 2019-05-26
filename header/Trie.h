@@ -14,7 +14,7 @@ class Trie {
 public:
     Node* root;
 
-    Trie();
+    Trie(int);
 
     void append(const string&, const int);
     Node* insert(char ch, Node*);

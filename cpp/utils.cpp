@@ -6,6 +6,7 @@
 #include <iostream>
 #include <bitset>
 #include "../header/utils.h"
+#include "../header/Beva.h"
 
 using namespace std;
 
@@ -98,4 +99,14 @@ char utils::convertSpecialCharToSimpleChar(char c) {
         case -111: return 'n';
         default: return '?'; // unknown
     }
+}
+
+string utils::normalize(string& data) {
+    for (char &c : data) {
+        if ((int) c == -61) continue;
+        else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+            c = utils::convertSpecialCharToSimpleChar(c);
+        }
+    }
+    return data;
 }

@@ -37,6 +37,7 @@ void readData(string& filename, vector<string>& recs) {
         for (auto i = 0; i < str.length(); i++) {
             str[i] = tolower(str[i]);
         }
+        str = utils::normalize(str);
         recs.push_back(str);
     }
 }
@@ -86,7 +87,7 @@ void Framework::index(map<string,string> config) {
     sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
-    this->trie = new Trie();
+    this->trie = new Trie(this->records.size());
 
     int recordId = 0;
     for (string& record : this->records) {
@@ -108,12 +109,7 @@ void Framework::process(string query, int algorithm, int queryLength) {
 
     cout << "Query: " + query + "\n";
 
-    for (char &c : query) {
-        if ((int) c == -61) continue;
-        else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
-            c = utils::convertSpecialCharToSimpleChar(c);
-        }
-    }
+    query = utils::normalize(query);
 
     auto start = chrono::high_resolution_clock::now();
 
@@ -128,7 +124,7 @@ void Framework::process(string query, int algorithm, int queryLength) {
 
     auto done = chrono::high_resolution_clock::now();
 
-    //output();
+//    output();
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query
@@ -145,13 +141,18 @@ void Framework::output() {
         int endRange = activeNode->node->endRange;
 
         if (beginRange != -1 && endRange != -1) {
-            vector<string> recs(this->records.begin() + beginRange, this->records.begin() + endRange);
-            count += recs.size();
-            for (const string& record : recs) {
+            vector<string> results;
+            if (endRange - beginRange != this->records.size()) {
+                vector<string> recs(this->records.begin() + beginRange, this->records.begin() + endRange);
+                results = recs;
+            } else {
+                results = this->records;
+            }
+            count += results.size();
+            for (const string& record : results) {
                 cout << record << "\n";
             }
         }
     }
     cout << "Results length: " + to_string(count) << "\n";
-    cout << "\n";
 }

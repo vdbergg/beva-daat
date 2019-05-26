@@ -6,8 +6,10 @@
 #include "../header/C.h"
 #include "../header/utils.h"
 
-Trie::Trie() {
+Trie::Trie(int datasetSize) {
     this->root = new Node();
+    this->root->beginRange = 0;
+    this->root->endRange = datasetSize;
 }
 
 void Trie::append(const string& rec, const int recordId) {

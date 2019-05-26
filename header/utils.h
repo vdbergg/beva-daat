@@ -15,6 +15,7 @@ public:
     static string shiftBitInBinaryString(string&, int, int);
     static string convertDecimalToBinaryString(int, int);
     static char convertSpecialCharToSimpleChar(char);
+    static string normalize(string&);
 };
 
 
