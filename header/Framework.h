@@ -11,6 +11,7 @@
 #include "ActiveNode.h"
 #include "Trie.h"
 #include "Beva.h"
+#include "Experiment.h"
 
 using namespace std;
 
@@ -22,13 +23,14 @@ public:
     vector<ActiveNode*> activeNodes;
     int editDistanceThreshold;
     int dataset;
+    Experiment* experiment;
 
     Beva* beva;
 
     Framework(map<string,string>);
 
     void index(map<string,string>);
-    void process(string, int, int);
+    void process(string, int, int, int, int);
     void output();
 
     ~Framework();

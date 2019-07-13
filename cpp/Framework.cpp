@@ -11,6 +11,7 @@
 #include "../header/C.h"
 #include "../header/Framework.h"
 #include "../header/utils.h"
+#include "../header/Experiment.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ Framework::Framework(map<string,string> config) {
     this->trie = nullptr;
     this->editDistanceThreshold = stoi(config["edit_distance"]);
     this->dataset = stoi(config["dataset"]);
+    this->experiment = new Experiment(config, editDistanceThreshold);
 
     index(config);
 }
@@ -60,6 +62,7 @@ void Framework::index(map<string,string> config) {
     }
 
     auto start = chrono::high_resolution_clock::now();
+    this->experiment->initIndexingTime();
     
     string datasetFile = config["dataset_basepath"];
     string queryFile = config["query_basepath"];
@@ -98,10 +101,12 @@ void Framework::index(map<string,string> config) {
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
+    this->experiment->endIndexingTime();
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
-void Framework::process(string query, int algorithm, int queryLength) {
+void Framework::process(string query, int algorithm, int queryLength, int countQueryExpected,
+        int currentCountQuery) {
     if (query.empty()) {
         this->activeNodes.push_back(new ActiveNode(this->trie->root, ""));
         return;
@@ -112,6 +117,7 @@ void Framework::process(string query, int algorithm, int queryLength) {
     query = utils::normalize(query);
 
     auto start = chrono::high_resolution_clock::now();
+    this->experiment->initQueryProcessingTime();
 
     switch (algorithm) {
         case C::BEVA:
@@ -123,8 +129,13 @@ void Framework::process(string query, int algorithm, int queryLength) {
     }
 
     auto done = chrono::high_resolution_clock::now();
+    this->experiment->endQueryProcessingTime(query.length());
 
 //    output();
+
+    if (currentCountQuery == countQueryExpected && query.length() == queryLength) {
+        this->experiment->compileQueryProcessingTimes(countQueryExpected);
+    }
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query

@@ -32,6 +32,8 @@ int main(int argc, char** argv) {
         indexMax = qryNumber + 1;
     }
 
+    int countQueryExpected = indexMax - indexMin;
+    int currentCountQuery = 1;
     for (int i = indexMin; i < indexMax; ++i) {
         q = framework->queries[i];
         query = "";
@@ -39,13 +41,15 @@ int main(int argc, char** argv) {
 
         int count = 0;
 
+
         while (query.length() <= q.length()) {
-            framework->process(query, algorithmType, (int) q.length());
+            framework->process(query, algorithmType, (int) q.length(), countQueryExpected, currentCountQuery);
 
             query += queryRemaining[count];
             count++;
             this_thread::sleep_for(chrono::seconds(2));
         }
+        currentCountQuery++;
     }
 
     delete framework;
