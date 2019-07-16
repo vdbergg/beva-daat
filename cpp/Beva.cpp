@@ -44,7 +44,7 @@ vector<ActiveNode*> Beva::process(string& query, vector<ActiveNode*>& oldActiveN
 
     this->updateBitmap(query);
 
-    if (query.length() < this->editDistanceThreshold) return oldActiveNodes;
+    if (query.length() <= this->editDistanceThreshold) return oldActiveNodes;
 
     for (ActiveNode* oldActiveNode : oldActiveNodes) {
         findActiveNodes(query, oldActiveNode);
