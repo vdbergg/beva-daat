@@ -30,12 +30,15 @@ Framework::~Framework() {
     delete this->trie;
 }
 
-void readData(string& filename, vector<string>& recs) {
+void Framework::readData(string& filename, vector<string>& recs) {
     cout << "reading dataset " << filename << endl;
 
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
+        if (str.find("http ") != std::string::npos || str.length() <= this->editDistanceThreshold) {
+            continue;
+        }
         for (auto i = 0; i < str.length(); i++) {
             str[i] = tolower(str[i]);
         }
@@ -90,13 +93,15 @@ void Framework::index(map<string,string> config) {
     sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
-    this->trie = new Trie(this->records.size());
+    this->trie = new Trie(this->records.size(), this->experiment);
 
     int recordId = 0;
     for (string& record : this->records) {
         this->trie->append(record, recordId);
         recordId++;
     }
+
+    this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
@@ -160,9 +165,9 @@ void Framework::output() {
                 results = this->records;
             }
             count += results.size();
-            for (const string& record : results) {
-                cout << record << "\n";
-            }
+//            for (const string& record : results) {
+//                cout << record << "\n";
+//            }
         }
     }
     cout << "Results length: " + to_string(count) << "\n";

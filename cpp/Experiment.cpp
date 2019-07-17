@@ -5,7 +5,6 @@
 //
 // Created by berg on 12/07/19.
 //
-#include <chrono>
 #include <iostream>
 #include <fstream>
 
@@ -80,4 +79,20 @@ void Experiment::compileQueryProcessingTimes(int countQueryProcessed) {
     }
 
     writeFile("query_processing_time", value);
+}
+
+void Experiment::proportionOfBranchingSizeInBEVA2Level(int size) {
+    if (this->branchSize.find(size) == this->branchSize.end() ) {
+        this->branchSize[size] = 1;
+    } else {
+        this->branchSize[size]++;
+    }
+}
+
+void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
+    string value = "";
+    for (map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {
+        value += to_string(it->first) + " " + to_string(it->second) + "\n";
+    }
+    writeFile("proportion_branch_size_beva_2_level", value);
 }

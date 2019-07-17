@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <map>
+#include <chrono>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
     map<string, string>  config;
     int editDistanceThreshold;
     vector<long> processingTimes;
+    map<int, int> branchSize;
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
 
@@ -28,7 +30,8 @@ public:
     void initQueryProcessingTime();
     void endQueryProcessingTime(int);
     void compileQueryProcessingTimes(int);
-    void proportionOfBranchingSizeInBEVA2Level();
+    void proportionOfBranchingSizeInBEVA2Level(int);
+    void compileProportionOfBranchingSizeInBEVA2Level();
 
     void writeFile(const string&, const string&);
 };

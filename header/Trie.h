@@ -4,6 +4,7 @@
 
 #include <string>
 #include "Node.h"
+#include "Experiment.h"
 
 #ifndef BEVA_TRIE_H
 #define BEVA_TRIE_H
@@ -13,8 +14,9 @@ using namespace std;
 class Trie {
 public:
     Node* root;
+    Experiment* experiment;
 
-    Trie(int);
+    Trie(int, Experiment*);
 
     void append(const string&, const int);
     Node* insert(char ch, Node*);
