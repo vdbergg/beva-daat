@@ -11,9 +11,10 @@
 class ActiveNode {
 public:
     Node* node;
+    State* state;
     string data;
 
-    ActiveNode(Node*, string);
+    ActiveNode(Node*, State*, string&);
 };
 
 

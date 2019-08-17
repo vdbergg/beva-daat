@@ -4,10 +4,9 @@
 
 #include "../header/Node.h"
 
-Node::Node(char value, State* state) {
+Node::Node(char value) {
     this->isEndOfWord = false;
     this->value = value;
-    this->state = state;
     this->beginRange = -1;
     this->endRange = -1;
 }

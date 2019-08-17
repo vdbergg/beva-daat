@@ -18,7 +18,6 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
     this->trie = trie;
     this->editVectorAutomata = new EditVectorAutomata(this->editDistanceThreshold);
     this->editVectorAutomata->buildAutomaton();
-    this->trie->root->state = this->editVectorAutomata->initialState;
     this->bitmapZero = utils::convertDecimalToBinaryString(0, this->bitmapSize);
     this->bitmapOne = utils::convertDecimalToBinaryString(1, this->bitmapSize);
 
@@ -34,7 +33,6 @@ Beva::~Beva() {
 
 void Beva::reset(Trie* trie) {
     this->trie = trie;
-    this->trie->root->state = this->editVectorAutomata->initialState;
     this->bitmaps->clear();
     this->bitmaps['\0'] = this->bitmapLast;
 }
@@ -101,16 +99,17 @@ State* Beva::getNewState(string& query, string& data, State* state) {
 void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode) {
     string data = oldActiveNode->data;
     Node* node = oldActiveNode->node;
+    State* state = oldActiveNode->state;
 
     for (auto &i : node->children) {
         string temp = data + i->value;
-        i->state = this->getNewState(query, temp, node->state);
+        State* newState = this->getNewState(query, temp, state);
 
-        if (i->state->isFinal) continue;
+        if (newState->isFinal) continue;
 
-        ActiveNode* activeNode = new ActiveNode(i, temp);
+        ActiveNode* activeNode = new ActiveNode(i, newState, temp);
         if (temp.length() >= query.length() &&
-            i->state->getEditDistance(query, temp) <= this->editDistanceThreshold) {
+            newState->getEditDistance(query, temp) <= this->editDistanceThreshold) {
             this->currentActiveNodes.push_back(activeNode);
         } else {
             findActiveNodes(query, activeNode);

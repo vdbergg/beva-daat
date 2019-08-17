@@ -3,7 +3,6 @@
 //
 
 #include "../header/Trie.h"
-#include "../header/C.h"
 #include "../header/utils.h"
 #include "../header/Experiment.h"
 

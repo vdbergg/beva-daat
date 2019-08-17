@@ -14,14 +14,13 @@
 class Node {
 public:
     vector<Node*> children;
-    State* state;
 
     bool isEndOfWord;
     char value;
     int beginRange;
     int endRange;
 
-    Node(char value = '\0', State* = nullptr);
+    Node(char value = '\0');
 };
 
 #endif //BEVA_NODE_H
