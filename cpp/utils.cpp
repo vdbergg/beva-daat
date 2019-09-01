@@ -10,6 +10,10 @@
 
 using namespace std;
 
+bool utils::sortQueryProcessingTime(const pair<string, QueryResult*>&i, const pair<string, QueryResult*>&j) {
+    return i.second->queryProcessingTime < j.second->queryProcessingTime;
+}
+
 int utils::min(int a, int b, int c) {
     return std::min(std::min(a, b), c);
 }

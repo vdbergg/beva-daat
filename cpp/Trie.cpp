@@ -11,6 +11,7 @@ Trie::Trie(int datasetSize, Experiment* experiment) {
     this->root->beginRange = 0;
     this->root->endRange = datasetSize;
     this->experiment = experiment;
+    this->experiment->incrementNumberOfNodes();
 }
 
 void Trie::append(const string& rec, const int recordId) {
@@ -42,6 +43,7 @@ Node* Trie::insert(char ch, Node* node) {
 
     if (vit == node->children.end()) {
         Node* newNode = new Node(ch);
+        this->experiment->incrementNumberOfNodes();
         node->children.push_back(newNode);
         return newNode;
     }

@@ -101,12 +101,12 @@ void Framework::index(map<string,string> config) {
         recordId++;
     }
 
-    this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
-
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
     this->experiment->endIndexingTime();
+    this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
+    this->experiment->compileNumberOfNodes();
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
@@ -137,12 +137,13 @@ void Framework::process(string query, int algorithm, int queryLength, int countQ
     }
 
     auto done = chrono::high_resolution_clock::now();
-    this->experiment->endQueryProcessingTime(query.length());
+    this->experiment->endQueryProcessingTime(query.length(), this->activeNodes.size(), query);
 
 //    output();
 
     if (currentCountQuery == countQueryExpected && query.length() == queryLength) {
         this->experiment->compileQueryProcessingTimes(countQueryExpected);
+        this->experiment->compileLongAndShortProcessingTimeQueries();
     }
 
     if (query.length() == queryLength) {

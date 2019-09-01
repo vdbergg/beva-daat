@@ -8,6 +8,10 @@
 #include <vector>
 #include <map>
 #include <chrono>
+#include "QueryResult.h"
+
+#include "sys/types.h"
+#include "sys/sysinfo.h"
 
 using namespace std;
 
@@ -17,8 +21,14 @@ public:
 
     map<string, string>  config;
     int editDistanceThreshold;
+    long numberOfNodes;
     vector<long> processingTimes;
+    vector<long> currentQueryProcessingTime;
+    vector<float> activeNodesSizes;
+    vector<long> currentActiveNodesSize;
     map<int, int> branchSize;
+
+    vector<pair<string, QueryResult*>> processingTimeByQuery;
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
 
@@ -28,9 +38,12 @@ public:
     void initIndexingTime();
     void endIndexingTime();
     void initQueryProcessingTime();
-    void endQueryProcessingTime(int);
+    void endQueryProcessingTime(int, long, string&);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSizeInBEVA2Level(int);
+    void incrementNumberOfNodes();
+    void compileNumberOfNodes();
+    void compileLongAndShortProcessingTimeQueries();
     void compileProportionOfBranchingSizeInBEVA2Level();
 
     void writeFile(const string&, const string&);

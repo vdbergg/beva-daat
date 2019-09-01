@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
     if(qryNumber == -1){
         indexMin = 0;
-        indexMax = framework->queries.size();
+        indexMax = 10;
     }
     else{
         indexMin = qryNumber;
