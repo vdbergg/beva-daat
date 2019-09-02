@@ -33,7 +33,7 @@ Beva::~Beva() {
 
 void Beva::reset(Trie* trie) {
     this->trie = trie;
-    this->bitmaps->clear();
+    for(int i=0; i<CHAR_SIZE; i++) this->bitmaps[i] = "";
     this->bitmaps['\0'] = this->bitmapLast;
 }
 
