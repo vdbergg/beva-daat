@@ -19,18 +19,9 @@ int main(int argc, char** argv) {
 
     string q, query, queryRemaining;
     Framework* framework = new Framework(config);
-    int indexMin, indexMax;
+    int indexMin = stoi(config["qry_number_start"]);
+    int indexMax =  stoi(config["qry_number_end"]);
     int algorithmType = 0; // = -> BEVA
-    int qryNumber = stoi(config["qry_number"]);
-
-    if(qryNumber == -1){
-        indexMin = 0;
-        indexMax = 10;
-    }
-    else{
-        indexMin = qryNumber;
-        indexMax = qryNumber + 1;
-    }
 
     int countQueryExpected = indexMax - indexMin;
     int currentCountQuery = 1;

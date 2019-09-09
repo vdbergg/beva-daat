@@ -70,22 +70,25 @@ void Framework::index(map<string,string> config) {
     string datasetFile = config["dataset_basepath"];
     string queryFile = config["query_basepath"];
 
+    int queriesSize = stoi(config["queries_size"]);
+    string datasetSuffix = queriesSize == 10 ? "_10" : "";
+
     switch (this->dataset) {
         case C::AOL:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
-            queryFile += "aol/q13_10.txt";
+            queryFile += "aol/q13" + datasetSuffix + ".txt";
             break;
         case C::MEDLINE:
             datasetFile += "medline/medline" + sizeSufix + ".txt";
-            queryFile += "medline/q13_10.txt";
+            queryFile += "medline/q13" + datasetSuffix + ".txt";
             break;
         case C::USADDR:
             datasetFile += "usaddr/usaddr" + sizeSufix + ".txt";
-            queryFile += "usaddr/q13_10.txt";
+            queryFile += "usaddr/q13" + datasetSuffix + ".txt";
             break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
-            queryFile += "aol/q13_10.txt";
+            queryFile += "aol/q13" + datasetSuffix + ".txt";
             break;
     }
 
