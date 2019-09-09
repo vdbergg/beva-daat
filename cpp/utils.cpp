@@ -5,10 +5,22 @@
 #include <algorithm>
 #include <iostream>
 #include <bitset>
+#include <sstream>
 #include "../header/utils.h"
 #include "../header/Beva.h"
 
 using namespace std;
+
+vector<string> utils::split(string value, char delimiter) {
+    vector <string> tokens;
+    stringstream check1(value);
+    string intermediate;
+
+    while(getline(check1, intermediate, delimiter)) {
+        tokens.push_back(intermediate);
+    }
+    return tokens;
+}
 
 bool utils::sortQueryProcessingTime(const pair<string, QueryResult*>&i, const pair<string, QueryResult*>&j) {
     return i.second->queryProcessingTime < j.second->queryProcessingTime;

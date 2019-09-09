@@ -113,8 +113,7 @@ void Framework::index(map<string,string> config) {
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
-void Framework::process(string query, int algorithm, int queryLength, int countQueryExpected,
-        int currentCountQuery) {
+void Framework::process(string query, int algorithm, int queryLength, int currentCountQuery) {
     if (query.empty()) {
         string empty = "";
         this->activeNodes.push_back(
@@ -140,14 +139,9 @@ void Framework::process(string query, int algorithm, int queryLength, int countQ
     }
 
     auto done = chrono::high_resolution_clock::now();
-    this->experiment->endQueryProcessingTime(query.length(), this->activeNodes.size(), query);
+    this->experiment->endQueryProcessingTime(this->activeNodes.size(), query, currentCountQuery);
 
 //    output();
-
-    if (currentCountQuery == countQueryExpected && query.length() == queryLength) {
-        this->experiment->compileQueryProcessingTimes(countQueryExpected);
-        this->experiment->compileLongAndShortProcessingTimeQueries();
-    }
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query

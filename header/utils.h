@@ -11,6 +11,7 @@ using namespace std;
 
 class utils {
 public:
+    static vector<string> split(string, char);
     static int min(int, int, int);
     static bool sortQueryProcessingTime(const pair<string, QueryResult*>&, const pair<string, QueryResult*>&);
     static void printVector(int*, int);

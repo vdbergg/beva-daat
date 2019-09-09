@@ -28,6 +28,8 @@ public:
     vector<long> currentActiveNodesSize;
     map<int, int> branchSize;
 
+    bool recoveryMode = false;
+
     vector<pair<string, QueryResult*>> processingTimeByQuery;
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
@@ -38,13 +40,15 @@ public:
     void initIndexingTime();
     void endIndexingTime();
     void initQueryProcessingTime();
-    void endQueryProcessingTime(int, long, string&);
+    void endQueryProcessingTime(long, string&, int);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSizeInBEVA2Level(int);
     void incrementNumberOfNodes();
     void compileNumberOfNodes();
-    void compileLongAndShortProcessingTimeQueries();
+    void compileLongAndShortProcessingTimeQueries(int);
     void compileProportionOfBranchingSizeInBEVA2Level();
+    void readQueriesProcessingTime(string& filename);
+    void readQueryProcessingTime(string& filename);
 
     void writeFile(const string&, const string&);
 };
