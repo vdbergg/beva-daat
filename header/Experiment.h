@@ -49,8 +49,9 @@ public:
     void compileProportionOfBranchingSizeInBEVA2Level();
     void readQueriesProcessingTime(string& filename);
     void readQueryProcessingTime(string& filename);
+    void saveQueryProcessingTime();
 
-    void writeFile(const string&, const string&);
+    void writeFile(const string&, const string&, bool writeInTheEnd=false);
 };
 
 

@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <numeric>
+#include <math.h>
 
 #include "../header/Experiment.h"
 #include "../header/utils.h"
@@ -113,13 +115,17 @@ void Experiment::readQueryProcessingTime(string& filename) {
     }
 }
 
-void Experiment::writeFile(const string& name, const string& value) {
+void Experiment::writeFile(const string& name, const string& value, bool writeInTheEnd) {
     ofstream myfile;
     string newName = config["experiments_basepath"] + name;
     newName += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] +
             "_tau_" + to_string(this->editDistanceThreshold) + "_alg_" + config["alg"] + ".txt";
     cout << newName << "\n";
-    myfile.open(newName);
+    if (writeInTheEnd) {
+        myfile.open(newName, std::ios::app);
+    } else {
+        myfile.open(newName);
+    }
 
     if (myfile.is_open()) {
         myfile << value;
@@ -173,12 +179,27 @@ void Experiment::endQueryProcessingTime(long activeNodesSize, string &query, int
 
         this->compileQueryProcessingTimes(queryId);
         this->compileLongAndShortProcessingTimeQueries(queryId);
+        this->saveQueryProcessingTime();
     }
+}
+
+void Experiment::saveQueryProcessingTime() {
+    long sumTime = (long) std::accumulate(
+            this->currentQueryProcessingTime.begin(), this->currentQueryProcessingTime.end(), 0.0
+    );
+
+    long sumActiveNodesSizes = (long) std::accumulate(
+            this->currentActiveNodesSize.begin(), this->currentActiveNodesSize.end(), 0.0
+    );
+
+    string value = to_string(sumTime) + "\t" + to_string(sumActiveNodesSizes) + "\n";
+    writeFile("all_time_values", value, true);
 }
 
 void Experiment::compileQueryProcessingTimes(int queryId) {
     string value = to_string(queryId) + "\n";
     value += "query_size\tquery_processing_time\taccumulated_query_processing_time\tactive_nodes_size\n";
+
     int accum = 0;
     for (int i = 0; i < this->processingTimes.size(); i++) {
         long processingTime = this->processingTimes[i] / (queryId + 1);
