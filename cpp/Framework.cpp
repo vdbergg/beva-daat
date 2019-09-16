@@ -86,6 +86,14 @@ void Framework::index(map<string,string> config) {
             datasetFile += "usaddr/usaddr" + sizeSufix + ".txt";
             queryFile += "usaddr/q13" + datasetSuffix + ".txt";
             break;
+        case C::MEDLINE19:
+            datasetFile += "medline19/medline19" + sizeSufix + ".txt";
+            queryFile += "medline19/q13" + datasetSuffix + ".txt";
+            break;
+        case C::DBLP:
+            datasetFile += "dblp/dblp" + sizeSufix + ".txt";
+            queryFile += "dblp/q13" + datasetSuffix + ".txt";
+	    break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q13" + datasetSuffix + ".txt";

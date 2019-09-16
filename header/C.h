@@ -15,6 +15,8 @@ public:
     static const int AOL = 0;
     static const int MEDLINE = 1;
     static const int USADDR = 2;
+    static const int MEDLINE19 = 3;
+    static const int DBLP = 4;
 
 };
 
