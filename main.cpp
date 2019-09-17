@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
             query += queryRemaining[count];
             count++;
-            this_thread::sleep_for(chrono::seconds(2));
+//            this_thread::sleep_for(chrono::seconds(2));
         }
     }
 
