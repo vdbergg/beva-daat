@@ -118,11 +118,14 @@ char utils::convertSpecialCharToSimpleChar(char c) {
 }
 
 string utils::normalize(string& data) {
+    string normalized = "";
     for (char &c : data) {
         if ((int) c == -61) continue;
         else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
             c = utils::convertSpecialCharToSimpleChar(c);
         }
+        normalized += c;
     }
+    data = normalized;
     return data;
 }
