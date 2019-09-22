@@ -227,7 +227,7 @@ void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     for (map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {
         value += to_string(it->first) + "\t" + to_string(it->second) + "\n";
     }
-    writeFile("proportion_branch_size_BEVA", value);
+    writeFile("proportion_branch_size", value);
 }
 
 void Experiment::incrementNumberOfNodes() {
@@ -237,7 +237,7 @@ void Experiment::incrementNumberOfNodes() {
 void Experiment::compileNumberOfNodes() {
     string value = "number_of_nodes\n";
     value += to_string(this->numberOfNodes) + "\n";
-    writeFile("number_of_nodes_BEVA", value);
+    writeFile("number_of_nodes", value);
 }
 
 void Experiment::compileLongAndShortProcessingTimeQueries(int queryId) {
