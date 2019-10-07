@@ -5,8 +5,9 @@
 #include "../header/QueryResult.h"
 
 QueryResult::QueryResult(long queryProcessingTime, vector<long>&prefixProcessingTime,
-        vector<long>&prefixActiveNodeSizes) {
+        vector<long>&prefixActiveNodeSizes, int queryId) {
     this->queryProcessingTime = queryProcessingTime;
     this->prefixProcessingTime = prefixProcessingTime;
     this->prefixActiveNodeSizes = prefixActiveNodeSizes;
+    this->queryId = queryId;
 }

@@ -55,6 +55,7 @@ Experiment::Experiment(map<string, string> config, int editDistanceThreshold) {
 void Experiment::readQueriesProcessingTime(string& filename) {
     int count = 0, countQuery = 0;
     long accumulatedProcessingTime = 0;
+    int queryId = -1;
 
     string query;
     vector<long> cQueryProcessingTime;
@@ -71,10 +72,10 @@ void Experiment::readQueriesProcessingTime(string& filename) {
         vector<string> tokens = utils::split(str, '\t');
         int tokensSize = tokens.size();
 
-        if (tokensSize == 2) {
+        if (tokensSize == 3) {
             if (countQuery > 0) {
                 auto *queryResult = new QueryResult(accumulatedProcessingTime, cQueryProcessingTime,
-                        cActiveNodesSize);
+                        cActiveNodesSize, queryId);
                 this->processingTimeByQuery.emplace_back(query, queryResult);
                 for (int i = 0; i < MAX_QUERY_CHARACTER; i++) {
                     cActiveNodesSize[i] = 0;
@@ -84,6 +85,7 @@ void Experiment::readQueriesProcessingTime(string& filename) {
 
             query = tokens[0];
             accumulatedProcessingTime = stol(tokens[1]);
+            queryId = stol(tokens[2]);
             countQuery++;
             count = 0;
         } else if (tokensSize == 4) {
@@ -174,25 +176,28 @@ void Experiment::endQueryProcessingTime(long activeNodesSize, string &query, int
             accum += processingTime;
         }
         auto* queryResult = new QueryResult(accum, this->currentQueryProcessingTime,
-                this->currentActiveNodesSize);
+                this->currentActiveNodesSize, queryId);
         this->processingTimeByQuery.emplace_back(query, queryResult);
 
         this->compileQueryProcessingTimes(queryId);
         this->compileLongAndShortProcessingTimeQueries(queryId);
-        this->saveQueryProcessingTime();
+        this->saveQueryProcessingTime(query, queryId);
     }
 }
 
-void Experiment::saveQueryProcessingTime() {
-    long sumTime = (long) std::accumulate(
-            this->currentQueryProcessingTime.begin(), this->currentQueryProcessingTime.end(), 0.0
-    );
+void Experiment::saveQueryProcessingTime(string& query, int queryId) {
+    string value = query + "\t" + to_string(queryId) + "\n";
 
-    long sumActiveNodesSizes = (long) std::accumulate(
-            this->currentActiveNodesSize.begin(), this->currentActiveNodesSize.end(), 0.0
-    );
+    vector<long>prefixProcessingTime = this->currentQueryProcessingTime;
+    vector<long>prefixActiveNodeSizesShort = this->currentActiveNodesSize;
+    long accum = 0;
 
-    string value = to_string(sumTime) + "\t" + to_string(sumActiveNodesSizes) + "\n";
+    for (int j = 0; j < prefixProcessingTime.size(); j++) {
+        accum += prefixProcessingTime[j];
+        value += to_string(j + 1) + "\t" + to_string(prefixProcessingTime[j]) + "\t" +
+                                    to_string(accum) + "\t" + to_string(prefixActiveNodeSizesShort[j]) + "\n";
+    }
+
     writeFile("all_time_values", value, true);
 }
 
@@ -255,7 +260,7 @@ void Experiment::compileLongAndShortProcessingTimeQueries(int queryId) {
     for (int i = 0; i < top; i++) {
         auto* queryResultShort = this->processingTimeByQuery[i].second;
         shortProcessingTimeValue += this->processingTimeByQuery[i].first + "\t" +
-                to_string(queryResultShort->queryProcessingTime) + "\n";
+                to_string(queryResultShort->queryProcessingTime) + "\t" + to_string(queryResultShort->queryId) + "\n";
         vector<long>prefixProcessingTimeShort = queryResultShort->prefixProcessingTime;
         vector<long>prefixActiveNodeSizesShort = queryResultShort->prefixActiveNodeSizes;
         long accum = 0;
@@ -268,7 +273,8 @@ void Experiment::compileLongAndShortProcessingTimeQueries(int queryId) {
 
         auto* queryResultLong = this->processingTimeByQuery[n - i].second;
         longProcessingTimeValue += this->processingTimeByQuery[n - i].first + "\t" +
-                                    to_string(queryResultLong->queryProcessingTime) + "\n";
+                                    to_string(queryResultLong->queryProcessingTime) + "\t" +
+                                    to_string(queryResultLong->queryId) + "\n";
         vector<long>prefixProcessingTimeLong = queryResultLong->prefixProcessingTime;
         vector<long>prefixActiveNodeSizesLong = queryResultLong->prefixActiveNodeSizes;
         accum = 0;

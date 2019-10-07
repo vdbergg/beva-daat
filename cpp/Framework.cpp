@@ -36,9 +36,9 @@ void Framework::readData(string& filename, vector<string>& recs) {
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
-        if (str.find("http ") != std::string::npos || str.length() <= this->editDistanceThreshold) {
-            continue;
-        }
+//        if (str.find("http ") != std::string::npos || str.length() <= this->editDistanceThreshold) {
+//            continue;
+//        }
         for (auto i = 0; i < str.length(); i++) {
             str[i] = tolower(str[i]);
         }

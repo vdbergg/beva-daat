@@ -12,9 +12,10 @@ using namespace std;
 
 class QueryResult {
 public:
-    QueryResult(long, vector<long>&, vector<long>&);
+    QueryResult(long, vector<long>&, vector<long>&, int);
 
     long queryProcessingTime;
+    int queryId;
     vector<long> prefixProcessingTime;
     vector<long> prefixActiveNodeSizes;
 };
