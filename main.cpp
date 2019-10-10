@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     int indexMin = stoi(config["qry_number_start"]);
     int indexMax =  stoi(config["qry_number_end"]);
     int algorithmType = 0; // = -> BEVA
+    cout << "processing...\n";
 
     for (int i = indexMin; i < indexMax; ++i) {
         q = framework->queries[i];
@@ -29,7 +30,6 @@ int main(int argc, char** argv) {
         queryRemaining = q.substr(0);
 
         int count = 0;
-
 
         while (query.length() <= q.length()) {
             framework->process(query, algorithmType, (int) q.length(), i);

@@ -141,7 +141,7 @@ void Experiment::writeFile(const string& name, const string& value, bool writeIn
     string newName = config["experiments_basepath"] + name;
     newName += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] +
             "_tau_" + to_string(this->editDistanceThreshold) + "_alg_" + config["alg"] + ".txt";
-    cout << newName << "\n";
+//    cout << newName << "\n";
     if (writeInTheEnd) {
         myfile.open(newName, std::ios::app);
     } else {

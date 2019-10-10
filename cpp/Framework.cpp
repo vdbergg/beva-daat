@@ -7,6 +7,7 @@
 #include <fstream>
 #include <chrono>
 #include <algorithm>
+#include <thread>
 #include "../header/Trie.h"
 #include "../header/C.h"
 #include "../header/Framework.h"
@@ -131,7 +132,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
         return;
     }
 
-    cout << "Query: " + query + "\n";
+//    cout << "Query: " + query + "\n";
 
     query = utils::normalize(query);
 
@@ -157,7 +158,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
         this->beva->reset(this->trie); // Reset the information from previous query
     }
 
-    cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
+//    cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 
 void Framework::output() {
