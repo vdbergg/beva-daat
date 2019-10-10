@@ -8,8 +8,9 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
-#include <numeric>
 #include <math.h>
+#include <unordered_map>
+#include <zconf.h>
 
 #include "../header/Experiment.h"
 #include "../header/utils.h"
@@ -27,6 +28,23 @@ string getFilename(map<string, string> config, string filename, int editDistance
     return name;
 }
 
+string exec(const char* cmd) {
+    char buffer[128];
+    std::string result = "";
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    try {
+        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+            result += buffer;
+        }
+    } catch (...) {
+        pclose(pipe);
+        throw;
+    }
+    pclose(pipe);
+    return result;
+}
+
 Experiment::Experiment(map<string, string> config, int editDistanceThreshold) {
     this->config = std::move(config);
     this->editDistanceThreshold = editDistanceThreshold;
@@ -36,6 +54,7 @@ Experiment::Experiment(map<string, string> config, int editDistanceThreshold) {
         this->activeNodesSizes.push_back(0);
         this->currentActiveNodesSize.push_back(0);
         this->currentQueryProcessingTime.push_back(0);
+        this->memoryUsedInProcessing.push_back(0);
     }
 
     this->recoveryMode = this->config["recovery_mode"] == "0" ? false : true;
@@ -287,4 +306,46 @@ void Experiment::compileLongAndShortProcessingTimeQueries(int queryId) {
     }
     writeFile("top_queries_with_short_processing_time", shortProcessingTimeValue);
     writeFile("top_queries_with_long_processing_time", longProcessingTimeValue);
+}
+
+void Experiment::getMemoryUsedInProcessing(int currentQueryLength) {
+    pid_t pid = getpid();
+    string cmd = "/bin/ps -p " + to_string(pid) + " -o size";
+    string output = exec(cmd.c_str());
+
+    vector<string> tokens = utils::split(output, '\n');
+
+    float memoryUsed = stof(tokens[1]) / 1000;
+
+    this->memoryUsedInProcessing[currentQueryLength - 1] = memoryUsed;
+
+    if (currentQueryLength == MAX_QUERY_CHARACTER) {
+       float avgMemoryUsed = 0;
+       for (float memory : this->memoryUsedInProcessing) {
+           avgMemoryUsed += memory;
+       }
+       avgMemoryUsed /= this->memoryUsedInProcessing.size();
+
+       string value = to_string(avgMemoryUsed) + "\n";
+
+       writeFile("memory_used_in_processing", value, true);
+
+       for (int i = 0; i < this->memoryUsedInProcessing.size(); i++) {
+           this->memoryUsedInProcessing[i] = 0;
+       }
+    }
+}
+
+void Experiment::getMemoryUsedInIndexing() {
+    pid_t pid = getpid();
+    string cmd = "/bin/ps -p " + to_string(pid) + " -o size";
+    string output = exec(cmd.c_str());
+
+    vector<string> tokens = utils::split(output, '\n');
+
+    float memoryUsed = stof(tokens[1]) / 1000;
+
+    string value = to_string(memoryUsed) + "\n";
+
+    writeFile("memory_used_in_indexing", "memory_total_mb\tmemory_used_mb\n" + value);
 }

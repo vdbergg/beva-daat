@@ -22,6 +22,7 @@ public:
     map<string, string>  config;
     int editDistanceThreshold;
     long numberOfNodes;
+    vector<float> memoryUsedInProcessing;
     vector<long> processingTimes;
     vector<long> currentQueryProcessingTime;
     vector<float> activeNodesSizes;
@@ -50,6 +51,8 @@ public:
     void readQueriesProcessingTime(string& filename);
     void readQueryProcessingTime(string& filename);
     void saveQueryProcessingTime(string&, int);
+    void getMemoryUsedInIndexing();
+    void getMemoryUsedInProcessing(int);
 
     void writeFile(const string&, const string&, bool writeInTheEnd=false);
 };

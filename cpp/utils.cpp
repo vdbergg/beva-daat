@@ -6,6 +6,8 @@
 #include <iostream>
 #include <bitset>
 #include <sstream>
+#include <string>
+#include <vector>
 #include "../header/utils.h"
 #include "../header/Beva.h"
 

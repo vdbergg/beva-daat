@@ -111,6 +111,7 @@ void Framework::index(map<string,string> config) {
         this->trie->append(record, recordId);
         recordId++;
     }
+    this->experiment->getMemoryUsedInIndexing();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
@@ -148,7 +149,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
 
     auto done = chrono::high_resolution_clock::now();
     this->experiment->endQueryProcessingTime(this->activeNodes.size(), query, currentCountQuery);
-
+    this->experiment->getMemoryUsedInProcessing(query.size());
 //    output();
 
     if (query.length() == queryLength) {
