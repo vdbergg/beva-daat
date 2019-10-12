@@ -29,43 +29,47 @@ on_recovery_mode=0
 
 for dt in $(seq ${dataset} 4)
 do
-    if [[ "${dt}" != 1 ]] && [[ "${dt}" != 3 ]]; then # No have memory sufficient to experiment MEDLINE datasets
+    if [[ "${dt}" != 1 ]]; then # No have memory sufficient to experiment MEDLINE datasets
 
-        for ed in $(seq ${edit_distance} 3)
+        for st in $(seq ${size_type} 3)
         do
 
-            if [[ "${recovery_mode}" == 1 ]] && [[ "${on_recovery_mode}" == 1 ]] ; then
-                recovery_mode=0
-                qry_number_start=0
-                on_recovery_mode=0
-            fi
+            for ed in $(seq ${edit_distance} 3)
+            do
 
-            echo -n > ${cfg_path} # Clear file
+                if [[ "${recovery_mode}" == 1 ]] && [[ "${on_recovery_mode}" == 1 ]] ; then
+                    recovery_mode=0
+                    qry_number_start=0
+                    on_recovery_mode=0
+                fi
 
-            echo "edit_distance=${ed}" >> ${cfg_path}
-            echo "dataset=${dt}" >> ${cfg_path}
-            echo "queries_size=${queries_size}" >> ${cfg_path}
-            echo "recovery_mode=${recovery_mode}" >> ${cfg_path}
-            echo "qry_number_start=${qry_number_start}" >> ${cfg_path}
-            echo "qry_number_end=${qry_number_end}" >> ${cfg_path}
-            echo "size_type=${size_type}" >> ${cfg_path}
-            echo "alg=${alg}" >> ${cfg_path}
-            echo "dataset_basepath=${dataset_basepath}" >> ${cfg_path}
-            echo "query_basepath=${query_basepath}" >> ${cfg_path}
-            echo "experiments_basepath=${experiments_basepath}" >> ${cfg_path}
+                echo -n > ${cfg_path} # Clear file
 
-            echo "<<<<<<<<<< Start Run >>>>>>>>>>>"
+                echo "edit_distance=${ed}" >> ${cfg_path}
+                echo "dataset=${dt}" >> ${cfg_path}
+                echo "queries_size=${queries_size}" >> ${cfg_path}
+                echo "recovery_mode=${recovery_mode}" >> ${cfg_path}
+                echo "qry_number_start=${qry_number_start}" >> ${cfg_path}
+                echo "qry_number_end=${qry_number_end}" >> ${cfg_path}
+                echo "size_type=${st}" >> ${cfg_path}
+                echo "alg=${alg}" >> ${cfg_path}
+                echo "dataset_basepath=${dataset_basepath}" >> ${cfg_path}
+                echo "query_basepath=${query_basepath}" >> ${cfg_path}
+                echo "experiments_basepath=${experiments_basepath}" >> ${cfg_path}
 
-            ${executable_path}
-            [[ $? -eq 0 ]] || exit 1 # break if fail
+                echo "<<<<<<<<<< Start Run >>>>>>>>>>>"
 
-            echo "<<<<<<<<<< Stop Run >>>>>>>>>>>"
+                ${executable_path}
+                [[ $? -eq 0 ]] || exit 1 # break if fail
 
-            on_recovery_mode=${recovery_mode}
+                echo "<<<<<<<<<< Stop Run >>>>>>>>>>>"
 
+                on_recovery_mode=${recovery_mode}
+
+            done
+
+	          edit_distance=1
         done
-
-	edit_distance=1
-
+        size_type=0
     fi
 done
