@@ -124,20 +124,13 @@ void Framework::index(map<string,string> config) {
 }
 
 void Framework::process(string query, int algorithm, int queryLength, int currentCountQuery) {
-    if (query.empty()) {
-        string empty = "";
-        this->activeNodes.push_back(
-                new ActiveNode(this->trie->root, this->beva->editVectorAutomata->initialState,empty)
-        );
-        return;
-    }
-
 //    cout << "Query: " + query + "\n";
 
-    query = utils::normalize(query);
-
-    auto start = chrono::high_resolution_clock::now();
-    this->experiment->initQueryProcessingTime();
+    if (!query.empty()) {
+        query = utils::normalize(query);
+        auto start = chrono::high_resolution_clock::now();
+        this->experiment->initQueryProcessingTime();
+    }
 
     switch (algorithm) {
         case C::BEVA:
@@ -148,10 +141,12 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
             break;
     }
 
-    auto done = chrono::high_resolution_clock::now();
-    this->experiment->endQueryProcessingTime(this->activeNodes.size(), query, currentCountQuery);
-    this->experiment->getMemoryUsedInProcessing(query.size());
-//    output();
+    if (!query.empty()) {
+        auto done = chrono::high_resolution_clock::now();
+        this->experiment->endQueryProcessingTime(this->activeNodes.size(), query, currentCountQuery);
+        this->experiment->getMemoryUsedInProcessing(query.size());
+//        output();
+    }
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query
@@ -163,6 +158,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
 
 void Framework::output() {
     int count = 0;
+
     for (ActiveNode* activeNode : this->activeNodes) {
         int beginRange = activeNode->node->beginRange;
         int endRange = activeNode->node->endRange;

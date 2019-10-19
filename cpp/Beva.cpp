@@ -24,7 +24,8 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
     for (int i = 0; i < this->bitmapSize; i++) {
         this->bitmapLast += "1";
     }
-    this->bitmaps['\0'] = this->bitmapLast;
+    for(auto & bitmap : this->bitmaps) bitmap = "";
+    this->bitmaps[this->trie->root->value] = this->bitmapLast;
 }
 
 Beva::~Beva() {
@@ -33,19 +34,33 @@ Beva::~Beva() {
 
 void Beva::reset(Trie* trie) {
     this->trie = trie;
-    for(int i=0; i<CHAR_SIZE; i++) this->bitmaps[i] = "";
-    this->bitmaps['\0'] = this->bitmapLast;
+    for(auto & bitmap : this->bitmaps) bitmap = "";
+    this->bitmaps[this->trie->root->value] = this->bitmapLast;
 }
 
 vector<ActiveNode*> Beva::process(string& query, vector<ActiveNode*>& oldActiveNodes) {
     if (!this->currentActiveNodes.empty()) this->currentActiveNodes.clear();
 
-    this->updateBitmap(query);
+    if (!query.empty()) this->updateBitmap(query);
 
-    if (query.length() <= this->editDistanceThreshold) return oldActiveNodes;
+    if (query.length() < this->editDistanceThreshold) {
+        string empty;
+        this->currentActiveNodes.push_back(
+                new ActiveNode(this->trie->root, this->editVectorAutomata->initialState,empty)
+        );
+        return this->currentActiveNodes;
+    }
 
     for (ActiveNode* oldActiveNode : oldActiveNodes) {
-        findActiveNodes(query, oldActiveNode);
+        string data = oldActiveNode->data;
+        State* state = oldActiveNode->state;
+        State* newState = this->getNewState(query, data, state);
+
+        if (!newState->isFinal && newState->getEditDistance(query, data) <= this->editDistanceThreshold) {
+            this->currentActiveNodes.push_back(oldActiveNode);
+        } else {
+            findActiveNodes(query, oldActiveNode);
+        }
     }
     return this->currentActiveNodes;
 }
@@ -108,8 +123,7 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode) {
         if (newState->isFinal) continue;
 
         ActiveNode* activeNode = new ActiveNode(i, newState, temp);
-        if (temp.length() >= query.length() &&
-            newState->getEditDistance(query, temp) <= this->editDistanceThreshold) {
+        if (newState->getEditDistance(query, temp) <= this->editDistanceThreshold) {
             this->currentActiveNodes.push_back(activeNode);
         } else {
             findActiveNodes(query, activeNode);
