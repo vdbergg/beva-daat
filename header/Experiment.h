@@ -24,31 +24,35 @@ public:
     long numberOfNodes;
     vector<float> memoryUsedInProcessing;
     vector<long> processingTimes;
+    vector<long> fetchingTimes;
     vector<long> currentQueryProcessingTime;
+    vector<long> currentQueryFetchingTime;
     vector<float> activeNodesSizes;
     vector<long> currentActiveNodesSize;
     map<int, int> branchSize;
 
     bool recoveryMode = false;
 
-    vector<pair<string, QueryResult*>> processingTimeByQuery;
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
 
     chrono::time_point<std::chrono::system_clock> startQueryProcessingTime;
     chrono::time_point<std::chrono::system_clock> finishQueryProcessingTime;
 
+    chrono::time_point<std::chrono::system_clock> startQueryFetchingTime;
+    chrono::time_point<std::chrono::system_clock> finishQueryFetchingTime;
+
     void initIndexingTime();
     void endIndexingTime();
     void initQueryProcessingTime();
-    void endQueryProcessingTime(long, string&, int);
+    void endQueryProcessingTime(long, string&);
+    void initQueryFetchingTime();
+    void endQueryFetchingTime(string&, int);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSizeInBEVA2Level(int);
     void incrementNumberOfNodes();
     void compileNumberOfNodes();
-    void compileLongAndShortProcessingTimeQueries(int);
     void compileProportionOfBranchingSizeInBEVA2Level();
-    void readQueriesProcessingTime(string& filename);
     void readQueryProcessingTime(string& filename);
     void saveQueryProcessingTime(string&, int);
     void getMemoryUsedInIndexing();

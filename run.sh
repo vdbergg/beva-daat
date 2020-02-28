@@ -2,6 +2,7 @@
 
 executable_path=$1
 cfg_path=$2
+free_cache="echo 3 > /proc/sys/vm/drop_caches"
 
 declare -a cfg_array
 
@@ -60,6 +61,7 @@ do
                 echo "<<<<<<<<<< Start Run >>>>>>>>>>>"
 
                 ${executable_path}
+                ${free_cache} # Free cache
                 [[ $? -eq 0 ]] || exit 1 # break if fail
 
                 echo "<<<<<<<<<< Stop Run >>>>>>>>>>>"
