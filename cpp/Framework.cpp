@@ -112,7 +112,7 @@ void Framework::index(map<string,string> config) {
         this->trie->append(record, recordId);
         recordId++;
     }
-    this->experiment->getMemoryUsedInIndexing();
+//    this->experiment->getMemoryUsedInIndexing();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
@@ -128,7 +128,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
 
     if (!query.empty()) {
         query = utils::normalize(query);
-        auto start = chrono::high_resolution_clock::now();
+//        auto start = chrono::high_resolution_clock::now();
         this->experiment->initQueryProcessingTime();
     }
 
@@ -142,10 +142,12 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
     }
 
     if (!query.empty()) {
-        auto done = chrono::high_resolution_clock::now();
-        this->experiment->endQueryProcessingTime(this->activeNodes.size(), query, currentCountQuery);
-        this->experiment->getMemoryUsedInProcessing(query.size());
-//        output();
+//        auto done = chrono::high_resolution_clock::now();
+        this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
+        this->experiment->initQueryFetchingTime();
+        output();
+        this->experiment->endQueryFetchingTime(query, currentCountQuery);
+        //        this->experiment->getMemoryUsedInProcessing(query.size());
     }
 
     if (query.length() == queryLength) {
@@ -157,7 +159,7 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
 }
 
 void Framework::output() {
-    int count = 0;
+//    int count = 0;
 
     for (ActiveNode* activeNode : this->activeNodes) {
         int beginRange = activeNode->node->beginRange;
@@ -171,11 +173,11 @@ void Framework::output() {
             } else {
                 results = this->records;
             }
-            count += results.size();
+//            count += results.size();
 //            for (const string& record : results) {
 //                cout << record << "\n";
 //            }
         }
     }
-    cout << "Results length: " + to_string(count) << "\n";
+//    cout << "Results length: " + to_string(count) << "\n";
 }
