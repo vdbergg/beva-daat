@@ -144,9 +144,11 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
     if (!query.empty()) {
 //        auto done = chrono::high_resolution_clock::now();
         this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
-        this->experiment->initQueryFetchingTime();
-        output();
-        this->experiment->endQueryFetchingTime(query, currentCountQuery);
+        if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
+            this->experiment->initQueryFetchingTime();
+            output();
+            this->experiment->endQueryFetchingTime(query, currentCountQuery);
+        }
         //        this->experiment->getMemoryUsedInProcessing(query.size());
     }
 
