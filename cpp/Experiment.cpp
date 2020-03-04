@@ -52,8 +52,10 @@ Experiment::Experiment(map<string, string> config, int editDistanceThreshold) {
         this->activeNodesSizes.push_back(0);
         this->currentActiveNodesSize.push_back(0);
         this->currentQueryProcessingTime.push_back(0);
+        this->currentResultsSize.push_back(0);
         this->memoryUsedInProcessing.push_back(0);
         this->fetchingTimes.push_back(0);
+        this->resultsSize.push_back(0);
         this->currentQueryFetchingTime.push_back(0);
     }
 
@@ -77,10 +79,11 @@ void Experiment::readQueryProcessingTime(string& filename) {
 
         if (tokensSize == 1) {
             queriesProcessed = stoi(tokens[0]);
-        } else if (tokensSize == 5 && countLine > 1) {
+        } else if (tokensSize == 6 && countLine > 1) {
             this->processingTimes[count] = stol(tokens[1]) * (queriesProcessed + 1);
-            this->activeNodesSizes[count] = stof(tokens[4]) * (queriesProcessed + 1);
+            this->activeNodesSizes[count] = stof(tokens[5]) * (queriesProcessed + 1);
             this->fetchingTimes[count] = stol(tokens[3]) * (queriesProcessed + 1);
+            this->resultsSize[count] = stol(tokens[4]) * (queriesProcessed + 1);
             count++;
         }
         countLine++;
@@ -126,7 +129,7 @@ void Experiment::initQueryFetchingTime() {
     this->startQueryFetchingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryFetchingTime(string &query, int queryId) {
+void Experiment::endQueryFetchingTime(string &query, int queryId, int resultsSize) {
     this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
 
     int currentQueryLength = query.size();
@@ -136,7 +139,9 @@ void Experiment::endQueryFetchingTime(string &query, int queryId) {
     ).count();
 
     this->currentQueryFetchingTime[currentQueryLength - 1] = result;
+    this->currentResultsSize[currentQueryLength - 1] = resultsSize;
     this->fetchingTimes[currentQueryLength - 1] += result;
+    this->resultsSize[currentQueryLength - 1] += resultsSize;
 
     if (currentQueryLength == MAX_QUERY_CHARACTER) {
         this->compileQueryProcessingTimes(queryId);
@@ -172,11 +177,13 @@ void Experiment::saveQueryProcessingTime(string& query, int queryId) {
         accum += this->currentQueryProcessingTime[j];
         value += to_string(j + 1) + "\t" + to_string(this->currentQueryProcessingTime[j]) + "\t" +
                                     to_string(accum) + "\t" + to_string(this->currentQueryFetchingTime[j]) + "\t" +
+                                    to_string(this->currentResultsSize[j]) + "\t" +
                                     to_string(this->currentActiveNodesSize[j]) + "\n";
 
         this->currentQueryProcessingTime[j] = 0;
         this->currentActiveNodesSize[j] = 0;
         this->currentQueryFetchingTime[j] = 0;
+        this->currentResultsSize[j] = 0;
     }
 
     writeFile("all_time_values", value, true);
@@ -184,18 +191,21 @@ void Experiment::saveQueryProcessingTime(string& query, int queryId) {
 
 void Experiment::compileQueryProcessingTimes(int queryId) {
     string value = to_string(queryId) + "\n";
-    value += "query_size\tquery_processing_time\taccumulated_query_processing_time\tfetching_time\tactive_nodes_size\n";
+    value += "query_size\tquery_processing_time\taccumulated_query_processing_time\tfetching_time\tresults_size\t"
+             "active_nodes_size\n";
 
     int accum = 0;
     for (int i = 0; i < this->processingTimes.size(); i++) {
         long processingTime = this->processingTimes[i] / (queryId + 1);
         float activeNodesSize = this->activeNodesSizes[i] / (queryId + 1);
         long fetchingTime = this->fetchingTimes[i] / (queryId + 1);
+        int _resultsSize = this->resultsSize[i] / (queryId + 1);
         stringstream stream;
         stream << std::fixed << std::setprecision(1) << activeNodesSize;
         accum += processingTime;
         value += to_string(i + 1) + "\t" + to_string(processingTime) +
-                "\t" + to_string(accum) + "\t" + to_string(fetchingTime) + "\t" + stream.str() + "\n";
+                "\t" + to_string(accum) + "\t" + to_string(fetchingTime) +
+                "\t" + to_string(_resultsSize) + "\t" + stream.str() + "\n";
     }
 
     writeFile("query_processing_time", value);

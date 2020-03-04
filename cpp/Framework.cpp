@@ -147,8 +147,8 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
         this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
         if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
             this->experiment->initQueryFetchingTime();
-            output();
-            this->experiment->endQueryFetchingTime(query, currentCountQuery);
+            int resultsSize = output();
+            this->experiment->endQueryFetchingTime(query, currentCountQuery, resultsSize);
         }
         //        this->experiment->getMemoryUsedInProcessing(query.size());
     }
@@ -161,20 +161,26 @@ void Framework::process(string query, int algorithm, int queryLength, int curren
 //    cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 
-void Framework::output() {
+int Framework::output() {
 //    int count = 0;
+
+    vector<string> outputs;
 
     for (ActiveNode* activeNode : this->activeNodes) {
         int beginRange = activeNode->node->beginRange;
         int endRange = activeNode->node->endRange;
 
+        vector<string> results;
+
         if (beginRange != -1 && endRange != -1) {
-            vector<string> results;
             if (endRange - beginRange != this->records.size()) {
                 vector<string> recs(this->records.begin() + beginRange, this->records.begin() + endRange);
                 results = recs;
             } else {
                 results = this->records;
+            }
+            for (const string& record : results) {
+                outputs.push_back(record);
             }
 //            count += results.size();
 //            for (const string& record : results) {
@@ -182,5 +188,6 @@ void Framework::output() {
 //            }
         }
     }
+    return outputs.size();
 //    cout << "Results length: " + to_string(count) << "\n";
 }

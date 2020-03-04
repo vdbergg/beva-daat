@@ -32,7 +32,7 @@ public:
     void readData(string&, vector<string>&);
     void index(map<string,string>);
     void process(string, int, int, int);
-    void output();
+    int output();
 
     ~Framework();
 
