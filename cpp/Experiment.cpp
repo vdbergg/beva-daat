@@ -5,7 +5,6 @@
 #include <utility>
 #include <iostream>
 #include <fstream>
-#include <algorithm>
 #include <sstream>
 #include <iomanip>
 #include <unordered_map>
@@ -17,9 +16,9 @@
 
 using namespace std;
 
-const int MAX_QUERY_CHARACTER = 13;
+const int MAX_QUERY_CHARACTER = 17;
 
-string getFilename(map<string, string> config, string filename, int editDistanceThreshold) {
+string getFilename(map<string, string> config, const string& filename, int editDistanceThreshold) {
     string name = config["experiments_basepath"] + filename;
     name += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] +
                 "_tau_" + to_string(editDistanceThreshold) + "_alg_" + config["alg"] + ".txt";

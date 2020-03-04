@@ -73,11 +73,12 @@ void Framework::index(map<string,string> config) {
 
     int queriesSize = stoi(config["queries_size"]);
     string datasetSuffix = queriesSize == 10 ? "_10" : "";
+    string tau = to_string(this->editDistanceThreshold);
 
     switch (this->dataset) {
         case C::AOL:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
-            queryFile += "aol/q13" + datasetSuffix + ".txt";
+            queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";
             break;
         case C::MEDLINE:
             datasetFile += "medline/medline" + sizeSufix + ".txt";
@@ -85,19 +86,19 @@ void Framework::index(map<string,string> config) {
             break;
         case C::USADDR:
             datasetFile += "usaddr/usaddr" + sizeSufix + ".txt";
-            queryFile += "usaddr/q13" + datasetSuffix + ".txt";
+            queryFile += "usaddr/q17_" + tau + datasetSuffix + ".txt";
             break;
         case C::MEDLINE19:
             datasetFile += "medline19/medline19" + sizeSufix + ".txt";
-            queryFile += "medline19/q13" + datasetSuffix + ".txt";
+            queryFile += "medline19/q17_" + tau + datasetSuffix + ".txt";
             break;
         case C::DBLP:
             datasetFile += "dblp/dblp" + sizeSufix + ".txt";
-            queryFile += "dblp/q13" + datasetSuffix + ".txt";
+            queryFile += "dblp/q17_" + tau + datasetSuffix + ".txt";
 	    break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
-            queryFile += "aol/q13" + datasetSuffix + ".txt";
+            queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";
             break;
     }
 
