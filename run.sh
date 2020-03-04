@@ -72,6 +72,6 @@ do
 
 	          edit_distance=1
         done
-        size_type=0
+        size_type=3
     fi
 done
