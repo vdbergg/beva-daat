@@ -6,9 +6,7 @@
 #define BEVA_EXPERIMENT_H
 
 #include <vector>
-#include <map>
 #include <chrono>
-#include "QueryResult.h"
 
 #include "sys/types.h"
 #include "sys/sysinfo.h"
@@ -17,21 +15,21 @@ using namespace std;
 
 class Experiment {
 public:
-    Experiment(map<string, string>, int);
+    Experiment(unordered_map<string, string>, int);
 
-    map<string, string>  config;
+    unordered_map<string, string> config;
     int editDistanceThreshold;
     long numberOfNodes;
     vector<float> memoryUsedInProcessing;
     vector<long> processingTimes;
     vector<long> fetchingTimes;
-    vector<int> resultsSize;
+    vector<float> resultsSize;
     vector<long> currentQueryProcessingTime;
     vector<long> currentQueryFetchingTime;
-    vector<int> currentResultsSize;
+    vector<long> currentResultsSize;
     vector<float> activeNodesSizes;
     vector<long> currentActiveNodesSize;
-    map<int, int> branchSize;
+    unordered_map<int, int> branchSize;
 
     bool recoveryMode = false;
 
@@ -49,7 +47,7 @@ public:
     void initQueryProcessingTime();
     void endQueryProcessingTime(long, string&);
     void initQueryFetchingTime();
-    void endQueryFetchingTime(string&, int, int);
+    void endQueryFetchingTime(string&, int, long);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSizeInBEVA2Level(int);
     void incrementNumberOfNodes();

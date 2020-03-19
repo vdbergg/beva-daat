@@ -3,14 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <map>
 #include <string>
 #include "header/Framework.h"
-#include "header/C.h"
 
 using namespace std;
 
-map<string,string> config;
+unordered_map<string,string> config;
 void loadConfig();
 
 int main(int argc, char** argv) {
@@ -21,7 +19,6 @@ int main(int argc, char** argv) {
     Framework* framework = new Framework(config);
     int indexMin = stoi(config["qry_number_start"]);
     int indexMax =  stoi(config["qry_number_end"]);
-    int algorithmType = 0; // = -> BEVA
     cout << "processing...\n";
 
     for (int i = indexMin; i < indexMax; ++i) {
@@ -32,7 +29,7 @@ int main(int argc, char** argv) {
         int count = 0;
 
         while (query.length() <= q.length()) {
-            framework->process(query, algorithmType, (int) q.length(), i);
+            framework->process(query, (int) q.length(), i);
 
             query += queryRemaining[count];
             count++;

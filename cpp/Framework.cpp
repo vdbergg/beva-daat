@@ -16,13 +16,14 @@
 
 using namespace std;
 
-Framework::Framework(map<string,string> config) {
+Framework::Framework(unordered_map<string, string> config) {
     this->trie = nullptr;
     this->editDistanceThreshold = stoi(config["edit_distance"]);
     this->dataset = stoi(config["dataset"]);
     this->experiment = new Experiment(config, editDistanceThreshold);
+    this->config = config;
 
-    index(config);
+    index();
 }
 
 Framework::~Framework() {
@@ -37,9 +38,6 @@ void Framework::readData(string& filename, vector<string>& recs) {
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
-//        if (str.find("http ") != std::string::npos || str.length() <= this->editDistanceThreshold) {
-//            continue;
-//        }
         for (auto i = 0; i < str.length(); i++) {
             str[i] = tolower(str[i]);
         }
@@ -48,10 +46,10 @@ void Framework::readData(string& filename, vector<string>& recs) {
     }
 }
 
-void Framework::index(map<string,string> config) {
+void Framework::index(){
     cout << "indexing... \n";
     string sizeSufix = "";
-    switch (stoi(config["size_type"])) {
+    switch (stoi(this->config["size_type"])) {
         case 0:
             sizeSufix = "_25";
             break;
@@ -66,10 +64,10 @@ void Framework::index(map<string,string> config) {
     }
 
     auto start = chrono::high_resolution_clock::now();
-    this->experiment->initIndexingTime();
+    if (this->config["collect_memory"] == "0") this->experiment->initIndexingTime();
     
-    string datasetFile = config["dataset_basepath"];
-    string queryFile = config["query_basepath"];
+    string datasetFile = this->config["dataset_basepath"];
+    string queryFile = this->config["query_basepath"];
 
     int queriesSize = stoi(config["queries_size"]);
     string datasetSuffix = queriesSize == 10 ? "_10" : "";
@@ -113,48 +111,44 @@ void Framework::index(map<string,string> config) {
         this->trie->append(record, recordId);
         recordId++;
     }
-//    this->experiment->getMemoryUsedInIndexing();
+    if (this->config["collect_memory"] == "1") this->experiment->getMemoryUsedInIndexing();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
-    this->experiment->endIndexingTime();
-    this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
-    this->experiment->compileNumberOfNodes();
+    if (this->config["collect_memory"] == "0") this->experiment->endIndexingTime();
+    if (this->config["collect_memory"] == "0") this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
+    if (this->config["collect_memory"] == "0") this->experiment->compileNumberOfNodes();
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
-void Framework::process(string query, int algorithm, int queryLength, int currentCountQuery) {
+void Framework::process(string query, int queryLength, int currentCountQuery) {
 //    cout << "Query: " + query + "\n";
+    if (query.empty()) return;
 
-    if (!query.empty()) {
-        query = utils::normalize(query);
+    query = utils::normalize(query);
 //        auto start = chrono::high_resolution_clock::now();
-        this->experiment->initQueryProcessingTime();
-    }
+    if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
 
-    switch (algorithm) {
-        case C::BEVA:
-            this->activeNodes = this->beva->process(query, this->activeNodes);
-            break;
-        default:
-            this->activeNodes = this->beva->process(query, this->activeNodes);
-            break;
-    }
+    this->activeNodes = this->beva->process(query, this->activeNodes);
 
-    if (!query.empty()) {
-//        auto done = chrono::high_resolution_clock::now();
+    //       auto done = chrono::high_resolution_clock::now();
+    if (this->config["collect_memory"] == "0") {
         this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
-        if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
+    }
+    if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
+        if (this->config["collect_memory"] == "0") {
             this->experiment->initQueryFetchingTime();
             int resultsSize = output();
             this->experiment->endQueryFetchingTime(query, currentCountQuery, resultsSize);
+        } else {
+            this->experiment->getMemoryUsedInProcessing(query.size());
         }
-        //        this->experiment->getMemoryUsedInProcessing(query.size());
     }
 
     if (query.length() == queryLength) {
         this->activeNodes.clear(); // Clean the active nodes for next query
+        this->activeNodes.shrink_to_fit();
         this->beva->reset(this->trie); // Reset the information from previous query
     }
 

@@ -12,13 +12,12 @@
 
 #include "../header/Experiment.h"
 #include "../header/utils.h"
-#include "../header/QueryResult.h"
 
 using namespace std;
 
 const int MAX_QUERY_CHARACTER = 17;
 
-string getFilename(map<string, string> config, const string& filename, int editDistanceThreshold) {
+string getFilename(unordered_map<string, string> config, const string& filename, int editDistanceThreshold) {
     string name = config["experiments_basepath"] + filename;
     name += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] +
                 "_tau_" + to_string(editDistanceThreshold) + "_alg_" + config["alg"] + ".txt";
@@ -43,7 +42,7 @@ string exec(const char* cmd) {
     return result;
 }
 
-Experiment::Experiment(map<string, string> config, int editDistanceThreshold) {
+Experiment::Experiment(unordered_map<string, string> config, int editDistanceThreshold) {
     this->config = std::move(config);
     this->editDistanceThreshold = editDistanceThreshold;
 
@@ -129,7 +128,7 @@ void Experiment::initQueryFetchingTime() {
     this->startQueryFetchingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryFetchingTime(string &query, int queryId, int resultsSize) {
+void Experiment::endQueryFetchingTime(string &query, int queryId, long resultsSize_) {
     this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
 
     int currentQueryLength = query.size();
@@ -139,9 +138,9 @@ void Experiment::endQueryFetchingTime(string &query, int queryId, int resultsSiz
     ).count();
 
     this->currentQueryFetchingTime[currentQueryLength - 1] = result;
-    this->currentResultsSize[currentQueryLength - 1] = resultsSize;
+    this->currentResultsSize[currentQueryLength - 1] = resultsSize_;
     this->fetchingTimes[currentQueryLength - 1] += result;
-    this->resultsSize[currentQueryLength - 1] += resultsSize;
+    this->resultsSize[currentQueryLength - 1] += resultsSize_;
 
     if (currentQueryLength == MAX_QUERY_CHARACTER) {
         this->compileQueryProcessingTimes(queryId);
@@ -197,15 +196,17 @@ void Experiment::compileQueryProcessingTimes(int queryId) {
     int accum = 0;
     for (int i = 0; i < this->processingTimes.size(); i++) {
         long processingTime = this->processingTimes[i] / (queryId + 1);
-        float activeNodesSize = this->activeNodesSizes[i] / (queryId + 1);
+        float activeNodesSize = this->activeNodesSizes[i] / (float) (queryId + 1);
         long fetchingTime = this->fetchingTimes[i] / (queryId + 1);
-        int _resultsSize = this->resultsSize[i] / (queryId + 1);
+        float _resultsSize = this->resultsSize[i] / (float) (queryId + 1);
+        stringstream streamResultSize;
+        streamResultSize << std::fixed << std::setprecision(1) << _resultsSize;
         stringstream stream;
         stream << std::fixed << std::setprecision(1) << activeNodesSize;
         accum += processingTime;
         value += to_string(i + 1) + "\t" + to_string(processingTime) +
                 "\t" + to_string(accum) + "\t" + to_string(fetchingTime) +
-                "\t" + to_string(_resultsSize) + "\t" + stream.str() + "\n";
+                "\t" + streamResultSize.str() + "\t" + stream.str() + "\n";
     }
 
     writeFile("query_processing_time", value);
@@ -221,7 +222,7 @@ void Experiment::proportionOfBranchingSizeInBEVA2Level(int size) {
 
 void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     string value = "branch_size\tnumber_of_branches\n";
-    for (map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {
+    for (unordered_map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {
         value += to_string(it->first) + "\t" + to_string(it->second) + "\n";
     }
     writeFile("proportion_branch_size", value);
@@ -252,16 +253,13 @@ void Experiment::getMemoryUsedInProcessing(int currentQueryLength) {
        float avgMemoryUsed = 0;
        for (float memory : this->memoryUsedInProcessing) {
            avgMemoryUsed += memory;
+           memory = 0;
        }
-       avgMemoryUsed /= this->memoryUsedInProcessing.size();
+       avgMemoryUsed /= 4;
 
        string value = to_string(avgMemoryUsed) + "\n";
 
        writeFile("memory_used_in_processing", value, true);
-
-       for (int i = 0; i < this->memoryUsedInProcessing.size(); i++) {
-           this->memoryUsedInProcessing[i] = 0;
-       }
     }
 }
 
