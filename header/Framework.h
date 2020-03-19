@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <string>
-#include <map>
 #include "ActiveNode.h"
 #include "Trie.h"
 #include "Beva.h"
@@ -24,14 +23,15 @@ public:
     int editDistanceThreshold;
     int dataset;
     Experiment* experiment;
+    unordered_map<string, string> config;
 
     Beva* beva;
 
-    Framework(map<string,string>);
+    Framework(unordered_map<string, string>);
 
     void readData(string&, vector<string>&);
-    void index(map<string,string>);
-    void process(string, int, int, int);
+    void index();
+    void process(string, int, int);
     int output();
 
     ~Framework();

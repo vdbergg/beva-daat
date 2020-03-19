@@ -25,6 +25,7 @@ alg=${cfg_array[7]}
 dataset_basepath=${cfg_array[8]}
 query_basepath=${cfg_array[9]}
 experiments_basepath=${cfg_array[10]}
+collect_memory=${cfg_array[11]}
 
 on_recovery_mode=0
 
@@ -57,6 +58,7 @@ do
                 echo "dataset_basepath=${dataset_basepath}" >> ${cfg_path}
                 echo "query_basepath=${query_basepath}" >> ${cfg_path}
                 echo "experiments_basepath=${experiments_basepath}" >> ${cfg_path}
+                echo "collect_memory=${collect_memory}" >> ${cfg_path}
 
                 echo "<<<<<<<<<< Start Run >>>>>>>>>>>"
 

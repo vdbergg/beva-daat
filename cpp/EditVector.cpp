@@ -2,7 +2,6 @@
 // Created by berg on 28/01/19.
 //
 
-#include <iostream>
 #include "../header/EditVector.h"
 #include "../header/utils.h"
 #include "../header/C.h"

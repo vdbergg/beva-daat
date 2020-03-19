@@ -7,7 +7,6 @@
 #include <bitset>
 #include <sstream>
 #include <string>
-#include <vector>
 #include "../header/utils.h"
 #include "../header/Beva.h"
 
@@ -22,10 +21,6 @@ vector<string> utils::split(string value, char delimiter) {
         tokens.push_back(intermediate);
     }
     return tokens;
-}
-
-bool utils::sortQueryProcessingTime(const pair<string, QueryResult*>&i, const pair<string, QueryResult*>&j) {
-    return i.second->queryProcessingTime < j.second->queryProcessingTime;
 }
 
 int utils::min(int a, int b, int c) {
