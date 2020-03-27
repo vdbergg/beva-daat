@@ -19,6 +19,12 @@ public:
     static string convertDecimalToBinaryString(int, int);
     static char convertSpecialCharToSimpleChar(char);
     static string normalize(string&);
+
+    static void printBitsFromDecimal(unsigned decimal);
+    static unsigned leftShiftBitInDecimal(unsigned decimal, unsigned short countShiftBit,
+            unsigned short int bitmapSize);
+    static unsigned char getKthBitFromDecimal(unsigned int decimal, unsigned short k);
+    static unsigned int setKthBitFromDecimal(unsigned int decimal, unsigned short k, unsigned short bitmapSize);
 };
 
 

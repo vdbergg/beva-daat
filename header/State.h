@@ -17,7 +17,7 @@ public:
     int getEditDistance(string&, string&);
 
     EditVector* editVector;
-    unordered_map<string, State*> transitions;
+    unordered_map<unsigned, State*> transitions;
     bool isInitial;
     bool isFinal;
     int id;

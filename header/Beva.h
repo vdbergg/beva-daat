@@ -19,10 +19,10 @@ public:
     int editDistanceThreshold;
     vector<ActiveNode*> currentActiveNodes;
     int bitmapSize;
-    string bitmaps[CHAR_SIZE];
-    string bitmapZero;
-    string bitmapOne;
-    string bitmapLast;
+    unsigned bitmaps[CHAR_SIZE];
+    unsigned bitmapZero;
+    unsigned bitmapOne;
+    unsigned bitmapLast;
 
     Beva(Trie*, int);
     ~Beva();
@@ -30,7 +30,7 @@ public:
     vector<ActiveNode*> process(string&, vector<ActiveNode*>&);
     void findActiveNodes(string&, ActiveNode*);
     State* getNewState(string&, string&, State*);
-    string buildBitmap(string&, string&);
+    unsigned buildBitmap(string&, string&);
     void updateBitmap(string&);
     void reset(Trie*);
 };

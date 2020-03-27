@@ -19,7 +19,7 @@ public:
 
     ~EditVectorAutomata();
 
-    State* setTransition(State*&, string&, string&, unordered_map<string, State*>&);
+    State* setTransition(State*&, unsigned, string&, unordered_map<string, State*>&);
     void buildAutomaton();
 };
 

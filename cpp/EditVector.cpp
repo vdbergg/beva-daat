@@ -38,13 +38,12 @@ void EditVector::buildInitialEditVector() {
     this->isInitial = true;
 }
 
-void EditVector::buildEditVectorWithBitmap(string& bitmap, string& initialStateValue) {
+void EditVector::buildEditVectorWithBitmap(unsigned bitmap, string& initialStateValue) {
     this->isFinal = true;
     for (int i = 0; i < this->size; i++) {
-        int temp = bitmap[i] - '0';
-        temp = temp == 0 ? 1 : 0; // In edit vector build the ith bitmap is denied
+        char bit = utils::getKthBitFromDecimal(bitmap, this->size - 1 - i) == 0 ? 1 : 0; // In edit vector build the ith bitmap is denied
         this->vector[i] = utils::min(
-                this->previousEditVector->vector[i] + temp,
+                this->previousEditVector->vector[i] + bit,
                 i + 1 >= this->previousEditVector->size ? C::MARKER : this->previousEditVector->vector[i + 1] + 1,
                 i - 1 < 0 ? C::MARKER : this->vector[i - 1] + 1
         );

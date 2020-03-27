@@ -23,7 +23,7 @@ public:
     string value;
 
     void buildInitialEditVector();
-    void buildEditVectorWithBitmap(string&, string&);
+    void buildEditVectorWithBitmap(unsigned, string&);
     int getEditDistance(string&, string&);
 };
 

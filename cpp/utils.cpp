@@ -126,3 +126,21 @@ string utils::normalize(string& data) {
     data = normalized;
     return data;
 }
+
+unsigned utils::leftShiftBitInDecimal(unsigned decimal, unsigned short int countShiftBit,
+        unsigned short int bitmapSize) {
+    return (decimal << countShiftBit) & bitmapSize;
+}
+
+unsigned utils::setKthBitFromDecimal(unsigned decimal, unsigned short int k, unsigned short int bitmapSize) {
+    return (1 << k | decimal) & bitmapSize;
+}
+
+void utils::printBitsFromDecimal(unsigned decimal) {
+    bitset<16> bitset1{decimal};
+    cout << bitset1 << endl;
+}
+
+unsigned char utils::getKthBitFromDecimal(unsigned decimal, unsigned short int k) {
+    return (decimal >> k ) & 1;
+}

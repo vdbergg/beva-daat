@@ -4,10 +4,8 @@
 
 #include <queue>
 #include <math.h>
-#include <bitset>
 #include "../header/EditVectorAutomata.h"
 #include "../header/utils.h"
-#include <utility>
 #include <unordered_map>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
@@ -22,7 +20,7 @@ EditVectorAutomata::~EditVectorAutomata() {
     delete this->finalState;
 };
 
-State* EditVectorAutomata::setTransition(State*& state, string& bitmap, string& initialStateValue,
+State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, string& initialStateValue,
         unordered_map<string, State*>& states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
     editVector->buildEditVectorWithBitmap(bitmap, initialStateValue);
@@ -59,14 +57,11 @@ void EditVectorAutomata::buildAutomaton() {
         State* state = queue.front();
         queue.pop();
 
-        int countTransitions = (int) pow(2, bitmapSize);
-        int count = 0;
+        int countTransitions = (1 << bitmapSize); // 2^2tau + 1
+        unsigned count = 0;
 
         while (count < countTransitions) {
-            string bitmap = bitset<16>(count).to_string();
-            bitmap = bitmap.substr(bitmap.length() - bitmapSize);
-
-            State* newState = this->setTransition(state, bitmap, this->initialState->editVector->value, states);
+            State* newState = this->setTransition(state, count, this->initialState->editVector->value, states);
 
             if (newState != nullptr) { // if not exists state in automaton
                 states[newState->editVector->value] = newState;

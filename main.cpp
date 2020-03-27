@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include "header/Framework.h"
+#include "header/utils.h"
 
 using namespace std;
 
@@ -12,7 +13,6 @@ unordered_map<string,string> config;
 void loadConfig();
 
 int main(int argc, char** argv) {
-
     loadConfig();
 
     string q, query, queryRemaining;
