@@ -18,13 +18,11 @@ public:
     int* vector;
     int editDistanceThreshold;
     int size;
-    bool isInitial;
-    bool isFinal;
-    string value;
 
     void buildInitialEditVector();
-    void buildEditVectorWithBitmap(unsigned, string&);
+    void buildEditVectorWithBitmap(unsigned);
     int getEditDistance(int);
+    string getEditVectorSignature();
 };
 
 #endif //BEVA_EDITVECTOR_H

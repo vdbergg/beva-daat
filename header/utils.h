@@ -24,18 +24,17 @@ public:
     static inline int min(int a, int b, int c) {
         return std::min(std::min(a, b), c);
     };
-    inline void printBitsFromDecimal(unsigned decimal) {
+    static inline void printBitsFromDecimal(unsigned decimal) {
         bitset<16> bitset1{decimal};
         cout << bitset1 << endl;
     };
-    static inline unsigned leftShiftBitInDecimal(unsigned decimal, unsigned short countShiftBit,
-                                                 unsigned short int bitmapSize) {
+    static inline unsigned leftShiftBitInDecimal(unsigned decimal, unsigned countShiftBit, unsigned bitmapSize) {
         return (decimal << countShiftBit) & bitmapSize;
     };
-    static inline unsigned char getKthBitFromDecimal(unsigned int decimal, unsigned short k) {
+    static inline unsigned char getKthBitFromDecimal(unsigned int decimal, unsigned k) {
         return (decimal >> k) & 1;
     };
-    static inline unsigned int setKthBitFromDecimal(unsigned int decimal, unsigned short k, unsigned short bitmapSize) {
+    static inline unsigned int setKthBitFromDecimal(unsigned int decimal, unsigned short k, unsigned bitmapSize) {
         return (1 << k | decimal) & bitmapSize;
     };
 };

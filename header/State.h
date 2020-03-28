@@ -12,7 +12,7 @@ using namespace std;
 
 class State {
 public:
-    State(EditVector*, int);
+    State(EditVector* editVector, int id, bool isInitial = false, bool isFinal = false);
     ~State();
     int getEditDistance(int);
 
@@ -21,6 +21,7 @@ public:
     bool isInitial;
     bool isFinal;
     int id;
+//    string value;
 };
 
 
