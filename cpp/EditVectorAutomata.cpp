@@ -3,10 +3,10 @@
 //
 
 #include <queue>
-#include <math.h>
 #include "../header/EditVectorAutomata.h"
 #include "../header/utils.h"
 #include <unordered_map>
+#include <cmath>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;

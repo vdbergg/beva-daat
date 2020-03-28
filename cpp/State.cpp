@@ -16,6 +16,6 @@ State::~State() {
     delete this->editVector;
 };
 
-int State::getEditDistance(string& query, string& data) {
-    return this->editVector->getEditDistance(query, data);
+int State::getEditDistance(int k) {
+    return this->editVector->getEditDistance(k);
 }

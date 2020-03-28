@@ -27,8 +27,8 @@ public:
     Beva(Trie*, int);
     ~Beva();
 
-    vector<ActiveNode*> process(string&, vector<ActiveNode*>&);
-    void findActiveNodes(string&, ActiveNode*);
+    vector<ActiveNode*> process(string&);
+    vector<ActiveNode*> findActiveNodes(string&, ActiveNode*);
     State* getNewState(string&, string&, State*);
     unsigned buildBitmap(string&, string&);
     void updateBitmap(string&);

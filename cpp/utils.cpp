@@ -142,5 +142,5 @@ void utils::printBitsFromDecimal(unsigned decimal) {
 }
 
 unsigned char utils::getKthBitFromDecimal(unsigned decimal, unsigned short int k) {
-    return (decimal >> k ) & 1;
+    return (decimal >> k) & 1;
 }

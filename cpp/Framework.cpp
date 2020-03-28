@@ -126,11 +126,10 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
 //    cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
-    query = utils::normalize(query);
 //        auto start = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
 
-    this->activeNodes = this->beva->process(query, this->activeNodes);
+    this->activeNodes = this->beva->process(query);
 
     //       auto done = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") {

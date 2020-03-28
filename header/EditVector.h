@@ -24,7 +24,7 @@ public:
 
     void buildInitialEditVector();
     void buildEditVectorWithBitmap(unsigned, string&);
-    int getEditDistance(string&, string&);
+    int getEditDistance(int);
 };
 
 #endif //BEVA_EDITVECTOR_H

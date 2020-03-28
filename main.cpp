@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
         int count = 0;
 
         while (query.length() <= q.length()) {
+            query = utils::normalize(query);
             framework->process(query, (int) q.length(), i);
 
             query += queryRemaining[count];

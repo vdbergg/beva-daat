@@ -58,10 +58,8 @@ void EditVector::buildEditVectorWithBitmap(unsigned bitmap, string& initialState
     }
 }
 
-int EditVector::getEditDistance(string& query, string& data) {
-    if ((int) query.length() >= ((int) data.length() - this->editDistanceThreshold)
-        && (int) query.length() <= ((int) data.length() + this->editDistanceThreshold)) {
-        return this->vector[(this->editDistanceThreshold + 1 + ((int) query.length() - (int) data.length())) - 1];
-    }
+int EditVector::getEditDistance(int k) {
+    int result = (this->editDistanceThreshold + 1 + k) - 1;
+    if (result < this->size) return this->vector[result];
     return C::MARKER;
 }

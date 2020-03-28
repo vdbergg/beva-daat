@@ -14,7 +14,7 @@ class State {
 public:
     State(EditVector*, int);
     ~State();
-    int getEditDistance(string&, string&);
+    int getEditDistance(int);
 
     EditVector* editVector;
     unordered_map<unsigned, State*> transitions;
