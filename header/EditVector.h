@@ -15,7 +15,7 @@ public:
     ~EditVector();
 
     EditVector* previousEditVector;
-    int* vector;
+    unsigned char* vector;
     int editDistanceThreshold;
     int size;
 

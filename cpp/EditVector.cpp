@@ -9,15 +9,15 @@
 EditVector::EditVector(int editDistanceThreshold, EditVector* previousEditVector) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->size = (2 * this->editDistanceThreshold) + 1;
-    this->vector = new int[this->size];
+    this->vector = new unsigned char[this->size];
     this->previousEditVector = previousEditVector;
 }
 
 EditVector::~EditVector() = default;
 
 void EditVector::buildInitialEditVector() {
-    int countNegative = this->editDistanceThreshold;
-    int countPositive = 1;
+    unsigned countNegative = this->editDistanceThreshold;
+    unsigned countPositive = 1;
 
     for (int i = 0; i < this->size; i++) {
         if (i < this->editDistanceThreshold) {
