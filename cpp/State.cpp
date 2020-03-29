@@ -22,3 +22,7 @@ State::~State() {
 int State::getEditDistance(int k) {
     return this->editVector->getEditDistance(k);
 }
+
+VectorChar State::display() {
+    return this->editVector->display();
+}

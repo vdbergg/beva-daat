@@ -22,7 +22,7 @@ EditVectorAutomata::~EditVectorAutomata() {
 bool checkToTerminalEditVector(EditVector* editVector, int editDistanceThreshold) {
     bool isFinal = true;
     for (int i = 0; i < editVector->size; i++) {
-        if (editVector->vector[i] <= editDistanceThreshold) {
+        if (editVector->get(i) <= editDistanceThreshold) {
             isFinal = false;
             break;
         }
@@ -30,18 +30,18 @@ bool checkToTerminalEditVector(EditVector* editVector, int editDistanceThreshold
     return isFinal;
 }
 
-State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unordered_map<string, State*>& states) {
+State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unordered_map<VectorChar, State*,
+        MyHashVectorFunction>& states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
     editVector->buildEditVectorWithBitmap(bitmap);
-    string signature = editVector->getEditVectorSignature();
 
     State* newState = nullptr;
-    if (state->editVector->getEditVectorSignature() == signature) { // State already exists, by convention we defined null when an state point to yourself
-    } else if (states.find(signature) == states.end()) { // if not exists state in automaton
+    if (state->display() == editVector->display()) { // State already exists, by convention we defined null when an state point to yourself
+    } else if (states.find(editVector->display()) == states.end()) { // if not exists state in automaton
         bool isFinal = checkToTerminalEditVector(editVector, this->editDistanceThreshold);
         newState = new State(editVector, this->size, false, isFinal);
     } else {
-        newState = states[signature];
+        newState = states[editVector->display()];
         state->transitions[bitmap] = newState;
         return nullptr;
     }
@@ -50,13 +50,13 @@ State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unorder
 }
 
 void EditVectorAutomata::buildAutomaton() {
-    unordered_map<string, State*> states;
+    unordered_map<VectorChar, State*, MyHashVectorFunction> states;
 
     EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);
     editVector->buildInitialEditVector();
     this->initialState = new State(editVector, this->size, true);
 
-    states[this->initialState->editVector->getEditVectorSignature()] = this->initialState;
+    states[this->initialState->display()] = this->initialState;
     this->size++;
 
     queue<State*> queue;
@@ -73,16 +73,16 @@ void EditVectorAutomata::buildAutomaton() {
             State* newState = this->setTransition(state, count, states);
 
             if (newState != nullptr) { // if not exists state in automaton
-                states[newState->editVector->getEditVectorSignature()] = newState;
-                this->size++;
-                queue.push(newState);
+            states[newState->display()] = newState;
+            this->size++;
+            queue.push(newState);
 
-                if (newState->isFinal) {
-                    this->finalState = newState;
-                }
+            if (newState->isFinal) {
+                this->finalState = newState;
             }
+        }
 
-            count++;
+        count++;
         }
     }
 }
