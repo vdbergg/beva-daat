@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <bitset>
 #include <sstream>
 #include <string>
 #include "../header/utils.h"
@@ -21,10 +20,6 @@ vector<string> utils::split(string value, char delimiter) {
         tokens.push_back(intermediate);
     }
     return tokens;
-}
-
-int utils::min(int a, int b, int c) {
-    return std::min(std::min(a, b), c);
 }
 
 void utils::printVector(int* vector, int size) {

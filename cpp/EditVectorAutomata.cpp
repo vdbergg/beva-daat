@@ -3,11 +3,7 @@
 //
 
 #include <queue>
-#include <math.h>
-#include <bitset>
 #include "../header/EditVectorAutomata.h"
-#include "../header/utils.h"
-#include <utility>
 #include <unordered_map>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
@@ -15,6 +11,7 @@ EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->initialState = nullptr;
     this->finalState = nullptr;
     this->size = 0;
+    this->transitionsByState = (1 << ((2 * this->editDistanceThreshold) + 1)); // 2^2tau + 1
 }
 
 EditVectorAutomata::~EditVectorAutomata() {
@@ -22,17 +19,29 @@ EditVectorAutomata::~EditVectorAutomata() {
     delete this->finalState;
 };
 
-State* EditVectorAutomata::setTransition(State*& state, string& bitmap, string& initialStateValue,
-        unordered_map<string, State*>& states) {
+bool checkToTerminalEditVector(EditVector* editVector, int editDistanceThreshold) {
+    bool isFinal = true;
+    for (int i = 0; i < editVector->size; i++) {
+        if (editVector->vector[i] <= editDistanceThreshold) {
+            isFinal = false;
+            break;
+        }
+    }
+    return isFinal;
+}
+
+State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unordered_map<string, State*>& states) {
     EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
-    editVector->buildEditVectorWithBitmap(bitmap, initialStateValue);
+    editVector->buildEditVectorWithBitmap(bitmap);
+    string signature = editVector->getEditVectorSignature();
 
     State* newState = nullptr;
-    if (state->editVector->value == editVector->value) {
-    } else if (states.find(editVector->value) == states.end()) { // if not exists state in automaton
-        newState = new State(editVector, this->size);
+    if (state->editVector->getEditVectorSignature() == signature) { // State already exists, by convention we defined null when an state point to yourself
+    } else if (states.find(signature) == states.end()) { // if not exists state in automaton
+        bool isFinal = checkToTerminalEditVector(editVector, this->editDistanceThreshold);
+        newState = new State(editVector, this->size, false, isFinal);
     } else {
-        newState = states[editVector->value];
+        newState = states[signature];
         state->transitions[bitmap] = newState;
         return nullptr;
     }
@@ -45,31 +54,26 @@ void EditVectorAutomata::buildAutomaton() {
 
     EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);
     editVector->buildInitialEditVector();
-    this->initialState = new State(editVector, this->size);
+    this->initialState = new State(editVector, this->size, true);
 
-    states[editVector->value] = this->initialState;
+    states[this->initialState->editVector->getEditVectorSignature()] = this->initialState;
     this->size++;
 
     queue<State*> queue;
     queue.push(this->initialState);
 
-    int bitmapSize = (2 * this->editDistanceThreshold) + 1;
-
     while (!queue.empty()) {
         State* state = queue.front();
         queue.pop();
 
-        int countTransitions = (int) pow(2, bitmapSize);
-        int count = 0;
+        int countTransitions = this->transitionsByState;
+        unsigned count = 0;
 
         while (count < countTransitions) {
-            string bitmap = bitset<16>(count).to_string();
-            bitmap = bitmap.substr(bitmap.length() - bitmapSize);
-
-            State* newState = this->setTransition(state, bitmap, this->initialState->editVector->value, states);
+            State* newState = this->setTransition(state, count, states);
 
             if (newState != nullptr) { // if not exists state in automaton
-                states[newState->editVector->value] = newState;
+                states[newState->editVector->getEditVectorSignature()] = newState;
                 this->size++;
                 queue.push(newState);
 

@@ -14,12 +14,13 @@ public:
     State* finalState;
     int editDistanceThreshold;
     int size;
+    int transitionsByState;
 
     EditVectorAutomata(int);
 
     ~EditVectorAutomata();
 
-    State* setTransition(State*&, string&, string&, unordered_map<string, State*>&);
+    State* setTransition(State*&, unsigned, unordered_map<string, State*>&);
     void buildAutomaton();
 };
 

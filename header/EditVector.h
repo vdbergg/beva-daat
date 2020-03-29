@@ -15,16 +15,14 @@ public:
     ~EditVector();
 
     EditVector* previousEditVector;
-    int* vector;
+    unsigned char* vector;
     int editDistanceThreshold;
     int size;
-    bool isInitial;
-    bool isFinal;
-    string value;
 
     void buildInitialEditVector();
-    void buildEditVectorWithBitmap(string&, string&);
-    int getEditDistance(string&, string&);
+    void buildEditVectorWithBitmap(unsigned);
+    int getEditDistance(int);
+    string getEditVectorSignature();
 };
 
 #endif //BEVA_EDITVECTOR_H

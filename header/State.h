@@ -12,15 +12,16 @@ using namespace std;
 
 class State {
 public:
-    State(EditVector*, int);
+    State(EditVector* editVector, int id, bool isInitial = false, bool isFinal = false);
     ~State();
-    int getEditDistance(string&, string&);
+    int getEditDistance(int);
 
     EditVector* editVector;
-    unordered_map<string, State*> transitions;
+    unordered_map<unsigned, State*> transitions;
     bool isInitial;
     bool isFinal;
     int id;
+//    string value;
 };
 
 

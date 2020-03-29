@@ -5,17 +5,20 @@
 #include "../header/State.h"
 #include <utility>
 
-State::State(EditVector *editVector, int id) {
+State::State(EditVector *editVector, int id, bool isInitial, bool isFinal) {
     this->editVector = editVector;
-    this->isInitial = editVector->isInitial;
-    this->isFinal = editVector->isFinal;
+    this->isInitial = isInitial;
+    this->isFinal = isFinal;
     this->id = id;
+//    for (int i = 0; i < this->editVector->size; i++) {
+//        this->value += to_string(this->editVector->vector[i]);
+//    }
 }
 
 State::~State() {
     delete this->editVector;
 };
 
-int State::getEditDistance(string& query, string& data) {
-    return this->editVector->getEditDistance(query, data);
+int State::getEditDistance(int k) {
+    return this->editVector->getEditDistance(k);
 }
