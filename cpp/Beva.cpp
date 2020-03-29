@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <cmath>
 #include "../header/Beva.h"
 #include "../header/ActiveNode.h"
 #include "../header/utils.h"

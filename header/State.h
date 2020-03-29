@@ -21,6 +21,7 @@ public:
     bool isInitial;
     bool isFinal;
     int id;
+    VectorChar display();
 //    string value;
 };
 

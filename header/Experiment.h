@@ -9,7 +9,6 @@
 #include <chrono>
 
 #include "sys/types.h"
-#include "sys/sysinfo.h"
 
 using namespace std;
 
@@ -33,14 +32,12 @@ public:
 
     bool recoveryMode = false;
 
-    chrono::time_point<std::chrono::system_clock> startIndexingTime;
-    chrono::time_point<std::chrono::system_clock> finishIndexingTime;
-
-    chrono::time_point<std::chrono::system_clock> startQueryProcessingTime;
-    chrono::time_point<std::chrono::system_clock> finishQueryProcessingTime;
-
-    chrono::time_point<std::chrono::system_clock> startQueryFetchingTime;
-    chrono::time_point<std::chrono::system_clock> finishQueryFetchingTime;
+    chrono::high_resolution_clock::time_point startIndexingTime;
+    chrono::high_resolution_clock::time_point finishIndexingTime;
+    chrono::high_resolution_clock::time_point startQueryProcessingTime;
+    chrono::high_resolution_clock::time_point finishQueryProcessingTime;
+    chrono::high_resolution_clock::time_point startQueryFetchingTime;
+    chrono::high_resolution_clock::time_point finishQueryFetchingTime;
 
     void initIndexingTime();
     void endIndexingTime();

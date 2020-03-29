@@ -20,7 +20,7 @@ public:
 
     ~EditVectorAutomata();
 
-    State* setTransition(State*&, unsigned, unordered_map<string, State*>&);
+    State* setTransition(State*&, unsigned, unordered_map<VectorChar, State*, MyHashVectorFunction>&);
     void buildAutomaton();
 };
 
