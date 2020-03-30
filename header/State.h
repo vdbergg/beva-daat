@@ -14,15 +14,21 @@ class State {
 public:
     State(EditVector* editVector, int id, bool isInitial = false, bool isFinal = false);
     ~State();
-    int getEditDistance(int);
 
     EditVector* editVector;
     unordered_map<unsigned, State*> transitions;
     bool isInitial;
     bool isFinal;
     int id;
-    VectorChar display();
 //    string value;
+
+    inline unsigned getEditDistance(int k) {
+        return this->editVector->getEditDistance(k);
+    }
+
+    inline VectorChar display() {
+        return this->editVector->display();
+    }
 };
 
 

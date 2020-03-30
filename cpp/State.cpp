@@ -18,11 +18,3 @@ State::State(EditVector *editVector, int id, bool isInitial, bool isFinal) {
 State::~State() {
     delete this->editVector;
 };
-
-int State::getEditDistance(int k) {
-    return this->editVector->getEditDistance(k);
-}
-
-VectorChar State::display() {
-    return this->editVector->display();
-}
