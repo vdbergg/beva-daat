@@ -32,6 +32,7 @@ void Trie::append(const string& rec, const int recordId) {
         }
         node->endRange = recordId + 1;
     }
+    node->isEndOfWord = true;
     this->experiment->proportionOfBranchingSizeInBEVA2Level(currentIndexLevel);
 }
 
