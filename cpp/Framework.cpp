@@ -111,6 +111,8 @@ void Framework::index(){
         this->trie->append(record, recordId);
         recordId++;
     }
+    this->trie->shrinkToFit();
+
     if (this->config["collect_memory"] == "1") this->experiment->getMemoryUsedInIndexing();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
@@ -123,7 +125,7 @@ void Framework::index(){
 }
 
 void Framework::process(string query, int queryLength, int currentCountQuery) {
-    cout << "Query: " + query + "\n";
+  //    cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
         auto start = chrono::high_resolution_clock::now();
@@ -151,7 +153,7 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
         this->beva->reset(this->trie); // Reset the information from previous query
     }
 
-cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
+    // cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 
 int Framework::output() {
@@ -160,8 +162,8 @@ int Framework::output() {
     vector<string> outputs;
 
     for (ActiveNode* activeNode : this->activeNodes) {
-        int beginRange = activeNode->node->beginRange;
-        int endRange = activeNode->node->endRange;
+      int beginRange = this->trie->getNode(activeNode->node).getBeginRange();
+      int endRange = this->trie->getNode(activeNode->node).getEndRange();
 
         vector<string> results;
 
@@ -176,9 +178,9 @@ int Framework::output() {
                 outputs.push_back(record);
             }
 //            count += results.size();
-            for (const string& record : results) {
-                cout << record << "\n";
-            }
+//            for (const string& record : results) {
+//                cout << record << "\n";
+//            }
         }
     }
     return outputs.size();

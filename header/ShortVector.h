@@ -1,10 +1,7 @@
 #include <string>
 #include <iostream>
 #include <iterator>
-
-// MUDEI O INCREMENTO DO VECTOR PARA CONSTANTE IGUAL A 2 AO INVES DE EXPONENCIAL
-// ISSO PODE CAUSAR CERTA LENTIDAO NA CONSTRUCAO DA TRIE, MAS EVITA USO EXCESSIVO DE MEMORIA
-
+#include <stdio.h>
 
 using namespace std;
 
@@ -12,6 +9,7 @@ template <class KeyType> class ShortVectorIteratorType;
 template <class KeyType> class ShortVector;
 
 const unsigned int MAX_CAPACITY = 0xFF;
+const unsigned int SIZE = 4;
 
 template<class KeyType>
 
@@ -32,18 +30,20 @@ public:
     bool isEndOfWord;
     char value;
 
-
     ShortVector() {
-        this->data = NULL;
-        this->size = 0;
-        this->capacity = 0;
+      this->data = NULL;
+      this->size = 0;
+      this->capacity = 0;
     }
 
-    ~ShortVector() {
-        if (this->capacity) free(this->data);
-        this->size = 0;
+    ~ShortVector() {  }
+
+    void dealoc() {
+	  free(this->data);
+	  this->data = NULL;
+	  this->size = 0;
         this->capacity = 0;
-    }
+	}
 
     KeyType* getData() { return this->data; }
     sizeType getSize() { return this->size; }
@@ -57,36 +57,42 @@ public:
         return this->data[pos];
     }
 
+    void  init() {
+        this->data = NULL;
+        this->size = 0;
+        this->capacity = 0;
+    }
+
     iterator insert(iterator position, const valueType& item) {
-        iterator x, y;
+       iterator x, y;
 
-        if (this->size == this->capacity) {
-            sizeType pos = (position.operator->() - this->data);
+       if (this->size == this->capacity) {
+           sizeType pos = (position.operator->() - this->data);
 
-            if (this->capacity < MAX_CAPACITY) {
-	      if( this->capacity == 0) {
-		this->capacity = 4;
-	      }
-	      else {
-                this->capacity += 2;
-	      }
-                this->data = (KeyType*) realloc(this->data, sizeof(KeyType) * this->capacity);
-                position.setPos(this->data + pos);
-            } else {
-                return position;
-            }
-        }
-        x = this->end();
+           if (this->capacity < MAX_CAPACITY) {
+               if (this->capacity == 0) {
+                   this->capacity = 8;
+               } else {
+                   this->capacity += SIZE;
+               }
+               this->data = (KeyType*) realloc(this->data, sizeof(KeyType) * this->capacity);
+               if ((this->capacity) && (this->data == NULL)) exit(1);
+                   position.setPos(this->data + pos);
+               } else {
+                   return position;
+               }
+           }
+       x = this->end();
 
-        while (x != position) {
-            y = x;
-            x--;
-            *y = *x;
-        }
-        *position = item;
-        this->size++;
+       while (x != position) {
+           y = x;
+           x--;
+           *y = *x;
+       }
+       *position = item;
+       this->size++;
 
-        return position;
+       return position;
     }
 
     iterator erase(iterator position) {
@@ -107,7 +113,7 @@ public:
     void push_back(const KeyType &item) {
         if (this->size == this->capacity) {
             if (this->capacity < MAX_CAPACITY) {
-                this->capacity += 2;
+                this->capacity += SIZE;
             } else {
                 return;
             }

@@ -10,11 +10,11 @@
 
 class ActiveNode {
 public:
-    Node* node;
+    unsigned node;
     State* state;
     string data;
 
-    ActiveNode(Node*, State*, string&);
+    ActiveNode(unsigned, State*, string&);
 };
 
 

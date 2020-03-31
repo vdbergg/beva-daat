@@ -21,13 +21,19 @@ using namespace std;
 
 class Node {
 public:
-  ShortVector<Node *> children;
+  ShortVector<unsigned> children;
   unsigned beginRange;
   unsigned endRange;
 
 
-  Node(char value = 0) {
+  Node(char value) {
+    this->children.init();
     this->setValue(value);
+    this-> setIsEndOfWord(false);
+}
+
+  Node() {
+    this->children.init();
     this-> setIsEndOfWord(false);
 }
 

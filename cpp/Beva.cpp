@@ -87,8 +87,8 @@ State* Beva::getNewState(string& query, string& data, State* state) {
 vector<ActiveNode*> Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode) {
     vector<ActiveNode*> activeNodes;
 
-    for (auto &i : oldActiveNode->node->children) {
-      string temp = oldActiveNode->data + i->getValue();
+    for (auto &i : this->trie->getNode(oldActiveNode->node).children) {
+        string temp = oldActiveNode->data +  this->trie->getNode(i).getValue();
         int k = (int) query.length() - (int) temp.length();
 
         State* newState = this->getNewState(query, temp, oldActiveNode->state);
