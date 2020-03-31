@@ -13,13 +13,14 @@ using namespace std;
 
 class Trie {
 public:
+    vector<Node> globalMemory;
     Node* root;
     Experiment* experiment;
 
     Trie(int, Experiment*);
 
     void append(const string&, const int);
-    Node* insert(char ch, Node*);
+    Node* insert(char ch, int, Node*);
 };
 
 #endif //BEVA_TRIE_H

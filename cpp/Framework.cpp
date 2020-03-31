@@ -123,15 +123,15 @@ void Framework::index(){
 }
 
 void Framework::process(string query, int queryLength, int currentCountQuery) {
-//    cout << "Query: " + query + "\n";
+    cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
-//        auto start = chrono::high_resolution_clock::now();
+        auto start = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
 
     this->activeNodes = this->beva->process(query);
 
-    //       auto done = chrono::high_resolution_clock::now();
+          auto done = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") {
         this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
     }
@@ -151,7 +151,7 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
         this->beva->reset(this->trie); // Reset the information from previous query
     }
 
-//    cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
+cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 
 int Framework::output() {
@@ -176,9 +176,9 @@ int Framework::output() {
                 outputs.push_back(record);
             }
 //            count += results.size();
-//            for (const string& record : results) {
-//                cout << record << "\n";
-//            }
+            for (const string& record : results) {
+                cout << record << "\n";
+            }
         }
     }
     return outputs.size();
