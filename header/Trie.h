@@ -13,13 +13,38 @@ using namespace std;
 
 class Trie {
 public:
-    Node* root;
+    vector<Node> globalMemory;
+    unsigned root;
     Experiment* experiment;
 
     Trie(int, Experiment*);
 
     void append(const string&, const int);
-    Node* insert(char ch, Node*);
+    unsigned insert(char ch, int, unsigned);
+
+    inline Node* getNodeAddr(unsigned x) {
+        return &globalMemory[x];
+    }
+
+    inline Node& getNode(unsigned x) {
+        if (x >= globalMemory.size()) {
+            cout << "ERRO\n";
+            exit(1);
+        }
+        return globalMemory[x];
+    }
+
+    inline unsigned newNode() {
+        globalMemory.emplace_back();
+        return globalMemory.size() - 1;
+    }
+
+    inline unsigned newNode(char ch) {
+        globalMemory.emplace_back(ch);
+        return globalMemory.size() - 1;
+    }
+
+    void shrinkToFit();
 };
 
 #endif //BEVA_TRIE_H

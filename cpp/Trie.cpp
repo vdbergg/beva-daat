@@ -7,46 +7,58 @@
 #include "../header/Experiment.h"
 
 Trie::Trie(int datasetSize, Experiment* experiment) {
-    this->root = new Node();
-    this->root->beginRange = 0;
-    this->root->endRange = datasetSize;
     this->experiment = experiment;
+    this->root = newNode();
     this->experiment->incrementNumberOfNodes();
+
+    getNode(this->root).setBeginRange(0);
+    getNode(this->root).setEndRange(datasetSize);
+    this->globalMemory.reserve(datasetSize * 5);
 }
 
 void Trie::append(const string& rec, const int recordId) {
-    Node* node = this->root;
+    unsigned node = this->root;
     int currentIndexLevel = 0;
-    for (char ch : rec) {
-        if ((int) ch == -61) continue;
-        else if ((int) ch < 0 || (int) ch >= CHAR_SIZE) {
+
+    for (unsigned char ch : rec) {
+        if (ch == 195) continue;
+        else if (ch >= CHAR_SIZE) {
             ch = utils::convertSpecialCharToSimpleChar(ch);
         }
-
-        node = this->insert(ch, node);
+	    node = this->insert((char)ch, recordId, node);
 
         currentIndexLevel++;
-
-        if (node->beginRange == -1) {
-            node->beginRange = recordId;
-        }
-        node->endRange = recordId + 1;
+	    getNode(node).setEndRange(recordId + 1);
     }
-    node->isEndOfWord = true;
-    this->experiment->proportionOfBranchingSizeInBEVA2Level(currentIndexLevel);
+    getNode(node).setIsEndOfWord(true);
+    this->experiment->proportionOfBranchingSize(currentIndexLevel);
 }
 
-Node* Trie::insert(char ch, Node* node) {
-    auto vit = node->children.begin();
-    for (; vit != node->children.end(); vit++) {
-        if ((*vit)->value == ch) break;
+unsigned Trie::insert(char ch, int recordId, unsigned node) {
+
+    ShortVector<unsigned>::iterator vit = getNode(node).children.begin();
+
+    for (; vit != getNode(node).children.end(); vit++) {
+        if (getNode((*vit)).getValue() == ch) break;
     }
 
-    if (vit == node->children.end()) {
-        Node* newNode = new Node(ch);
+    if (vit == getNode(node).children.end()) {
+        unsigned newN = newNode();
+        getNode(newN).setValue(ch);
+        getNode(newN).setBeginRange(recordId);
+
+        getNode(node).children.push_back(newN);
         this->experiment->incrementNumberOfNodes();
-        node->children.push_back(newNode);
-        return newNode;
+        return newN;
     }
+
     return *vit;
+}
+
+void Trie::shrinkToFit() {
+    this->globalMemory.shrink_to_fit();
+
+    for (auto node : this->globalMemory) {
+        node.children.shrink_to_fit();
+    }
 }

@@ -117,9 +117,8 @@ void Experiment::endIndexingTime() {
     this->finishIndexingTime = chrono::high_resolution_clock::now();
 
     long result = chrono::duration_cast<chrono::nanoseconds>(
-            this->finishIndexingTime - this->startIndexingTime
-            ).count();
-
+    this->finishIndexingTime - this->startIndexingTime
+    ).count();
 
     writeFile("indexing_time", "indexing_time\n" + to_string(result) + "\n");
 }
@@ -175,9 +174,9 @@ void Experiment::saveQueryProcessingTime(string& query, int queryId) {
     for (int j = 0; j < this->currentQueryProcessingTime.size(); j++) {
         accum += this->currentQueryProcessingTime[j];
         value += to_string(j + 1) + "\t" + to_string(this->currentQueryProcessingTime[j]) + "\t" +
-                                    to_string(accum) + "\t" + to_string(this->currentQueryFetchingTime[j]) + "\t" +
-                                    to_string(this->currentResultsSize[j]) + "\t" +
-                                    to_string(this->currentActiveNodesSize[j]) + "\n";
+          to_string(accum) + "\t" + to_string(this->currentQueryFetchingTime[j]) + "\t" +
+          to_string(this->currentResultsSize[j]) + "\t" +
+          to_string(this->currentActiveNodesSize[j]) + "\n";
 
         this->currentQueryProcessingTime[j] = 0;
         this->currentActiveNodesSize[j] = 0;
@@ -191,7 +190,7 @@ void Experiment::saveQueryProcessingTime(string& query, int queryId) {
 void Experiment::compileQueryProcessingTimes(int queryId) {
     string value = to_string(queryId) + "\n";
     value += "query_size\tquery_processing_time\taccumulated_query_processing_time\tfetching_time\tresults_size\t"
-             "active_nodes_size\n";
+    "active_nodes_size\n";
 
     int accum = 0;
     for (int i = 0; i < this->processingTimes.size(); i++) {
@@ -212,7 +211,7 @@ void Experiment::compileQueryProcessingTimes(int queryId) {
     writeFile("query_processing_time", value);
 }
 
-void Experiment::proportionOfBranchingSizeInBEVA2Level(int size) {
+void Experiment::proportionOfBranchingSize(int size) {
     if (this->branchSize.find(size) == this->branchSize.end() ) {
         this->branchSize[size] = 1;
     } else {
@@ -220,6 +219,7 @@ void Experiment::proportionOfBranchingSizeInBEVA2Level(int size) {
     }
 }
 
+                        
 void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     string value = "branch_size\tnumber_of_branches\n";
     for (unordered_map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {

@@ -46,7 +46,7 @@ public:
     void initQueryFetchingTime();
     void endQueryFetchingTime(string&, int, long);
     void compileQueryProcessingTimes(int);
-    void proportionOfBranchingSizeInBEVA2Level(int);
+    void proportionOfBranchingSize(int size);
     void incrementNumberOfNodes();
     void compileNumberOfNodes();
     void compileProportionOfBranchingSizeInBEVA2Level();
