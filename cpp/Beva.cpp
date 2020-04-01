@@ -103,10 +103,10 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<Acti
         if (newState->getEditDistance(k) <= this->editDistanceThreshold) {
             activeNodes.push_back(new ActiveNode(i, newState, temp));
         } else {
-	   ActiveNode * tmp =new ActiveNode(i, newState, temp);
+	   ActiveNode  tmp(i, newState, temp);
 	  //	  oldActiveNode->update(i,newState,temp);
-	  findActiveNodes(query, tmp, activeNodes);
-	  delete tmp;
+	  findActiveNodes(query, &tmp, activeNodes);
+	  //	  delete tmp;
         }
     }
 }
