@@ -17,7 +17,8 @@ public:
     Trie* trie;
     EditVectorAutomata* editVectorAutomata;
     int editDistanceThreshold;
-    vector<ActiveNode*> currentActiveNodes;
+    vector<ActiveNode*> currentActiveNodes;// includes active nodes from all processed prefix since last reset
+   
     int bitmapSize;
     unsigned bitmaps[CHAR_SIZE];
     unsigned bitmapZero;
@@ -27,8 +28,9 @@ public:
     Beva(Trie*, int);
     ~Beva();
 
-    vector<ActiveNode*> process(string&);
-    vector<ActiveNode*> findActiveNodes(string&, ActiveNode*);
+
+    void process(string&);
+    void findActiveNodes(string&, ActiveNode*,  vector<ActiveNode*>&);
     State* getNewState(string&, string&, State*);
     unsigned buildBitmap(string&, string&);
     void updateBitmap(string&);

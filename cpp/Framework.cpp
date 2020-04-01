@@ -124,18 +124,19 @@ void Framework::index(){
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
+
 void Framework::process(string query, int queryLength, int currentCountQuery) {
-  //    cout << "Query: " + query + "\n";
+  //      cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
         auto start = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
 
-    this->activeNodes = this->beva->process(query);
+    this->beva->process(query);
 
           auto done = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") {
-        this->experiment->endQueryProcessingTime(this->activeNodes.size(), query);
+        this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), query);
     }
     if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
         if (this->config["collect_memory"] == "0") {
@@ -146,10 +147,8 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
             this->experiment->getMemoryUsedInProcessing(query.size());
         }
     }
-
+    this->beva->currentActiveNodes.shrink_to_fit();
     if (query.length() == queryLength) {
-        this->activeNodes.clear(); // Clean the active nodes for next query
-        this->activeNodes.shrink_to_fit();
         this->beva->reset(this->trie); // Reset the information from previous query
     }
 
@@ -160,8 +159,8 @@ int Framework::output() {
 //    int count = 0;
 
     vector<string> outputs;
-
-    for (ActiveNode* activeNode : this->activeNodes) {
+    //    cout << "RESULTS:\n";
+    for (ActiveNode* activeNode : this->beva->currentActiveNodes) {
       int beginRange = this->trie->getNode(activeNode->node).getBeginRange();
       int endRange = this->trie->getNode(activeNode->node).getEndRange();
 
@@ -186,3 +185,5 @@ int Framework::output() {
     return outputs.size();
 //    cout << "Results length: " + to_string(count) << "\n";
 }
+
+
