@@ -129,12 +129,12 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
   //      cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
-        auto start = chrono::high_resolution_clock::now();
+//        auto start = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
 
     this->beva->process(query);
 
-          auto done = chrono::high_resolution_clock::now();
+//          auto done = chrono::high_resolution_clock::now();
     if (this->config["collect_memory"] == "0") {
         this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), query);
     }
@@ -156,34 +156,20 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
 }
 
 int Framework::output() {
-//    int count = 0;
-
     vector<string> outputs;
-    //        cout << "RESULTS:\n";
+
     for (ActiveNode* activeNode : this->beva->currentActiveNodes) {
-      int beginRange = this->trie->getNode(activeNode->node).getBeginRange();
-      int endRange = this->trie->getNode(activeNode->node).getEndRange();
+        unsigned beginRange = this->trie->getNode(activeNode->node).getBeginRange();
+        unsigned endRange = this->trie->getNode(activeNode->node).getEndRange();
 
-        vector<string> results;
-
-        if (beginRange != -1 && endRange != -1) {
-            if (endRange - beginRange != this->records.size()) {
-                vector<string> recs(this->records.begin() + beginRange, this->records.begin() + endRange);
-                results = recs;
-            } else {
-                results = this->records;
-            }
-            for (const string& record : results) {
-                outputs.push_back(record);
-            }
-//            count += results.size();
-//           for (const string& record : results) {
-//                cout << record << "\n";
-//            }
+        for (unsigned i = beginRange; i < endRange; i++) {
+            outputs.push_back(this->records[i]);
         }
     }
+
+//    for (const string& record : outputs) {
+//        cout << record << "\n";
+//    }
+
     return outputs.size();
-//    cout << "Results length: " + to_string(count) << "\n";
 }
-
-

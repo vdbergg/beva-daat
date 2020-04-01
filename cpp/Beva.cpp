@@ -18,7 +18,7 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
     this->bitmapZero = 0;
     this->bitmapOne = 1;
 
-    for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
+    for (auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
 }
 
 Beva::~Beva() {
@@ -35,22 +35,24 @@ void Beva::reset(Trie* trie) {
 
 
 void Beva::process(string& query) {
-  vector<ActiveNode*> activeNodes;
-  this->updateBitmap(query);
-  if (query.length() == 1) {
-    string empty;
-    this->currentActiveNodes.clear();
-    this->currentActiveNodes.push_back(
-				       new ActiveNode(this->trie->root, this->editVectorAutomata->initialState,empty)
-				       );
-  } else if (query.length() > this->editDistanceThreshold) {
-    for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
-      findActiveNodes(query, oldActiveNode,activeNodes);
-      delete oldActiveNode;
+    this->updateBitmap(query);
+
+    vector<ActiveNode*> activeNodes;
+
+    if (query.length() == 1) {
+        string empty;
+        this->currentActiveNodes.clear();
+        this->currentActiveNodes.push_back(
+                new ActiveNode(this->trie->root, this->editVectorAutomata->initialState,empty)
+                );
+    } else if (query.length() > this->editDistanceThreshold) {
+        for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
+            findActiveNodes(query, oldActiveNode,activeNodes);
+            delete oldActiveNode;
+        }
+        this->currentActiveNodes.clear();
+        this->currentActiveNodes= activeNodes;
     }
-    this->currentActiveNodes.clear();
-    this->currentActiveNodes= activeNodes;
-  }
 }
 
 
@@ -88,12 +90,9 @@ State* Beva::getNewState(string& query, string& data, State* state) {
     return newState;
 }
 
-
-
 void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<ActiveNode*> &activeNodes) {
-
     for (auto &i : this->trie->getNode(oldActiveNode->node).children) {
-      string temp = oldActiveNode->data +  this->trie->getNode(i).getValue();
+        string temp = oldActiveNode->data +  this->trie->getNode(i).getValue();
         int k = (int) query.length() - (int) temp.length();
 
         State* newState = this->getNewState(query, temp, oldActiveNode->state);
@@ -103,12 +102,8 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<Acti
         if (newState->getEditDistance(k) <= this->editDistanceThreshold) {
             activeNodes.push_back(new ActiveNode(i, newState, temp));
         } else {
-	   ActiveNode  tmp(i, newState, temp);
-	  //	  oldActiveNode->update(i,newState,temp);
-	  findActiveNodes(query, &tmp, activeNodes);
-	  //	  delete tmp;
+            ActiveNode  tmp(i, newState, temp);
+            findActiveNodes(query, &tmp, activeNodes);
         }
     }
 }
-
-
