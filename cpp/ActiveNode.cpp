@@ -9,3 +9,6 @@ ActiveNode::ActiveNode(unsigned node, State* state, string &data) {
     this->state = state;
     this->data = data;
 }
+
+ActiveNode::~ActiveNode() {
+}

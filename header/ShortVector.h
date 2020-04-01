@@ -31,17 +31,17 @@ public:
     char value;
 
     ShortVector() {
-      this->data = NULL;
-      this->size = 0;
-      this->capacity = 0;
+        this->data = NULL;
+        this->size = 0;
+        this->capacity = 0;
     }
 
     ~ShortVector() {  }
 
     void dealoc() {
-	  free(this->data);
-	  this->data = NULL;
-	  this->size = 0;
+	    free(this->data);
+	    this->data = NULL;
+	    this->size = 0;
         this->capacity = 0;
 	}
 
@@ -64,7 +64,7 @@ public:
     }
 
     iterator insert(iterator position, const valueType& item) {
-       iterator x, y;
+        iterator x, y;
 
        if (this->size == this->capacity) {
            sizeType pos = (position.operator->() - this->data);

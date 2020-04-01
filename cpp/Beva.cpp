@@ -28,6 +28,9 @@ Beva::~Beva() {
 void Beva::reset(Trie* trie) {
     this->trie = trie;
     for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
+    for (auto* activeNode : this->currentActiveNodes) delete activeNode;
+    this->currentActiveNodes.clear(); // Clean the active nodes for next query
+    this->currentActiveNodes.shrink_to_fit();
 }
 
 vector<ActiveNode*> Beva::process(string& query) {
