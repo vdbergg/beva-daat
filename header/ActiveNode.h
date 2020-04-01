@@ -16,6 +16,16 @@ public:
 
     ActiveNode(unsigned, State*, string&);
     ~ActiveNode();
+
+
+    void update(unsigned node, State* state, string &data) {
+    this->node = node;
+    this->state = state;
+    this->data = data;
+    }
+
+
+
 };
 
 

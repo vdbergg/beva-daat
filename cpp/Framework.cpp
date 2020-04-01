@@ -159,7 +159,7 @@ int Framework::output() {
 //    int count = 0;
 
     vector<string> outputs;
-    //    cout << "RESULTS:\n";
+    //        cout << "RESULTS:\n";
     for (ActiveNode* activeNode : this->beva->currentActiveNodes) {
       int beginRange = this->trie->getNode(activeNode->node).getBeginRange();
       int endRange = this->trie->getNode(activeNode->node).getEndRange();
@@ -177,7 +177,7 @@ int Framework::output() {
                 outputs.push_back(record);
             }
 //            count += results.size();
-//            for (const string& record : results) {
+//           for (const string& record : results) {
 //                cout << record << "\n";
 //            }
         }
