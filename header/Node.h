@@ -18,25 +18,23 @@
 
 using namespace std;
 
-
 class Node {
 public:
-  ShortVector<unsigned> children;
-  unsigned beginRange;
-  unsigned endRange;
+    ShortVector<unsigned> children;
+    unsigned beginRange;
+    unsigned endRange;
 
 
-  Node(char value) {
-    this->children.init();
-    this->setValue(value);
-    this-> setIsEndOfWord(false);
-}
+    Node(char value) {
+        this->children.init();
+        this->setValue(value);
+        this->setIsEndOfWord(false);
+    }
 
-  Node() {
-    this->children.init();
-    this-> setIsEndOfWord(false);
-}
-
+    Node() {
+        this->children.init();
+        this->setIsEndOfWord(false);
+    }
 
     inline void setValue(char value) { this->children.value = value; }
     inline char getValue() { return this->children.value; }
