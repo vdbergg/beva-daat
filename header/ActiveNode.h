@@ -15,6 +15,7 @@ public:
     string data;
 
     ActiveNode(unsigned, State*, string&);
+    ~ActiveNode();
 };
 
 
