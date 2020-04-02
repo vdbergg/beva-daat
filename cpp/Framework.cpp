@@ -38,11 +38,14 @@ void Framework::readData(string& filename, vector<string>& recs) {
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
-        for (auto i = 0; i < str.length(); i++) {
-            str[i] = tolower(str[i]);
+        for (char &c : str) {
+            if ((int) c == -61) continue;
+            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+                c = utils::convertSpecialCharToSimpleChar(c);
+            }
+            c = tolower(c);
         }
-        str = utils::normalize(str);
-        recs.push_back(str);
+        if (!str.empty()) recs.push_back(str);
     }
 }
 

@@ -21,10 +21,6 @@ void Trie::append(const string& rec, const int recordId) {
     int currentIndexLevel = 0;
 
     for (unsigned char ch : rec) {
-        if (ch == 195) continue;
-        else if (ch >= CHAR_SIZE) {
-            ch = utils::convertSpecialCharToSimpleChar(ch);
-        }
 	    node = this->insert((char)ch, recordId, node);
 
         currentIndexLevel++;
