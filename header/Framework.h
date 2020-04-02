@@ -19,7 +19,6 @@ public:
     Trie* trie;
     vector<string> records;
     vector<string> queries;
-    vector<ActiveNode*> activeNodes;
     int editDistanceThreshold;
     int dataset;
     Experiment* experiment;

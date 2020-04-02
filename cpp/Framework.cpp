@@ -151,7 +151,6 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
     if (query.length() == queryLength) {
         this->beva->reset(this->trie); // Reset the information from previous query
     }
-
     // cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 

@@ -28,16 +28,14 @@ Beva::~Beva() {
 void Beva::reset(Trie* trie) {
     this->trie = trie;
     for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
+
     for (auto* activeNode : this->currentActiveNodes) delete activeNode;
     this->currentActiveNodes.clear(); // Clean the active nodes for next query
     this->currentActiveNodes.shrink_to_fit();
 }
 
-
 void Beva::process(string& query) {
     this->updateBitmap(query);
-
-    vector<ActiveNode*> activeNodes;
 
     if (query.length() == 1) {
         string empty;
@@ -46,15 +44,16 @@ void Beva::process(string& query) {
                 new ActiveNode(this->trie->root, this->editVectorAutomata->initialState,empty)
                 );
     } else if (query.length() > this->editDistanceThreshold) {
+        vector<ActiveNode*> activeNodes;
+
         for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
             findActiveNodes(query, oldActiveNode,activeNodes);
             delete oldActiveNode;
         }
         this->currentActiveNodes.clear();
-        this->currentActiveNodes= activeNodes;
+        this->currentActiveNodes = activeNodes;
     }
 }
-
 
 void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the last character c
     char c = query[(int) query.length() - 1];
@@ -102,7 +101,7 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<Acti
         if (newState->getEditDistance(k) <= this->editDistanceThreshold) {
             activeNodes.push_back(new ActiveNode(i, newState, temp));
         } else {
-            ActiveNode  tmp(i, newState, temp);
+            ActiveNode tmp(i, newState, temp);
             findActiveNodes(query, &tmp, activeNodes);
         }
     }
