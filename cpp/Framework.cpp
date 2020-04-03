@@ -13,6 +13,7 @@
 #include "../header/Framework.h"
 #include "../header/utils.h"
 #include "../header/Experiment.h"
+#include "../header/Directives.h"
 
 using namespace std;
 
@@ -67,7 +68,10 @@ void Framework::index(){
     }
 
     auto start = chrono::high_resolution_clock::now();
-    if (this->config["collect_memory"] == "0") this->experiment->initIndexingTime();
+
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->initIndexingTime();
+    #endif
     
     string datasetFile = this->config["dataset_basepath"];
     string queryFile = this->config["query_basepath"];
@@ -116,45 +120,47 @@ void Framework::index(){
     }
     this->trie->shrinkToFit();
 
-    if (this->config["collect_memory"] == "1") this->experiment->getMemoryUsedInIndexing();
-
     this->beva = new Beva(this->trie, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
-    if (this->config["collect_memory"] == "0") this->experiment->endIndexingTime();
-    if (this->config["collect_memory"] == "0") this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
-    if (this->config["collect_memory"] == "0") this->experiment->compileNumberOfNodes();
+
+    #ifdef BEVA_IS_COLLECT_MEMORY_H
+        this->experiment->getMemoryUsedInIndexing();
+    #else
+        this->experiment->endIndexingTime();
+        this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
+        this->experiment->compileNumberOfNodes();
+    #endif
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
 
 void Framework::process(string query, int queryLength, int currentCountQuery) {
-  //      cout << "Query: " + query + "\n";
     if (query.empty()) return;
 
-//        auto start = chrono::high_resolution_clock::now();
-    if (this->config["collect_memory"] == "0") this->experiment->initQueryProcessingTime();
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->initQueryProcessingTime();
+    #endif
 
     this->beva->process(query);
 
-//          auto done = chrono::high_resolution_clock::now();
-    if (this->config["collect_memory"] == "0") {
+    #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), query);
-    }
-    if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
-        if (this->config["collect_memory"] == "0") {
+
+        if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
             this->experiment->initQueryFetchingTime();
             int resultsSize = output();
             this->experiment->endQueryFetchingTime(query, currentCountQuery, resultsSize);
-        } else {
-            this->experiment->getMemoryUsedInProcessing(query.size());
         }
-    }
+    #endif
+
     this->beva->currentActiveNodes.shrink_to_fit();
     if (query.length() == queryLength) {
+        #ifdef BEVA_IS_COLLECT_MEMORY_H
+            this->experiment->getMemoryUsedInProcessing();
+        #endif
         this->beva->reset(this->trie); // Reset the information from previous query
     }
-    // cout << "<<<Process time: " << chrono::duration_cast<chrono::microseconds>(done - start).count() << " us>>>\n\n";
 }
 
 int Framework::output() {

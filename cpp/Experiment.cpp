@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <unordered_map>
 #include <unistd.h>
+#include <algorithm>
 
 #include "../header/Experiment.h"
 #include "../header/utils.h"
@@ -222,8 +223,12 @@ void Experiment::proportionOfBranchingSize(int size) {
                         
 void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     string value = "branch_size\tnumber_of_branches\n";
-    for (unordered_map<int, int>::iterator it = this->branchSize.begin(); it != this->branchSize.end(); ++it) {
-        value += to_string(it->first) + "\t" + to_string(it->second) + "\n";
+
+    vector<pair<int, int>> elements(this->branchSize.begin(), this->branchSize.end());
+    sort(elements.begin(), elements.end());
+
+    for (const pair<int, int> &p : elements) {
+        value += to_string(p.first) + "\t" + to_string(p.second) + "\n";
     }
     writeFile("proportion_branch_size", value);
 }
@@ -238,29 +243,16 @@ void Experiment::compileNumberOfNodes() {
     writeFile("number_of_nodes", value);
 }
 
-void Experiment::getMemoryUsedInProcessing(int currentQueryLength) {
+void Experiment::getMemoryUsedInProcessing() {
     pid_t pid = getpid();
-    string cmd = "/bin/ps -p " + to_string(pid) + " -o size";
-    string output = exec(cmd.c_str());
+    string output = "/bin/ps -p " + to_string(pid) + " -o size";
+    output = exec(output.c_str());
 
     vector<string> tokens = utils::split(output, '\n');
 
     float memoryUsed = stof(tokens[1]) / 1000;
 
-    this->memoryUsedInProcessing[currentQueryLength - 1] = memoryUsed;
-
-    if (currentQueryLength == MAX_QUERY_CHARACTER) {
-       float avgMemoryUsed = 0;
-       for (float memory : this->memoryUsedInProcessing) {
-           avgMemoryUsed += memory;
-           memory = 0;
-       }
-       avgMemoryUsed /= 4;
-
-       string value = to_string(avgMemoryUsed) + "\n";
-
-       writeFile("memory_used_in_processing", value, true);
-    }
+    writeFile("memory_used_in_processing", to_string(memoryUsed) + "\n", true);
 }
 
 void Experiment::getMemoryUsedInIndexing() {

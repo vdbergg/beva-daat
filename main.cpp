@@ -6,6 +6,7 @@
 #include <string>
 #include "header/Framework.h"
 #include "header/utils.h"
+#include "header/Directives.h"
 
 using namespace std;
 
@@ -19,6 +20,10 @@ int main(int argc, char** argv) {
     Framework* framework = new Framework(config);
     int indexMin = stoi(config["qry_number_start"]);
     int indexMax =  stoi(config["qry_number_end"]);
+
+    #ifdef BEVA_IS_COLLECT_MEMORY_H
+        indexMax = 100;
+    #endif
     cout << "processing...\n";
 
     for (int i = indexMin; i < indexMax; ++i) {

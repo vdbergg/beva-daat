@@ -53,7 +53,7 @@ public:
     void readQueryProcessingTime(string& filename);
     void saveQueryProcessingTime(string&, int);
     void getMemoryUsedInIndexing();
-    void getMemoryUsedInProcessing(int);
+    void getMemoryUsedInProcessing();
 
     void writeFile(const string&, const string&, bool writeInTheEnd=false);
 };

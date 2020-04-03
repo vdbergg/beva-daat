@@ -5,6 +5,7 @@
 #include "../header/Trie.h"
 #include "../header/utils.h"
 #include "../header/Experiment.h"
+#include "../header/Directives.h"
 
 Trie::Trie(int datasetSize, Experiment* experiment) {
     this->experiment = experiment;
@@ -27,11 +28,12 @@ void Trie::append(const string& rec, const int recordId) {
 	    getNode(node).setEndRange(recordId + 1);
     }
     getNode(node).setIsEndOfWord(true);
-    this->experiment->proportionOfBranchingSize(currentIndexLevel);
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->proportionOfBranchingSize(currentIndexLevel);
+    #endif
 }
 
 unsigned Trie::insert(char ch, int recordId, unsigned node) {
-
     ShortVector<unsigned>::iterator vit = getNode(node).children.begin();
 
     for (; vit != getNode(node).children.end(); vit++) {
@@ -44,7 +46,9 @@ unsigned Trie::insert(char ch, int recordId, unsigned node) {
         getNode(newN).setBeginRange(recordId);
 
         getNode(node).children.push_back(newN);
-        this->experiment->incrementNumberOfNodes();
+        #ifdef BEVA_IS_COLLECT_TIME_H
+            this->experiment->incrementNumberOfNodes();
+        #endif
         return newN;
     }
 
