@@ -19,14 +19,13 @@ public:
     unordered_map<string, string> config;
     int editDistanceThreshold;
     long numberOfNodes;
-    vector<float> memoryUsedInProcessing;
     vector<long> processingTimes;
     vector<long> fetchingTimes;
-    vector<float> resultsSize;
+    vector<long> resultsSize;
     vector<long> currentQueryProcessingTime;
     vector<long> currentQueryFetchingTime;
     vector<long> currentResultsSize;
-    vector<float> activeNodesSizes;
+    vector<long> activeNodesSizes;
     vector<long> currentActiveNodesSize;
     unordered_map<int, int> branchSize;
 
@@ -44,7 +43,7 @@ public:
     void initQueryProcessingTime();
     void endQueryProcessingTime(long, string&);
     void initQueryFetchingTime();
-    void endQueryFetchingTime(string&, int, long);
+    void endQueryFetchingTime(string&, long);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSize(int size);
     void incrementNumberOfNodes();

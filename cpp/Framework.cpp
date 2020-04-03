@@ -150,7 +150,7 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
         if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
             this->experiment->initQueryFetchingTime();
             int resultsSize = output();
-            this->experiment->endQueryFetchingTime(query, currentCountQuery, resultsSize);
+            this->experiment->endQueryFetchingTime(query, resultsSize);
         }
     #endif
 
@@ -158,6 +158,9 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
     if (query.length() == queryLength) {
         #ifdef BEVA_IS_COLLECT_MEMORY_H
             this->experiment->getMemoryUsedInProcessing();
+        #else
+            this->experiment->compileQueryProcessingTimes(currentCountQuery);
+            this->experiment->saveQueryProcessingTime(query, currentCountQuery);
         #endif
         this->beva->reset(this->trie); // Reset the information from previous query
     }

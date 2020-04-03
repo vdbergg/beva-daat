@@ -39,7 +39,6 @@ void Beva::process(string& query) {
 
     if (query.length() == 1) {
         string empty;
-        this->currentActiveNodes.clear();
         this->currentActiveNodes.push_back(
                 new ActiveNode(this->trie->root, this->editVectorAutomata->initialState,empty)
                 );
@@ -47,7 +46,7 @@ void Beva::process(string& query) {
         vector<ActiveNode*> activeNodes;
 
         for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
-            findActiveNodes(query, oldActiveNode,activeNodes);
+            this->findActiveNodes(query, oldActiveNode,activeNodes);
             delete oldActiveNode;
         }
         this->currentActiveNodes.clear();
@@ -102,7 +101,7 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<Acti
             activeNodes.push_back(new ActiveNode(i, newState, temp));
         } else {
             ActiveNode tmp(i, newState, temp);
-            findActiveNodes(query, &tmp, activeNodes);
+            this->findActiveNodes(query, &tmp, activeNodes);
         }
     }
 }

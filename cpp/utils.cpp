@@ -2,7 +2,6 @@
 // Created by berg on 03/02/19.
 //
 
-#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -11,15 +10,13 @@
 
 using namespace std;
 
-vector<string> utils::split(string value, char delimiter) {
-    vector <string> tokens;
+void utils::split(string value, char delimiter, vector<string>& tokens) {
     stringstream check1(value);
     string intermediate;
 
     while(getline(check1, intermediate, delimiter)) {
         tokens.push_back(intermediate);
     }
-    return tokens;
 }
 
 void utils::printVector(int* vector, int size) {

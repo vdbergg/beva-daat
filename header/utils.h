@@ -13,7 +13,7 @@ using namespace std;
 
 class utils {
 public:
-    static vector<string> split(string, char);
+    static void split(string, char, vector<string>&);
     static void printVector(int*, int);
     static void printTransition(int*, int, int*, int, string&);
     static string shiftBitInBinaryString(string&, int, int);

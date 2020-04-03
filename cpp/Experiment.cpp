@@ -26,9 +26,8 @@ string getFilename(unordered_map<string, string> config, const string& filename,
     return name;
 }
 
-string exec(const char* cmd) {
+void exec(const char* cmd, string& result) {
     char buffer[128];
-    std::string result = "";
     FILE* pipe = popen(cmd, "r");
     if (!pipe) throw std::runtime_error("popen() failed!");
     try {
@@ -40,7 +39,6 @@ string exec(const char* cmd) {
         throw;
     }
     pclose(pipe);
-    return result;
 }
 
 Experiment::Experiment(unordered_map<string, string> config, int editDistanceThreshold) {
@@ -53,7 +51,6 @@ Experiment::Experiment(unordered_map<string, string> config, int editDistanceThr
         this->currentActiveNodesSize.push_back(0);
         this->currentQueryProcessingTime.push_back(0);
         this->currentResultsSize.push_back(0);
-        this->memoryUsedInProcessing.push_back(0);
         this->fetchingTimes.push_back(0);
         this->resultsSize.push_back(0);
         this->currentQueryFetchingTime.push_back(0);
@@ -74,7 +71,8 @@ void Experiment::readQueryProcessingTime(string& filename) {
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
-        vector<string> tokens = utils::split(str, '\t');
+        vector<string> tokens;
+        utils::split(str, '\t', tokens);
         int tokensSize = tokens.size();
 
         if (tokensSize == 1) {
@@ -128,7 +126,7 @@ void Experiment::initQueryFetchingTime() {
     this->startQueryFetchingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryFetchingTime(string &query, int queryId, long resultsSize_) {
+void Experiment::endQueryFetchingTime(string &query, long resultsSize_) {
     this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
 
     int currentQueryLength = query.size();
@@ -141,11 +139,6 @@ void Experiment::endQueryFetchingTime(string &query, int queryId, long resultsSi
     this->currentResultsSize[currentQueryLength - 1] = resultsSize_;
     this->fetchingTimes[currentQueryLength - 1] += result;
     this->resultsSize[currentQueryLength - 1] += resultsSize_;
-
-    if (currentQueryLength == MAX_QUERY_CHARACTER) {
-        this->compileQueryProcessingTimes(queryId);
-        this->saveQueryProcessingTime(query, queryId);
-    }
 }
 
 void Experiment::initQueryProcessingTime() {
@@ -164,7 +157,7 @@ void Experiment::endQueryProcessingTime(long activeNodesSize, string &query) {
     this->currentQueryProcessingTime[currentQueryLength - 1] = result;
     this->currentActiveNodesSize[currentQueryLength - 1] = activeNodesSize;
     this->processingTimes[currentQueryLength - 1] += result;
-    this->activeNodesSizes[currentQueryLength - 1] += (float) activeNodesSize;
+    this->activeNodesSizes[currentQueryLength - 1] += activeNodesSize;
 }
 
 void Experiment::saveQueryProcessingTime(string& query, int queryId) {
@@ -193,7 +186,7 @@ void Experiment::compileQueryProcessingTimes(int queryId) {
     value += "query_size\tquery_processing_time\taccumulated_query_processing_time\tfetching_time\tresults_size\t"
     "active_nodes_size\n";
 
-    int accum = 0;
+    long accum = 0;
     for (int i = 0; i < this->processingTimes.size(); i++) {
         long processingTime = this->processingTimes[i] / (queryId + 1);
         float activeNodesSize = this->activeNodesSizes[i] / (float) (queryId + 1);
@@ -230,6 +223,8 @@ void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     for (const pair<int, int> &p : elements) {
         value += to_string(p.first) + "\t" + to_string(p.second) + "\n";
     }
+    elements.clear();
+
     writeFile("proportion_branch_size", value);
 }
 
@@ -245,10 +240,12 @@ void Experiment::compileNumberOfNodes() {
 
 void Experiment::getMemoryUsedInProcessing() {
     pid_t pid = getpid();
-    string output = "/bin/ps -p " + to_string(pid) + " -o size";
-    output = exec(output.c_str());
+    string cmd = "/bin/ps -p " + to_string(pid) + " -o size";
+    string output;
+    exec(cmd.c_str(), output);
 
-    vector<string> tokens = utils::split(output, '\n');
+    vector<string> tokens;
+    utils::split(output, '\n', tokens);
 
     float memoryUsed = stof(tokens[1]) / 1000;
 
@@ -258,9 +255,11 @@ void Experiment::getMemoryUsedInProcessing() {
 void Experiment::getMemoryUsedInIndexing() {
     pid_t pid = getpid();
     string cmd = "/bin/ps -p " + to_string(pid) + " -o size";
-    string output = exec(cmd.c_str());
+    string output;
+    exec(cmd.c_str(), output);
 
-    vector<string> tokens = utils::split(output, '\n');
+    vector<string> tokens;
+    utils::split(output, '\n', tokens);
 
     float memoryUsed = stof(tokens[1]) / 1000;
 
