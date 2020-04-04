@@ -109,7 +109,7 @@ void Framework::index(){
     }
 
     readData(datasetFile, this->records);
-    sort(this->records.begin(), this->records.end());
+//    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
     this->trie = new Trie(this->records.size(), this->experiment);
