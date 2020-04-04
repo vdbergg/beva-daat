@@ -25,8 +25,7 @@ Beva::~Beva() {
     delete this->editVectorAutomata;
 }
 
-void Beva::reset(Trie* trie) {
-    this->trie = trie;
+void Beva::reset() {
     for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
 
     for (auto* activeNode : this->currentActiveNodes) delete activeNode;

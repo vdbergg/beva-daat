@@ -34,7 +34,7 @@ public:
     State* getNewState(string&, string&, State*);
     unsigned buildBitmap(string&, string&);
     void updateBitmap(string&);
-    void reset(Trie*);
+    void reset();
 };
 
 

@@ -64,6 +64,9 @@ Experiment::Experiment(unordered_map<string, string> config, int editDistanceThr
     }
 }
 
+Experiment::~Experiment() {
+}
+
 void Experiment::readQueryProcessingTime(string& filename) {
     int count = 0, countLine = 0;
     int queriesProcessed = 1;

@@ -31,6 +31,7 @@ Framework::~Framework() {
     cout << "deleting framework" << endl;
     delete this->beva;
     delete this->trie;
+    delete this->experiment;
 }
 
 void Framework::readData(string& filename, vector<string>& recs) {
@@ -162,7 +163,7 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
             this->experiment->compileQueryProcessingTimes(currentCountQuery);
             this->experiment->saveQueryProcessingTime(query, currentCountQuery);
         #endif
-        this->beva->reset(this->trie); // Reset the information from previous query
+        this->beva->reset(); // Reset the information from previous query
     }
 }
 

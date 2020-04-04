@@ -15,6 +15,7 @@ using namespace std;
 class Experiment {
 public:
     Experiment(unordered_map<string, string>, int);
+    ~Experiment();
 
     unordered_map<string, string> config;
     int editDistanceThreshold;
