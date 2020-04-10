@@ -5,11 +5,10 @@
 #include "../header/EditVector.h"
 #include "../header/utils.h"
 
-EditVector::EditVector(int editDistanceThreshold, EditVector* previousEditVector) {
+EditVector::EditVector(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->size = (2 * this->editDistanceThreshold) + 1;
     this->vectorChar = VectorChar(this->size);
-    this->previousEditVector = previousEditVector;
 }
 
 EditVector::~EditVector() = default;
@@ -31,11 +30,11 @@ void EditVector::buildInitialEditVector() {
     }
 }
 
-void EditVector::buildEditVectorWithBitmap(unsigned bitmap) {
+void EditVector::buildEditVectorWithBitmap(unsigned bitmap, EditVector* previousEditVector) {
     for (int i = 0; i < this->size; i++) {
         unsigned char item = utils::min(
-                this->previousEditVector->get(i) + (1 - utils::getKthBitFromDecimal(bitmap, this->size - 1 - i)),
-                i + 1 >= this->previousEditVector->size ? C::MARKER : this->previousEditVector->get(i + 1) + 1,
+                previousEditVector->get(i) + (1 - utils::getKthBitFromDecimal(bitmap, this->size - 1 - i)),
+                i + 1 >= previousEditVector->size ? C::MARKER : previousEditVector->get(i + 1) + 1,
                 i - 1 < 0 ? C::MARKER : this->get(i - 1) + 1
         );
         this->set(i, item);

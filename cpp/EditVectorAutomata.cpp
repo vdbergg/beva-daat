@@ -32,8 +32,8 @@ bool checkToTerminalEditVector(EditVector* editVector, int editDistanceThreshold
 
 State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unordered_map<VectorChar, State*,
         MyHashVectorFunction>& states) {
-    EditVector* editVector = new EditVector(this->editDistanceThreshold, state->editVector);
-    editVector->buildEditVectorWithBitmap(bitmap);
+    EditVector* editVector = new EditVector(this->editDistanceThreshold);
+    editVector->buildEditVectorWithBitmap(bitmap, state->editVector);
 
     State* newState = nullptr;
     if (state->display() == editVector->display()) { // State already exists, by convention we defined null when an state point to yourself
@@ -52,7 +52,7 @@ State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unorder
 void EditVectorAutomata::buildAutomaton() {
     unordered_map<VectorChar, State*, MyHashVectorFunction> states;
 
-    EditVector* editVector = new EditVector(this->editDistanceThreshold, nullptr);
+    EditVector* editVector = new EditVector(this->editDistanceThreshold);
     editVector->buildInitialEditVector();
     this->initialState = new State(editVector, this->size, true);
 

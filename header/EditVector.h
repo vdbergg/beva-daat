@@ -72,16 +72,15 @@ class MyHashVectorFunction {
 
 class EditVector {
 public:
-    EditVector(int, EditVector*);
+    EditVector(int);
     ~EditVector();
 
-    EditVector* previousEditVector;
     VectorChar vectorChar;
     int editDistanceThreshold;
     int size;
 
     void buildInitialEditVector();
-    void buildEditVectorWithBitmap(unsigned);
+    void buildEditVectorWithBitmap(unsigned, EditVector*);
 
     inline unsigned getEditDistance(int k) {
         int result = (this->editDistanceThreshold + k);
