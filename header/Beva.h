@@ -23,16 +23,14 @@ public:
     unsigned bitmaps[CHAR_SIZE];
     unsigned bitmapZero;
     unsigned bitmapOne;
-    unsigned bitmapLast;
 
     Beva(Trie*, int);
     ~Beva();
 
-
     void process(string&);
-    void findActiveNodes(string&, ActiveNode*,  vector<ActiveNode*>&);
-    State* getNewState(string&, string&, State*);
-    unsigned buildBitmap(string&, string&);
+    void findActiveNodes(unsigned, ActiveNode*,  vector<ActiveNode*>&);
+    State* getNewState(unsigned, string&, State*);
+    unsigned buildBitmap(unsigned, string&);
     void updateBitmap(string&);
     void reset();
 };

@@ -6,7 +6,6 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
-#include <algorithm>
 #include <thread>
 #include "../header/Trie.h"
 #include "../header/C.h"

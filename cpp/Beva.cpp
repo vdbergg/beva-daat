@@ -45,7 +45,7 @@ void Beva::process(string& query) {
         vector<ActiveNode*> activeNodes;
 
         for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
-            this->findActiveNodes(query, oldActiveNode,activeNodes);
+            this->findActiveNodes(query.length(), oldActiveNode,activeNodes);
             delete oldActiveNode;
         }
         this->currentActiveNodes.clear();
@@ -71,28 +71,28 @@ void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the l
     }
 }
 
-unsigned Beva::buildBitmap(string& query, string& data) {
+unsigned Beva::buildBitmap(unsigned queryLength, string& data) {
     char c = data[(int) data.length() - 1];
 
-    int k = (int) query.length() - (int) data.length();
+    int k = (int) queryLength - (int) data.length();
 
     return utils::leftShiftBitInDecimal(this->bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
 }
 
-State* Beva::getNewState(string& query, string& data, State* state) {
-    unsigned bitmap = this->buildBitmap(query, data);
+State* Beva::getNewState(unsigned queryLength, string& data, State* state) {
+    unsigned bitmap = this->buildBitmap(queryLength, data);
 
     State* newState = state->transitions[bitmap];
     if (newState == nullptr) newState = state;
     return newState;
 }
 
-void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<ActiveNode*> &activeNodes) {
+void Beva::findActiveNodes(unsigned queryLength, ActiveNode* oldActiveNode, vector<ActiveNode*> &activeNodes) {
     for (auto &i : this->trie->getNode(oldActiveNode->node).children) {
         string temp = oldActiveNode->data +  this->trie->getNode(i).getValue();
-        int k = (int) query.length() - (int) temp.length();
+        int k = (int) queryLength - (int) temp.length();
 
-        State* newState = this->getNewState(query, temp, oldActiveNode->state);
+        State* newState = this->getNewState(queryLength, temp, oldActiveNode->state);
 
         if (newState->isFinal) continue;
 
@@ -100,7 +100,7 @@ void Beva::findActiveNodes(string& query, ActiveNode* oldActiveNode, vector<Acti
             activeNodes.push_back(new ActiveNode(i, newState, temp));
         } else {
             ActiveNode tmp(i, newState, temp);
-            this->findActiveNodes(query, &tmp, activeNodes);
+            this->findActiveNodes(queryLength, &tmp, activeNodes);
         }
     }
 }
