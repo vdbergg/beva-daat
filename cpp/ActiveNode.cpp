@@ -4,10 +4,10 @@
 
 #include "../header/ActiveNode.h"
 
-ActiveNode::ActiveNode(unsigned node, State* state, string &data) {
+ActiveNode::ActiveNode(unsigned node, State* state, unsigned level) {
     this->node = node;
     this->state = state;
-    this->data = data;
+    this->level = level;
 }
 
 ActiveNode::~ActiveNode() {

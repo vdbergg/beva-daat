@@ -9,6 +9,7 @@
 #include "EditVectorAutomata.h"
 #include "Trie.h"
 #include "ActiveNode.h"
+#include "utils.h"
 
 #define CHAR_SIZE 128
 
@@ -29,8 +30,20 @@ public:
 
     void process(string&);
     void findActiveNodes(unsigned, ActiveNode*,  vector<ActiveNode*>&);
-    State* getNewState(unsigned, string&, State*);
-    unsigned buildBitmap(unsigned, string&);
+
+    inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c) {
+        int k = (int) queryLength - (int) lastPosition;
+        return utils::leftShiftBitInDecimal(this->bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
+    }
+
+    inline State* getNewState(unsigned queryLength, State* state, unsigned lastPosition, char c) {
+        unsigned bitmap = this->buildBitmap(queryLength, lastPosition, c);
+
+        State* newState = state->transitions[bitmap];
+        if (newState == nullptr) newState = state;
+        return newState;
+    }
+
     void updateBitmap(string&);
     void reset();
 };

@@ -12,9 +12,9 @@ class ActiveNode {
 public:
     unsigned node;
     State* state;
-    string data;
+    unsigned level;
 
-    ActiveNode(unsigned, State*, string&);
+    ActiveNode(unsigned, State*, unsigned);
     ~ActiveNode();
 };
 
