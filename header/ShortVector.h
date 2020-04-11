@@ -57,7 +57,7 @@ public:
         return this->data[pos];
     }
 
-    void  init() {
+    void init() {
         this->data = NULL;
         this->size = 0;
         this->capacity = 0;
@@ -77,11 +77,11 @@ public:
                }
                this->data = (KeyType*) realloc(this->data, sizeof(KeyType) * this->capacity);
                if ((this->capacity) && (this->data == NULL)) exit(1);
-                   position.setPos(this->data + pos);
-               } else {
-                   return position;
-               }
+               position.setPos(this->data + pos);
+           } else {
+               return position;
            }
+       }
        x = this->end();
 
        while (x != position) {

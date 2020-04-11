@@ -111,13 +111,13 @@ void Framework::index(){
 //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
-    this->trie = new Trie(this->records.size(), this->experiment);
+    this->trie = new Trie(this->records, this->experiment);
+    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
+        this->trie->buildBfsIndex();
+    #else
+        this->trie->buildDfsIndex();
+    #endif
 
-    int recordId = 0;
-    for (string& record : this->records) {
-        this->trie->append(record, recordId);
-        recordId++;
-    }
     this->trie->shrinkToFit();
 
     this->beva = new Beva(this->trie, this->editDistanceThreshold);

@@ -24,7 +24,6 @@ public:
     unsigned beginRange;
     unsigned endRange;
 
-
     Node(char value) {
         this->children.init();
         this->setValue(value);

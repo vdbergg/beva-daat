@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "../header/Experiment.h"
+#include "../header/Directives.h"
 #include "../header/utils.h"
 
 using namespace std;
@@ -93,9 +94,18 @@ void Experiment::readQueryProcessingTime(string& filename) {
 
 void Experiment::writeFile(const string& name, const string& value, bool writeInTheEnd) {
     ofstream myfile;
+    string buildIndexType;
+
+    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
+        buildIndexType = "bfs";
+    #else
+        buildIndexType = "dfs";
+    #endif
+
     string newName = config["experiments_basepath"] + name;
-    newName += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] +
-            "_tau_" + to_string(this->editDistanceThreshold) + "_alg_" + config["alg"] + ".txt";
+    newName += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] + "_tau_" +
+               to_string(this->editDistanceThreshold) + "_index_type_" + buildIndexType + "_alg_" +
+               config["alg"] + ".txt";
 
     if (writeInTheEnd) {
         myfile.open(newName, std::ios::app);

@@ -15,11 +15,15 @@ class Trie {
 public:
     vector<Node> globalMemory;
     unsigned root;
+    vector<string> records;
+    vector<unsigned> lastNodeKnownPerRecord;
+
     Experiment* experiment;
 
-    Trie(int, Experiment*);
+    Trie(vector<string>&, Experiment*);
 
-    void append(const string&, const int);
+    void buildBfsIndex();
+    void buildDfsIndex();
     unsigned insert(char ch, int, unsigned);
 
     inline Node* getNodeAddr(unsigned x) {
