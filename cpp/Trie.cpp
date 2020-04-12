@@ -13,6 +13,9 @@ Trie::Trie(vector<string>& records, Experiment* experiment) {
 
     #ifdef BEVA_IS_BUILD_INDEX_BFS_H
         this->lastNodeKnownPerRecord.reserve(this->records.size());
+        for (int recordId = 0; recordId < this->records.size(); recordId++) {
+            this->lastNodeKnownPerRecord[recordId] = this->root;
+        }
     #endif
 
     this->root = newNode();
@@ -23,15 +26,14 @@ Trie::Trie(vector<string>& records, Experiment* experiment) {
 
 void Trie::buildBfsIndex() {
     int maxLevel = this->records[0].length();
-    unsigned pattern = this->root;
 
     for (int currentIndexLevel = 0; currentIndexLevel < maxLevel; currentIndexLevel++) {
         for (int recordId = 0; recordId < this->records.size(); recordId++) {
 
             if (currentIndexLevel <= this->records[recordId].length() - 1) {
-                if (currentIndexLevel > 0) {
-                    pattern = this->lastNodeKnownPerRecord[recordId];
-                } else if (this->records[recordId].length() > maxLevel) {
+                unsigned pattern = this->lastNodeKnownPerRecord[recordId];
+
+                if (this->records[recordId].length() > maxLevel) {
                     maxLevel = this->records[recordId].length();
                 }
 
