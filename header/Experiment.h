@@ -20,6 +20,8 @@ public:
     unordered_map<string, string> config;
     int editDistanceThreshold;
     long numberOfNodes;
+    unsigned long numberOfActiveNodes;
+    unsigned long numberOfIterationInChildren;
     vector<long> processingTimes;
     vector<long> fetchingTimes;
     vector<long> resultsSize;
@@ -48,6 +50,10 @@ public:
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSize(int size);
     void incrementNumberOfNodes();
+    void incrementNumberOfActiveNodes();
+    void compileNumberOfActiveNodes();
+    void incrementNumberOfIterationInChildren();
+    void compileNumberOfIterationInChildren();
     void compileNumberOfNodes();
     void compileProportionOfBranchingSizeInBEVA2Level();
     void readQueryProcessingTime(string& filename);

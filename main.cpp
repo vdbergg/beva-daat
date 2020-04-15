@@ -43,6 +43,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    framework->writeExperiments();
+
     delete framework;
     return 0;
 }

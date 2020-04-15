@@ -17,6 +17,7 @@ class Beva {
 public:
     Trie* trie;
     EditVectorAutomata* editVectorAutomata;
+    Experiment *experiment;
     int editDistanceThreshold;
     vector<ActiveNode*> currentActiveNodes;// includes active nodes from all processed prefix since last reset
    
@@ -25,7 +26,7 @@ public:
     unsigned bitmapZero;
     unsigned bitmapOne;
 
-    Beva(Trie*, int);
+    Beva(Trie*, Experiment*, int);
     ~Beva();
 
     void process(string&);

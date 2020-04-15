@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Beva::Beva(Trie *trie, int editDistanceThreshold) {
+Beva::Beva(Trie *trie, Experiment* experiment, int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
     this->bitmapSize = (1 << ((2 * this->editDistanceThreshold) + 1)) - 1; // 2^(2tau + 1) - 1
     this->trie = trie;
@@ -17,6 +17,7 @@ Beva::Beva(Trie *trie, int editDistanceThreshold) {
     this->editVectorAutomata->buildAutomaton();
     this->bitmapZero = 0;
     this->bitmapOne = 1;
+    this->experiment = experiment;
 
     for (auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
 }
@@ -38,6 +39,7 @@ void Beva::process(string& query) {
 
     if (query.length() == 1) {
         this->currentActiveNodes.push_back(new ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
+//        this->experiment->incrementNumberOfActiveNodes();
     } else if (query.length() > this->editDistanceThreshold) {
         vector<ActiveNode*> activeNodes;
 
@@ -69,18 +71,24 @@ void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the l
 }
 
 void Beva::findActiveNodes(unsigned queryLength, ActiveNode* oldActiveNode, vector<ActiveNode*> &activeNodes) {
-    for (auto &i : this->trie->getNode(oldActiveNode->node).children) {
-        unsigned tempSize = oldActiveNode->level + 1;
-        unsigned char lastVal = this->trie->getNode(i).getValue();
+    ShortVector<unsigned>& children = this->trie->getNode(oldActiveNode->node).children;
+    unsigned tempSize = oldActiveNode->level + 1;
+
+    for (unsigned child : children) {
+//        this->experiment->incrementNumberOfIterationInChildren();
+
+        unsigned char lastVal = this->trie->getNode(child).getValue();
 
         State* newState = this->getNewState(queryLength, oldActiveNode->state, tempSize, (char) lastVal);
 
         if (newState->isFinal) continue;
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
-            activeNodes.push_back(new ActiveNode(i, newState, tempSize));
+            activeNodes.push_back(new ActiveNode(child, newState, tempSize));
+//            this->experiment->incrementNumberOfActiveNodes();
         } else {
-            ActiveNode tmp(i, newState, tempSize);
+            ActiveNode tmp(child, newState, tempSize);
+//            this->experiment->incrementNumberOfActiveNodes();
             this->findActiveNodes(queryLength, &tmp, activeNodes);
         }
     }

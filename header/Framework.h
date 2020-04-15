@@ -32,9 +32,9 @@ public:
     void index();
     void process(string, int, int);
     int output();
+    void writeExperiments();
 
     ~Framework();
-
 };
 
 

@@ -120,7 +120,7 @@ void Framework::index(){
 
     this->trie->shrinkToFit();
 
-    this->beva = new Beva(this->trie, this->editDistanceThreshold);
+    this->beva = new Beva(this->trie, this->experiment, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
 
@@ -164,6 +164,11 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
         #endif
         this->beva->reset(); // Reset the information from previous query
     }
+}
+
+void Framework::writeExperiments() {
+//    this->experiment->compileNumberOfActiveNodes();
+//    this->experiment->compileNumberOfIterationInChildren();
 }
 
 int Framework::output() {

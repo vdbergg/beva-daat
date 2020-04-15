@@ -245,6 +245,26 @@ void Experiment::incrementNumberOfNodes() {
     this->numberOfNodes++;
 }
 
+void Experiment::incrementNumberOfActiveNodes() {
+    this->numberOfActiveNodes++;
+}
+
+void Experiment::incrementNumberOfIterationInChildren() {
+    this->numberOfIterationInChildren++;
+}
+
+void Experiment::compileNumberOfActiveNodes() {
+    string value = "number_of_active_nodes\n";
+    value += to_string(this->numberOfActiveNodes) + "\n";
+    writeFile("number_of_active_nodes", value);
+}
+
+void Experiment::compileNumberOfIterationInChildren() {
+    string value = "number_of_iteration_in_children\n";
+    value += to_string(this->numberOfIterationInChildren) + "\n";
+    writeFile("number_of_iteration_in_children", value);
+}
+
 void Experiment::compileNumberOfNodes() {
     string value = "number_of_nodes\n";
     value += to_string(this->numberOfNodes) + "\n";
