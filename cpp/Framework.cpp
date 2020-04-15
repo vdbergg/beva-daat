@@ -108,7 +108,7 @@ void Framework::index(){
     }
 
     readData(datasetFile, this->records);
-//    sort(this->records.begin(), this->records.end());
+    //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
     this->trie = new Trie(this->records, this->experiment);
@@ -174,18 +174,18 @@ void Framework::writeExperiments() {
 int Framework::output() {
     vector<string> outputs;
 
-    for (ActiveNode* activeNode : this->beva->currentActiveNodes) {
-        unsigned beginRange = this->trie->getNode(activeNode->node).getBeginRange();
-        unsigned endRange = this->trie->getNode(activeNode->node).getEndRange();
+    for (ActiveNode activeNode : this->beva->currentActiveNodes) {
+        unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
+        unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
 
         for (unsigned i = beginRange; i < endRange; i++) {
             outputs.push_back(this->records[i]);
         }
     }
 
-//    for (const string& record : outputs) {
-//        cout << record << "\n";
-//    }
+    //    for (const string& record : outputs) {
+    //     cout << record << "\n";
+    // }
 
     return outputs.size();
 }

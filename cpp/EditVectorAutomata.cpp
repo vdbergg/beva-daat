@@ -5,6 +5,7 @@
 #include <queue>
 #include "../header/EditVectorAutomata.h"
 #include <unordered_map>
+#include <iostream>
 
 EditVectorAutomata::EditVectorAutomata(int editDistanceThreshold) {
     this->editDistanceThreshold = editDistanceThreshold;
@@ -36,7 +37,7 @@ State* EditVectorAutomata::setTransition(State*& state, unsigned bitmap, unorder
     editVector->buildEditVectorWithBitmap(bitmap, state->editVector);
 
     State* newState = nullptr;
-    if (state->display() == editVector->display()) { // State already exists, by convention we defined null when an state point to yourself
+    if (state->display() == editVector->display()) { // State already exists, by convention we defined null when an state point to himself
     } else if (states.find(editVector->display()) == states.end()) { // if not exists state in automaton
         bool isFinal = checkToTerminalEditVector(editVector, this->editDistanceThreshold);
         newState = new State(editVector, this->size, false, isFinal);

@@ -20,7 +20,7 @@ public:
     bool isInitial;
     bool isFinal;
     int id;
-//    string value;
+
 
     inline unsigned getEditDistance(int k) {
         return this->editVector->getEditDistance(k);
