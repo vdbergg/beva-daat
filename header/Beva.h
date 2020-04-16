@@ -19,7 +19,7 @@ public:
     EditVectorAutomata* editVectorAutomata;
     Experiment *experiment;
     int editDistanceThreshold;
-    vector<ActiveNode*> currentActiveNodes;// includes active nodes from all processed prefix since last reset
+    vector<ActiveNode> currentActiveNodes;// includes active nodes from all processed prefix since last reset
    
     int bitmapSize;
     unsigned bitmaps[CHAR_SIZE];
@@ -30,7 +30,7 @@ public:
     ~Beva();
 
     void process(string&);
-    void findActiveNodes(unsigned, ActiveNode*,  vector<ActiveNode*>&);
+    void findActiveNodes(unsigned, ActiveNode&,  vector<ActiveNode>&);
 
     inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c) {
         int k = (int) queryLength - (int) lastPosition;

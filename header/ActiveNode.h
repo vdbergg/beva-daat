@@ -10,8 +10,8 @@
 
 class ActiveNode {
 public:
-    unsigned node;
     State* state;
+    unsigned node;
     unsigned level;
 
     ActiveNode(unsigned, State*, unsigned);

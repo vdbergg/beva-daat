@@ -29,7 +29,6 @@ Beva::~Beva() {
 void Beva::reset() {
     for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
 
-    for (auto* activeNode : this->currentActiveNodes) delete activeNode;
     this->currentActiveNodes.clear(); // Clean the active nodes for next query
     this->currentActiveNodes.shrink_to_fit();
 }
@@ -38,17 +37,15 @@ void Beva::process(string& query) {
     this->updateBitmap(query);
 
     if (query.length() == 1) {
-        this->currentActiveNodes.push_back(new ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
+      this->currentActiveNodes.push_back(ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
 //        this->experiment->incrementNumberOfActiveNodes();
     } else if (query.length() > this->editDistanceThreshold) {
-        vector<ActiveNode*> activeNodes;
-
-        for (ActiveNode* oldActiveNode : this->currentActiveNodes) {
+      vector<ActiveNode> activeNodes;
+      
+      for (ActiveNode oldActiveNode : this->currentActiveNodes) {
             this->findActiveNodes(query.length(), oldActiveNode,activeNodes);
-            delete oldActiveNode;
         }
-        this->currentActiveNodes.clear();
-        this->currentActiveNodes = activeNodes;
+        swap(this->currentActiveNodes,activeNodes);
     }
 }
 
@@ -59,37 +56,35 @@ void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the l
         bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
     }
 
-    string temp = query;
-    temp.erase(query.length() - 1);
-    if (this->bitmaps[c] != this->bitmapZero && temp.find(c) != string::npos) { // Are two characters in the string window
-        // This is an bug in the BEVA algorithm
-        // solution: Set the last bit from the right to 1.
-        this->bitmaps[c] = utils::setKthBitFromDecimal(this->bitmaps[c], 0, this->bitmapSize);
+    if (this->bitmaps[c] != this->bitmapZero) {
+        if (query.find(c) < query.length() - 1) { // Are two characters in the string window
+            // This is an bug in the BEVA algorithm
+            // solution: Set the last bit from the right to 1.
+            this->bitmaps[c] = utils::setKthBitFromDecimal(this->bitmaps[c], 0, this->bitmapSize);
+        }
     } else {
-        this->bitmaps[c] = this->bitmaps[c] == this->bitmapZero ? this->bitmapOne : this->bitmaps[c];
+        this->bitmaps[c] =  this->bitmapOne;
     }
 }
 
-void Beva::findActiveNodes(unsigned queryLength, ActiveNode* oldActiveNode, vector<ActiveNode*> &activeNodes) {
-    ShortVector<unsigned>& children = this->trie->getNode(oldActiveNode->node).children;
-    unsigned tempSize = oldActiveNode->level + 1;
+void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vector<ActiveNode> &activeNodes) {
+    ShortVector<unsigned>& children = this->trie->getNode(oldActiveNode.node).children;
+    unsigned tempSize = oldActiveNode.level + 1;
 
     for (unsigned child : children) {
 //        this->experiment->incrementNumberOfIterationInChildren();
 
-        unsigned char lastVal = this->trie->getNode(child).getValue();
-
-        State* newState = this->getNewState(queryLength, oldActiveNode->state, tempSize, (char) lastVal);
+        State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize, this->trie->getNode(child).getValue());
 
         if (newState->isFinal) continue;
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
-            activeNodes.push_back(new ActiveNode(child, newState, tempSize));
-//            this->experiment->incrementNumberOfActiveNodes();
+            activeNodes.push_back(ActiveNode(child, newState, tempSize));
+        //            this->experiment->incrementNumberOfActiveNodes();
         } else {
             ActiveNode tmp(child, newState, tempSize);
-//            this->experiment->incrementNumberOfActiveNodes();
-            this->findActiveNodes(queryLength, &tmp, activeNodes);
+        //            this->experiment->incrementNumberOfActiveNodes();
+            this->findActiveNodes(queryLength, tmp, activeNodes);
         }
     }
 }
