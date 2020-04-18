@@ -167,8 +167,8 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
 }
 
 void Framework::writeExperiments() {
-//    this->experiment->compileNumberOfActiveNodes();
-//    this->experiment->compileNumberOfIterationInChildren();
+    this->experiment->compileNumberOfActiveNodes();
+    this->experiment->compileNumberOfIterationInChildren();
 }
 
 int Framework::output() {

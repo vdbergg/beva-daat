@@ -37,12 +37,12 @@ void Beva::process(string& query) {
     this->updateBitmap(query);
 
     if (query.length() == 1) {
-      this->currentActiveNodes.push_back(ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
-//        this->experiment->incrementNumberOfActiveNodes();
+        this->currentActiveNodes.push_back(ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
+        this->experiment->incrementNumberOfActiveNodes(query.length());
     } else if (query.length() > this->editDistanceThreshold) {
-      vector<ActiveNode> activeNodes;
-      
-      for (ActiveNode oldActiveNode : this->currentActiveNodes) {
+        vector<ActiveNode> activeNodes;
+
+        for (ActiveNode oldActiveNode : this->currentActiveNodes) {
             this->findActiveNodes(query.length(), oldActiveNode,activeNodes);
         }
         swap(this->currentActiveNodes,activeNodes);
@@ -72,7 +72,7 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
     unsigned tempSize = oldActiveNode.level + 1;
 
     for (unsigned child : children) {
-//        this->experiment->incrementNumberOfIterationInChildren();
+        this->experiment->incrementNumberOfIterationInChildren(queryLength);
 
         State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize, this->trie->getNode(child).getValue());
 
@@ -80,10 +80,10 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
             activeNodes.push_back(ActiveNode(child, newState, tempSize));
-        //            this->experiment->incrementNumberOfActiveNodes();
+            this->experiment->incrementNumberOfActiveNodes(queryLength);
         } else {
             ActiveNode tmp(child, newState, tempSize);
-        //            this->experiment->incrementNumberOfActiveNodes();
+            this->experiment->incrementNumberOfActiveNodes(queryLength);
             this->findActiveNodes(queryLength, tmp, activeNodes);
         }
     }

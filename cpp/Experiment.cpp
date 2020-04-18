@@ -55,6 +55,8 @@ Experiment::Experiment(unordered_map<string, string> config, int editDistanceThr
         this->fetchingTimes.push_back(0);
         this->resultsSize.push_back(0);
         this->currentQueryFetchingTime.push_back(0);
+        this->numberOfActiveNodes.push_back(0);
+        this->numberOfIterationInChildren.push_back(0);
     }
 
     this->recoveryMode = !(this->config["recovery_mode"] == "0");
@@ -245,23 +247,27 @@ void Experiment::incrementNumberOfNodes() {
     this->numberOfNodes++;
 }
 
-void Experiment::incrementNumberOfActiveNodes() {
-    this->numberOfActiveNodes++;
+void Experiment::incrementNumberOfActiveNodes(unsigned querySize) {
+    this->numberOfActiveNodes[querySize] += 1;
 }
 
-void Experiment::incrementNumberOfIterationInChildren() {
-    this->numberOfIterationInChildren++;
+void Experiment::incrementNumberOfIterationInChildren(unsigned querySize) {
+    this->numberOfIterationInChildren[querySize] += 1;
 }
 
 void Experiment::compileNumberOfActiveNodes() {
     string value = "number_of_active_nodes\n";
-    value += to_string(this->numberOfActiveNodes) + "\n";
+    for (unsigned i = 0; i < this->numberOfActiveNodes.size(); i++) {
+        value += to_string(i + 1) + "\t" + to_string(this->numberOfActiveNodes[i]) + "\n";
+    }
     writeFile("number_of_active_nodes", value);
 }
 
 void Experiment::compileNumberOfIterationInChildren() {
     string value = "number_of_iteration_in_children\n";
-    value += to_string(this->numberOfIterationInChildren) + "\n";
+    for (unsigned i = 0; i < this->numberOfIterationInChildren.size(); i++) {
+        value += to_string(i + 1) + "\t" + to_string(this->numberOfIterationInChildren[i]) + "\n";
+    }
     writeFile("number_of_iteration_in_children", value);
 }
 
