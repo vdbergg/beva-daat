@@ -56,15 +56,7 @@ void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the l
         bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
     }
 
-    if (this->bitmaps[c] != this->bitmapZero) {
-        if (query.find(c) < query.length() - 1) { // Are two characters in the string window
-            // This is an bug in the BEVA algorithm
-            // solution: Set the last bit from the right to 1.
-            this->bitmaps[c] = utils::setKthBitFromDecimal(this->bitmaps[c], 0, this->bitmapSize);
-        }
-    } else {
-        this->bitmaps[c] =  this->bitmapOne;
-    }
+    this->bitmaps[c] = this->bitmaps[c] | 1;
 }
 
 void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vector<ActiveNode> &activeNodes) {
