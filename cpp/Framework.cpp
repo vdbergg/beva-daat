@@ -65,6 +65,9 @@ void Framework::index(){
             break;
         case 3:
             sizeSufix = "";
+            break;
+        default:
+            sizeSufix = "_60";
     }
 
     auto start = chrono::high_resolution_clock::now();
