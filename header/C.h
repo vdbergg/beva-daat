@@ -17,6 +17,7 @@ public:
     static const int USADDR = 2;
     static const int MEDLINE19 = 3;
     static const int DBLP = 4;
+    static const int UMBC = 5;
 
 };
 

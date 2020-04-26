@@ -104,6 +104,10 @@ void Framework::index(){
             datasetFile += "dblp/dblp" + sizeSufix + ".txt";
             queryFile += "dblp/q17_" + tau + datasetSuffix + ".txt";
 	    break;
+        case C::UMBC:
+            datasetFile += "umbc/umbc" + sizeSufix + ".txt";
+            queryFile += "umbc/q17_" + tau + datasetSuffix + ".txt";
+            break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";

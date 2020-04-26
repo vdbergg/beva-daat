@@ -28,7 +28,7 @@ experiments_basepath=${cfg_array[10]}
 
 on_recovery_mode=0
 
-for dt in $(seq ${dataset} 4)
+for dt in $(seq ${dataset} 5)
 do
     if [[ "${dt}" != 1 ]] && [[ "${dt}" != 3 ]]; then # No have memory sufficient to experiment MEDLINE datasets
 
