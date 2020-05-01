@@ -11,17 +11,17 @@ Trie::Trie(vector<string>& records, Experiment* experiment) {
     this->records = records;
     this->globalMemory.reserve(this->records.size() * 5);
 
+    this->root = newNode();
+    getNode(this->root).setBeginRange(0);
+    getNode(this->root).setEndRange(this->records.size());
+    this->experiment->incrementNumberOfNodes();
+
     #ifdef BEVA_IS_BUILD_INDEX_BFS_H
         this->lastNodeKnownPerRecord.reserve(this->records.size());
         for (int recordId = 0; recordId < this->records.size(); recordId++) {
             this->lastNodeKnownPerRecord[recordId] = this->root;
         }
     #endif
-
-    this->root = newNode();
-    getNode(this->root).setBeginRange(0);
-    getNode(this->root).setEndRange(this->records.size());
-    this->experiment->incrementNumberOfNodes();
 }
 
 void Trie::buildBfsIndex() {
