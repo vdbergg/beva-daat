@@ -174,8 +174,10 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
 }
 
 void Framework::writeExperiments() {
-    this->experiment->compileNumberOfActiveNodes();
-    this->experiment->compileNumberOfIterationInChildren();
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->compileNumberOfActiveNodes();
+        this->experiment->compileNumberOfIterationInChildren();
+    #endif
 }
 
 int Framework::output() {
