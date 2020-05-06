@@ -156,7 +156,7 @@ void Framework::process(string query, int queryLength, int currentCountQuery) {
 
         if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
             this->experiment->initQueryFetchingTime();
-            int resultsSize = output();
+            unsigned long resultsSize = output();
             this->experiment->endQueryFetchingTime(query, resultsSize);
         }
     #endif
@@ -180,7 +180,7 @@ void Framework::writeExperiments() {
     #endif
 }
 
-int Framework::output() {
+unsigned long Framework::output() {
     vector<string> outputs;
 
     for (ActiveNode activeNode : this->beva->currentActiveNodes) {
@@ -196,5 +196,8 @@ int Framework::output() {
     //     cout << record << "\n";
     // }
 
-    return outputs.size();
+    unsigned long size = outputs.size();
+    outputs.shrink_to_fit();
+    outputs.clear();
+    return size;
 }

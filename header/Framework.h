@@ -31,7 +31,7 @@ public:
     void readData(string&, vector<string>&);
     void index();
     void process(string, int, int);
-    int output();
+    unsigned long output();
     void writeExperiments();
 
     ~Framework();

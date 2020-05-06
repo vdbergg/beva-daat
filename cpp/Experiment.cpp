@@ -141,7 +141,7 @@ void Experiment::initQueryFetchingTime() {
     this->startQueryFetchingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryFetchingTime(string &query, long resultsSize_) {
+void Experiment::endQueryFetchingTime(string &query, unsigned long resultsSize_) {
     this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
 
     int currentQueryLength = query.size();
@@ -238,7 +238,9 @@ void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     for (const pair<int, int> &p : elements) {
         value += to_string(p.first) + "\t" + to_string(p.second) + "\n";
     }
+    elements.shrink_to_fit();
     elements.clear();
+    this->branchSize.clear();
 
     writeFile("proportion_branch_size", value);
 }
@@ -259,6 +261,7 @@ void Experiment::compileNumberOfActiveNodes() {
     string value = "number_of_active_nodes\n";
     for (unsigned i = 0; i < this->numberOfActiveNodes.size(); i++) {
         value += to_string(i + 1) + "\t" + to_string(this->numberOfActiveNodes[i]) + "\n";
+        this->numberOfActiveNodes[i] = 0;
     }
     writeFile("number_of_active_nodes", value);
 }
@@ -267,6 +270,7 @@ void Experiment::compileNumberOfIterationInChildren() {
     string value = "number_of_iteration_in_children\n";
     for (unsigned i = 0; i < this->numberOfIterationInChildren.size(); i++) {
         value += to_string(i + 1) + "\t" + to_string(this->numberOfIterationInChildren[i]) + "\n";
+        this->numberOfIterationInChildren[i] = 0;
     }
     writeFile("number_of_iteration_in_children", value);
 }
