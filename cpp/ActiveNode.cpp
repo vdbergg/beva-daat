@@ -9,6 +9,3 @@ ActiveNode::ActiveNode(unsigned node, State* state, unsigned level) {
     this->state = state;
     this->level = level;
 }
-
-ActiveNode::~ActiveNode() {
-}

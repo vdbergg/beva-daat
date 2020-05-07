@@ -37,7 +37,7 @@ void Beva::process(string& query) {
     this->updateBitmap(query);
 
     if (query.length() == 1) {
-        this->currentActiveNodes.push_back(ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
+        this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
         #ifdef BEVA_IS_COLLECT_TIME_H
             this->experiment->incrementNumberOfActiveNodes(query.length());
         #endif
@@ -79,7 +79,7 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
         #endif
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
-            activeNodes.push_back(ActiveNode(child, newState, tempSize));
+            activeNodes.emplace_back(child, newState, tempSize);
         } else {
             ActiveNode tmp(child, newState, tempSize);
             this->findActiveNodes(queryLength, tmp, activeNodes);

@@ -6,7 +6,7 @@
 #define BEVA_ACTIVENODE_H
 
 
-#include "Node.h"
+#include "State.h"
 
 class ActiveNode {
 public:
@@ -15,7 +15,6 @@ public:
     unsigned level;
 
     ActiveNode(unsigned, State*, unsigned);
-    ~ActiveNode();
 };
 
 #endif //BEVA_ACTIVENODE_H

@@ -292,6 +292,9 @@ void Experiment::getMemoryUsedInProcessing() {
 
     float memoryUsed = stof(tokens[1]) / 1000;
 
+    tokens.clear();
+    tokens.shrink_to_fit();
+
     writeFile("memory_used_in_processing", to_string(memoryUsed) + "\n", true);
 }
 
@@ -307,6 +310,9 @@ void Experiment::getMemoryUsedInIndexing() {
     float memoryUsed = stof(tokens[1]) / 1000;
 
     string value = to_string(memoryUsed) + "\n";
+
+    tokens.clear();
+    tokens.shrink_to_fit();
 
     writeFile("memory_used_in_indexing", "memory_total_mb\tmemory_used_mb\n" + value);
 }

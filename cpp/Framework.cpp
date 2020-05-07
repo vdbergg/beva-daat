@@ -197,7 +197,7 @@ unsigned long Framework::output() {
     // }
 
     unsigned long size = outputs.size();
-    outputs.shrink_to_fit();
     outputs.clear();
+    outputs.shrink_to_fit();
     return size;
 }
