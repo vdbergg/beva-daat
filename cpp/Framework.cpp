@@ -142,32 +142,33 @@ void Framework::index(){
 }
 
 
-void Framework::process(string query, int queryLength, int currentCountQuery) {
+void Framework::process(string query, int prefixQueryLength, int currentCountQuery) {
     if (query.empty()) return;
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->initQueryProcessingTime();
     #endif
 
-    this->beva->process(query);
+    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), query);
+        this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), prefixQueryLength);
 
-        if (query.size() == 5 || query.size() == 9 || query.size() == 13 || query.size() == 17) {
+        if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13 || prefixQueryLength == 17) {
             this->experiment->initQueryFetchingTime();
             unsigned long resultsSize = output();
-            this->experiment->endQueryFetchingTime(query, resultsSize);
+            this->experiment->endQueryFetchingTime(prefixQueryLength, resultsSize);
         }
     #endif
 
     this->beva->currentActiveNodes.shrink_to_fit();
-    if (query.length() == queryLength) {
+    if (query.length() == prefixQueryLength) {
         #ifdef BEVA_IS_COLLECT_MEMORY_H
             this->experiment->getMemoryUsedInProcessing();
         #else
             this->experiment->compileQueryProcessingTimes(currentCountQuery);
-            this->experiment->saveQueryProcessingTime(query, currentCountQuery);
+            string currentQuery = query.substr(0, prefixQueryLength);
+            this->experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
         #endif
         this->beva->reset(); // Reset the information from previous query
     }
