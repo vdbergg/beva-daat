@@ -1,11 +1,8 @@
-#include <chrono>
-#include <thread>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include "header/Framework.h"
-#include "header/utils.h"
 #include "header/Directives.h"
 
 using namespace std;
@@ -16,7 +13,6 @@ void loadConfig();
 int main(int argc, char** argv) {
     loadConfig();
 
-    string q, query, queryRemaining;
     Framework* framework = new Framework(config);
     int indexMin = stoi(config["qry_number_start"]);
     int indexMax =  stoi(config["qry_number_end"]);
@@ -24,26 +20,18 @@ int main(int argc, char** argv) {
     #ifdef BEVA_IS_COLLECT_MEMORY_H
         indexMax = 100;
     #endif
+
+    const int MAX_QUERY_CHARACTER = 17;
+
     cout << "processing...\n";
 
     for (int i = indexMin; i < indexMax; ++i) {
-        q = framework->queries[i];
-        query = "";
-        queryRemaining = q.substr(0);
-
-        int count = 0;
-
-        while (query.length() <= q.length()) {
-            query = utils::normalize(query);
-            framework->process(query, (int) q.length(), i);
-
-            query += queryRemaining[count];
-            count++;
-//            this_thread::sleep_for(chrono::seconds(2));
+        for (int currentPrefixQuery = 1; currentPrefixQuery <= MAX_QUERY_CHARACTER; currentPrefixQuery++) {
+            framework->process(framework->queries[i], currentPrefixQuery, i);
         }
     }
 
-    framework->writeExperiments();
+//    framework->writeExperiments();
 
     delete framework;
     return 0;

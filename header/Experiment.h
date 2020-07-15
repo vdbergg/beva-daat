@@ -44,9 +44,9 @@ public:
     void initIndexingTime();
     void endIndexingTime();
     void initQueryProcessingTime();
-    void endQueryProcessingTime(long, string&);
+    void endQueryProcessingTime(long, int);
     void initQueryFetchingTime();
-    void endQueryFetchingTime(string&, unsigned long);
+    void endQueryFetchingTime(int, unsigned long);
     void compileQueryProcessingTimes(int);
     void proportionOfBranchingSize(int size);
     void incrementNumberOfNodes();

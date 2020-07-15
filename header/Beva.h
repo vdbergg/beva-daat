@@ -29,7 +29,7 @@ public:
     Beva(Trie*, Experiment*, int);
     ~Beva();
 
-    void process(string&);
+    void process(char, int);
     void findActiveNodes(unsigned, ActiveNode&,  vector<ActiveNode>&);
 
     inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c) {
@@ -45,7 +45,7 @@ public:
         return newState;
     }
 
-    void updateBitmap(string&);
+    void updateBitmap(char);
     void reset();
 };
 

@@ -2,7 +2,6 @@
 // Created by berg on 14/02/19.
 //
 
-#include <iostream>
 #include "../header/Beva.h"
 #include "../header/ActiveNode.h"
 #include "../header/utils.h"
@@ -33,32 +32,30 @@ void Beva::reset() {
     this->currentActiveNodes.shrink_to_fit();
 }
 
-void Beva::process(string& query) {
-    this->updateBitmap(query);
+void Beva::process(char ch, int prefixQueryLength) {
+    this->updateBitmap(ch);
 
-    if (query.length() == 1) {
+    if (prefixQueryLength == 1) {
         this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
-        #ifdef BEVA_IS_COLLECT_TIME_H
-            this->experiment->incrementNumberOfActiveNodes(query.length());
-        #endif
-    } else if (query.length() > this->editDistanceThreshold) {
+//        #ifdef BEVA_IS_COLLECT_TIME_H
+//            this->experiment->incrementNumberOfActiveNodes(query.length());
+//        #endif
+    } else if (prefixQueryLength > this->editDistanceThreshold) {
         vector<ActiveNode> activeNodes;
 
         for (ActiveNode oldActiveNode : this->currentActiveNodes) {
-            this->findActiveNodes(query.length(), oldActiveNode,activeNodes);
+            this->findActiveNodes(prefixQueryLength, oldActiveNode,activeNodes);
         }
         swap(this->currentActiveNodes,activeNodes);
     }
 }
 
-void Beva::updateBitmap(string& query) { // query is equivalent to Q' with the last character c
-    unsigned queryLength = query.length() - 1;
-
+void Beva::updateBitmap(char ch) { // query is equivalent to Q' with the last character c
     for (auto &bitmap : this->bitmaps) {
         bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
     }
 
-    this->bitmaps[query[queryLength]] = this->bitmaps[query[queryLength]] | 1;
+    this->bitmaps[ch] = this->bitmaps[ch] | 1;
 }
 
 void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vector<ActiveNode> &activeNodes) {
@@ -66,17 +63,18 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
     unsigned tempSize = oldActiveNode.level + 1;
 
     for (unsigned child : children) {
-        #ifdef BEVA_IS_COLLECT_TIME_H
-            this->experiment->incrementNumberOfIterationInChildren(queryLength);
-        #endif
+//        #ifdef BEVA_IS_COLLECT_TIME_H
+//            this->experiment->incrementNumberOfIterationInChildren(queryLength);
+//        #endif
 
-        State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize, this->trie->getNode(child).getValue());
+        State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize,
+                this->trie->getNode(child).getValue());
 
         if (newState->isFinal) continue;
 
-        #ifdef BEVA_IS_COLLECT_TIME_H
-            this->experiment->incrementNumberOfActiveNodes(queryLength);
-        #endif
+//        #ifdef BEVA_IS_COLLECT_TIME_H
+//            this->experiment->incrementNumberOfActiveNodes(queryLength);
+//        #endif
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
             activeNodes.emplace_back(child, newState, tempSize);

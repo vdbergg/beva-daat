@@ -141,38 +141,34 @@ void Experiment::initQueryFetchingTime() {
     this->startQueryFetchingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryFetchingTime(string &query, unsigned long resultsSize_) {
+void Experiment::endQueryFetchingTime(int prefixQueryLength, unsigned long resultsSize_) {
     this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
-
-    int currentQueryLength = query.size();
 
     long result = chrono::duration_cast<chrono::nanoseconds>(
             this->finishQueryFetchingTime - this->startQueryFetchingTime
     ).count();
 
-    this->currentQueryFetchingTime[currentQueryLength - 1] = result;
-    this->currentResultsSize[currentQueryLength - 1] = resultsSize_;
-    this->fetchingTimes[currentQueryLength - 1] += result;
-    this->resultsSize[currentQueryLength - 1] += resultsSize_;
+    this->currentQueryFetchingTime[prefixQueryLength - 1] = result;
+    this->currentResultsSize[prefixQueryLength - 1] = resultsSize_;
+    this->fetchingTimes[prefixQueryLength - 1] += result;
+    this->resultsSize[prefixQueryLength - 1] += resultsSize_;
 }
 
 void Experiment::initQueryProcessingTime() {
     this->startQueryProcessingTime = chrono::high_resolution_clock::now();
 }
 
-void Experiment::endQueryProcessingTime(long activeNodesSize, string &query) {
+void Experiment::endQueryProcessingTime(long activeNodesSize, int prefixQueryLength) {
     this->finishQueryProcessingTime = chrono::high_resolution_clock::now();
-
-    long currentQueryLength = query.size();
 
     long result = chrono::duration_cast<chrono::nanoseconds>(
             this->finishQueryProcessingTime - this->startQueryProcessingTime
     ).count();
 
-    this->currentQueryProcessingTime[currentQueryLength - 1] = result;
-    this->currentActiveNodesSize[currentQueryLength - 1] = activeNodesSize;
-    this->processingTimes[currentQueryLength - 1] += result;
-    this->activeNodesSizes[currentQueryLength - 1] += activeNodesSize;
+    this->currentQueryProcessingTime[prefixQueryLength - 1] = result;
+    this->currentActiveNodesSize[prefixQueryLength - 1] = activeNodesSize;
+    this->processingTimes[prefixQueryLength - 1] += result;
+    this->activeNodesSizes[prefixQueryLength - 1] += activeNodesSize;
 }
 
 void Experiment::saveQueryProcessingTime(string& query, int queryId) {
