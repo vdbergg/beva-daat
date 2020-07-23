@@ -5,13 +5,14 @@
 #include <string>
 #include "Node.h"
 #include "Experiment.h"
+#include "StaticString.h"
 
 #ifndef BEVA_TRIE_H
 #define BEVA_TRIE_H
 
 using namespace std;
 
-extern vector<string> records;
+extern vector<StaticString> records;
 
 class Trie {
 public:

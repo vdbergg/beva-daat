@@ -6,7 +6,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
-#include <thread>
+#include <sys/stat.h>
 #include "../header/Trie.h"
 #include "../header/C.h"
 #include "../header/Framework.h"
@@ -31,6 +31,37 @@ Framework::~Framework() {
     delete this->beva;
     delete this->trie;
     delete this->experiment;
+}
+
+unsigned long getFileSize(string filename) {
+    FILE *fp=fopen(filename.c_str(),"r");
+
+    struct stat buf;
+    fstat(fileno(fp), &buf);
+    fclose(fp);
+    return buf.st_size;
+}
+
+void Framework::readData(string& filename, vector<StaticString>& recs) {
+    cout << "reading dataset " << filename << endl;
+
+    string str;
+    ifstream input(filename, ios::in);
+
+    unsigned long fileSize = getFileSize(filename);
+//    cout << "Tamanho do Arquivo:" << fileSize << endl;
+    char *tmpPtr = (char*) malloc(sizeof(char)*fileSize);
+    StaticString::setDataBaseMemory(tmpPtr,fileSize);
+    while (getline(input, str)) {
+        for (char &c : str) {
+            if ((int) c == -61) continue;
+            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+                c = utils::convertSpecialCharToSimpleChar(c);
+            }
+            c = tolower(c);
+        }
+        if (!str.empty()) recs.push_back(StaticString(str));
+    }
 }
 
 void Framework::readData(string& filename, vector<string>& recs) {
@@ -182,7 +213,7 @@ void Framework::writeExperiments() {
 }
 
 unsigned long Framework::output() {
-    vector<string> outputs;
+    vector<StaticString> outputs;
 
     for (ActiveNode activeNode : this->beva->currentActiveNodes) {
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
