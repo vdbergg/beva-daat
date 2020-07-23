@@ -114,11 +114,11 @@ void Framework::index(){
             break;
     }
 
-    readData(datasetFile, this->records);
+    readData(datasetFile, records);
     //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
 
-    this->trie = new Trie(this->records, this->experiment);
+    this->trie = new Trie(this->experiment);
     #ifdef BEVA_IS_BUILD_INDEX_BFS_H
         this->trie->buildBfsIndex();
     #else
@@ -189,7 +189,7 @@ unsigned long Framework::output() {
         unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
 
         for (unsigned i = beginRange; i < endRange; i++) {
-            outputs.push_back(this->records[i]);
+            outputs.push_back(records[i]);
         }
     }
 
