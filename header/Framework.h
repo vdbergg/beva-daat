@@ -27,6 +27,7 @@ public:
 
     Framework(unordered_map<string, string>);
 
+    void readData(string&, vector<StaticString>&);
     void readData(string&, vector<string>&);
     void index();
     void process(string, int, int);

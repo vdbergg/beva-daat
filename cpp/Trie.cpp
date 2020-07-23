@@ -6,7 +6,7 @@
 #include "../header/Experiment.h"
 #include "../header/Directives.h"
 
-vector<string> records;
+vector<StaticString> records;
 
 Trie::Trie(Experiment* experiment) {
     this->experiment = experiment;
@@ -59,7 +59,7 @@ void Trie::buildDfsIndex() {
         unsigned node = this->root;
         int currentIndexLevel = 0;
 
-        for (unsigned char ch : records[recordId]) {
+        for (unsigned char ch : string(records[recordId].c_str())) {
             node = this->insert((char)ch, recordId, node);
 
             currentIndexLevel++;
