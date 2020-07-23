@@ -17,7 +17,6 @@ using namespace std;
 class Framework {
 public:
     Trie* trie;
-    vector<string> records;
     vector<string> queries;
     int editDistanceThreshold;
     int dataset;

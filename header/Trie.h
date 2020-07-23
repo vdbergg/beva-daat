@@ -11,16 +11,17 @@
 
 using namespace std;
 
+extern vector<string> records;
+
 class Trie {
 public:
     vector<Node> globalMemory;
     unsigned root;
-    vector<string> records;
     vector<unsigned> lastNodeKnownPerRecord;
 
     Experiment* experiment;
 
-    Trie(vector<string>&, Experiment*);
+    Trie(Experiment*);
 
     void buildBfsIndex();
     void buildDfsIndex();

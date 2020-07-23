@@ -6,43 +6,44 @@
 #include "../header/Experiment.h"
 #include "../header/Directives.h"
 
-Trie::Trie(vector<string>& records, Experiment* experiment) {
+vector<string> records;
+
+Trie::Trie(Experiment* experiment) {
     this->experiment = experiment;
-    this->records = records;
-    this->globalMemory.reserve(this->records.size() * 5);
+    this->globalMemory.reserve(records.size() * 5);
 
     this->root = newNode();
     getNode(this->root).setBeginRange(0);
-    getNode(this->root).setEndRange(this->records.size());
+    getNode(this->root).setEndRange(records.size());
     this->experiment->incrementNumberOfNodes();
 
     #ifdef BEVA_IS_BUILD_INDEX_BFS_H
-        this->lastNodeKnownPerRecord.reserve(this->records.size());
-        for (int recordId = 0; recordId < this->records.size(); recordId++) {
+        this->lastNodeKnownPerRecord.reserve(records.size());
+        for (int recordId = 0; recordId < records.size(); recordId++) {
             this->lastNodeKnownPerRecord[recordId] = this->root;
         }
     #endif
 }
 
 void Trie::buildBfsIndex() {
-    int maxLevel = this->records[0].length();
+    int maxLevel = records[0].length();
 
     for (int currentIndexLevel = 0; currentIndexLevel < maxLevel; currentIndexLevel++) {
-        for (int recordId = 0; recordId < this->records.size(); recordId++) {
+        for (int recordId = 0; recordId < records.size(); recordId++) {
 
-            if (currentIndexLevel <= this->records[recordId].length() - 1) {
+            if (currentIndexLevel <= records[recordId].length() - 1) {
                 unsigned pattern = this->lastNodeKnownPerRecord[recordId];
 
-                if (this->records[recordId].length() > maxLevel) {
-                    maxLevel = this->records[recordId].length();
+                if (records[recordId].length() > maxLevel) {
+                    maxLevel = records[recordId].length();
                 }
 
-                unsigned char ch = this->records[recordId][currentIndexLevel];
+                unsigned char ch = records[recordId][currentIndexLevel];
                 unsigned node = this->insert((char) ch, recordId, pattern);
                 getNode(node).setEndRange(recordId + 1);
                 this->lastNodeKnownPerRecord[recordId] = node;
 
-                if (currentIndexLevel == this->records[recordId].length() - 1) {
+                if (currentIndexLevel == records[recordId].length() - 1) {
                     getNode(node).setIsEndOfWord(true);
                     #ifdef BEVA_IS_COLLECT_TIME_H
                         this->experiment->proportionOfBranchingSize(currentIndexLevel + 1);
@@ -54,11 +55,11 @@ void Trie::buildBfsIndex() {
 }
 
 void Trie::buildDfsIndex() {
-    for (int recordId = 0; recordId < this->records.size(); recordId++) {
+    for (int recordId = 0; recordId < records.size(); recordId++) {
         unsigned node = this->root;
         int currentIndexLevel = 0;
 
-        for (unsigned char ch : this->records[recordId]) {
+        for (unsigned char ch : records[recordId]) {
             node = this->insert((char)ch, recordId, node);
 
             currentIndexLevel++;
