@@ -206,21 +206,22 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
 }
 
 void Framework::writeExperiments() {
-    #ifdef BEVA_IS_COLLECT_TIME_H
+    #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->compileNumberOfActiveNodes();
         this->experiment->compileNumberOfIterationInChildren();
     #endif
 }
 
 unsigned long Framework::output() {
-    vector<StaticString> outputs;
+    vector<char *> outputs;
+    string tmp;
 
     for (ActiveNode activeNode : this->beva->currentActiveNodes) {
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
         unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
 
         for (unsigned i = beginRange; i < endRange; i++) {
-            outputs.push_back(records[i]);
+            outputs.push_back(records[i].c_str());
         }
     }
 
@@ -230,6 +231,6 @@ unsigned long Framework::output() {
 
     unsigned long size = outputs.size();
     outputs.clear();
-    outputs.shrink_to_fit();
+//    outputs.shrink_to_fit();
     return size;
 }

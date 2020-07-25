@@ -31,7 +31,9 @@ int main(int argc, char** argv) {
         }
     }
 
-//    framework->writeExperiments();
+    #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+    framework->writeExperiments();
+    #endif
 
     delete framework;
     return 0;
