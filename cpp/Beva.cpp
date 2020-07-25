@@ -37,9 +37,9 @@ void Beva::process(char ch, int prefixQueryLength) {
 
     if (prefixQueryLength == 1) {
         this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
-//        #ifdef BEVA_IS_COLLECT_TIME_H
-//            this->experiment->incrementNumberOfActiveNodes(query.length());
-//        #endif
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+        this->experiment->incrementNumberOfActiveNodes(query.length());
+        #endif
     } else if (prefixQueryLength > this->editDistanceThreshold) {
         vector<ActiveNode> activeNodes;
 
@@ -63,18 +63,18 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
     unsigned tempSize = oldActiveNode.level + 1;
 
     for (unsigned child : children) {
-//        #ifdef BEVA_IS_COLLECT_TIME_H
-//            this->experiment->incrementNumberOfIterationInChildren(queryLength);
-//        #endif
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+        this->experiment->incrementNumberOfIterationInChildren(queryLength);
+        #endif
 
         State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize,
                 this->trie->getNode(child).getValue());
 
         if (newState->isFinal) continue;
 
-//        #ifdef BEVA_IS_COLLECT_TIME_H
-//            this->experiment->incrementNumberOfActiveNodes(queryLength);
-//        #endif
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+        this->experiment->incrementNumberOfActiveNodes(queryLength);
+        #endif
 
         if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
             activeNodes.emplace_back(child, newState, tempSize);
