@@ -28,25 +28,25 @@ public:
     unsigned insert(char ch, int, unsigned);
 
     inline Node* getNodeAddr(unsigned x) {
-      return &globalMemory[x];
+        return &globalMemory[x];
     }
     
     inline Node& getNode(unsigned x) {
-      if (x >= globalMemory.size()) {
-	cout << "ERRO\n";
-	exit(1);
-      }
-      return globalMemory[x];
+        if (x >= globalMemory.size()) {
+            cout << "ERRO\n";
+            exit(1);
+        }
+        return globalMemory[x];
     }
     
     inline unsigned newNode() {
-      globalMemory.emplace_back();
-      return globalMemory.size() - 1;
+        globalMemory.emplace_back();
+        return globalMemory.size() - 1;
     }
     
     inline unsigned newNode(char ch) {
-      globalMemory.emplace_back(ch);
-      return globalMemory.size() - 1;
+        globalMemory.emplace_back(ch);
+        return globalMemory.size() - 1;
     }
 
     void shrinkToFit();

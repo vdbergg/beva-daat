@@ -54,27 +54,26 @@ void Trie::buildBfsIndex() {
     }
 }
 
-unsigned Trie::insert(char ch, int recordId, unsigned pattern) {
-  unsigned child =getNode(pattern).children;
-  unsigned endChilds = child+getNode(pattern).numFilhos;
-    for (; child < endChilds; child++) {
-        if (getNode(child).getValue() == ch) break;
+unsigned Trie::insert(char ch, int recordId, unsigned parent) {
+    unsigned child;
+    unsigned numChildren = getNode(parent).numChildren;
+    if (numChildren) {
+        unsigned child = getNode(parent).children + numChildren - 1;
+        if (getNode(child).getValue() == ch) return child;
     }
+    unsigned node = newNode();
+    if (numChildren == 0) getNode(parent).children = node;
 
-    if (child == endChilds) {
-      unsigned node = newNode();
-      if (endChilds == 0) { getNode(pattern).children=node;}
-      getNode(node).setValue(ch);
-      getNode(node).setBeginRange(recordId);
-      getNode(pattern).numFilhos++;
-        #ifdef BEVA_IS_COLLECT_TIME_H
-            this->experiment->incrementNumberOfNodes();
-        #endif
-        return node;
-    }
+    getNode(node).setValue(ch);
+    getNode(node).setBeginRange(recordId);
+    getNode(parent).numChildren++;
+    #ifdef BEVA_IS_COLLECT_TIME_H
+    this->experiment->incrementNumberOfNodes();
+    #endif
 
-    return child;
+    return node;
 }
+
 
 void Trie::shrinkToFit() {
     this->globalMemory.shrink_to_fit();
@@ -83,5 +82,4 @@ void Trie::shrinkToFit() {
         this->lastNodeKnownPerRecord.clear();
         this->lastNodeKnownPerRecord.shrink_to_fit();
     #endif
-
 }

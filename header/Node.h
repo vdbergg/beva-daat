@@ -16,23 +16,23 @@ using namespace std;
 
 class Node {
 public:
-  //    ShortVector<unsigned> children;
-  unsigned children;
-  unsigned beginRange;
-  unsigned endRange;
-  unsigned char numFilhos;
-  bool isEndOfWord;
-  char value;
+    //    ShortVector<unsigned> children;
+    unsigned children;
+    unsigned beginRange;
+    unsigned endRange;
+    unsigned char numChildren;
+    bool isEndOfWord;
+    char value;
 
     Node(char value) {
-      this->numFilhos = 0;
-      this->setValue(value);
-      this->setIsEndOfWord(false);
+        this->numChildren = 0;
+        this->setValue(value);
+        this->setIsEndOfWord(false);
     }
 
     Node() {
-      this->numFilhos=0;
-      this->setIsEndOfWord(false);
+        this->numChildren = 0;
+        this->setIsEndOfWord(false);
     }
 
     inline void setValue(char value) { this->value = value; }

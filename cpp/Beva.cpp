@@ -33,39 +33,38 @@ void Beva::reset() {
 }
 
 void Beva::process(char ch, int prefixQueryLength) {
-  this->updateBitmap(ch);
+    this->updateBitmap(ch);
   
-  if (prefixQueryLength == 1) {
-    this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
-#ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
-    this->experiment->incrementNumberOfActiveNodes(query.length());
-#endif
-  } else if (prefixQueryLength > this->editDistanceThreshold) {
-    vector<ActiveNode> activeNodes;
-    
-    for (ActiveNode oldActiveNode : this->currentActiveNodes) {
-      this->findActiveNodes(prefixQueryLength, oldActiveNode,activeNodes);
+    if (prefixQueryLength == 1) {
+        this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+        this->experiment->incrementNumberOfActiveNodes(query.length());
+        #endif
+    } else if (prefixQueryLength > this->editDistanceThreshold) {
+        vector<ActiveNode> activeNodes;
+
+        for (ActiveNode oldActiveNode : this->currentActiveNodes) {
+            this->findActiveNodes(prefixQueryLength, oldActiveNode,activeNodes);
+        }
+        swap(this->currentActiveNodes,activeNodes);
     }
-    swap(this->currentActiveNodes,activeNodes);
-  }
 }
 
 void Beva::updateBitmap(char ch) { // query is equivalent to Q' with the last character c
-  for (auto &bitmap : this->bitmaps) {
-    bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
-  }
+    for (auto &bitmap : this->bitmaps) {
+        bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
+    }
   
-  this->bitmaps[ch] = this->bitmaps[ch] | 1;
+    this->bitmaps[ch] = this->bitmaps[ch] | 1;
 }
 
 void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vector<ActiveNode> &activeNodes) {
-  unsigned child = this->trie->getNode(oldActiveNode.node).children;
-  unsigned endChilds = child+this->trie->getNode(oldActiveNode.node).numFilhos;
-   
+    unsigned child = this->trie->getNode(oldActiveNode.node).children;
+    unsigned endChilds = child + this->trie->getNode(oldActiveNode.node).numChildren;
 
-  unsigned tempSize = oldActiveNode.level + 1;
-   for (; child < endChilds; child++) {
-#ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+    unsigned tempSize = oldActiveNode.level + 1;
+    for (; child < endChilds; child++) {
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfIterationInChildren(queryLength);
         #endif
 

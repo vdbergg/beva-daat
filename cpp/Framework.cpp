@@ -230,7 +230,7 @@ unsigned long Framework::output() {
     // }
 
     unsigned long size = outputs.size();
-    cout <<  "Número de resultados: "<< size << endl;
+//    cout <<  "Número de resultados: "<< size << endl;
     outputs.clear();
 //    outputs.shrink_to_fit();
     return size;
