@@ -28,15 +28,15 @@ public:
 
     Beva(Trie*, Experiment*, int);
     ~Beva();
-
+    
     void process(char, int);
     void findActiveNodes(unsigned, ActiveNode&,  vector<ActiveNode>&);
-
+    
     inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c) {
-        int k = (int) queryLength - (int) lastPosition;
-        return utils::leftShiftBitInDecimal(this->bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
+      int k = (int) queryLength - (int) lastPosition;
+      return utils::leftShiftBitInDecimal(this->bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
     }
-
+    
     inline State* getNewState(unsigned queryLength, State* state, unsigned lastPosition, char c) {
         unsigned bitmap = this->buildBitmap(queryLength, lastPosition, c);
 

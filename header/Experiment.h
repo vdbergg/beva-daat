@@ -7,7 +7,7 @@
 
 #include "../header/Directives.h"
 
-#ifdef BEVA_IS_MAC_H
+#ifndef BEVA_IS_MAC_H
 #include "sys/sysinfo.h"
 #else
 #include "sys/types.h"
@@ -40,7 +40,7 @@ public:
 
     bool recoveryMode = false;
 
-    #ifdef BEVA_IS_MAC_H
+    #ifndef BEVA_IS_MAC_H
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
 

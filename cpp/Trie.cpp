@@ -10,7 +10,7 @@ vector<StaticString> records;
 
 Trie::Trie(Experiment* experiment) {
     this->experiment = experiment;
-    this->globalMemory.reserve(records.size() * 5);
+    this->globalMemory.reserve(records.size() * 4);
 
     this->root = newNode();
     getNode(this->root).setBeginRange(0);
@@ -54,44 +54,26 @@ void Trie::buildBfsIndex() {
     }
 }
 
-void Trie::buildDfsIndex() {
-    for (int recordId = 0; recordId < records.size(); recordId++) {
-        unsigned node = this->root;
-        int currentIndexLevel = 0;
-
-        for (unsigned char ch : string(records[recordId].c_str())) {
-            node = this->insert((char)ch, recordId, node);
-
-            currentIndexLevel++;
-            getNode(node).setEndRange(recordId + 1);
-        }
-        getNode(node).setIsEndOfWord(true);
-        #ifdef BEVA_IS_COLLECT_TIME_H
-                this->experiment->proportionOfBranchingSize(currentIndexLevel);
-        #endif
-    }
-}
-
 unsigned Trie::insert(char ch, int recordId, unsigned pattern) {
-    ShortVector<unsigned>::iterator vit = getNode(pattern).children.begin();
-
-    for (; vit != getNode(pattern).children.end(); vit++) {
-        if (getNode((*vit)).getValue() == ch) break;
+  unsigned child =getNode(pattern).children;
+  unsigned endChilds = child+getNode(pattern).numFilhos;
+    for (; child < endChilds; child++) {
+        if (getNode(child).getValue() == ch) break;
     }
 
-    if (vit == getNode(pattern).children.end()) {
-        unsigned node = newNode();
-        getNode(node).setValue(ch);
-        getNode(node).setBeginRange(recordId);
-
-        getNode(pattern).children.push_back(node);
+    if (child == endChilds) {
+      unsigned node = newNode();
+      if (endChilds == 0) { getNode(pattern).children=node;}
+      getNode(node).setValue(ch);
+      getNode(node).setBeginRange(recordId);
+      getNode(pattern).numFilhos++;
         #ifdef BEVA_IS_COLLECT_TIME_H
             this->experiment->incrementNumberOfNodes();
         #endif
         return node;
     }
 
-    return *vit;
+    return child;
 }
 
 void Trie::shrinkToFit() {
@@ -102,7 +84,4 @@ void Trie::shrinkToFit() {
         this->lastNodeKnownPerRecord.shrink_to_fit();
     #endif
 
-    for (auto node : this->globalMemory) {
-        node.children.shrink_to_fit();
-    }
 }
