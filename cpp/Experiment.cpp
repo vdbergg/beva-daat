@@ -96,13 +96,7 @@ void Experiment::readQueryProcessingTime(string& filename) {
 
 void Experiment::writeFile(const string& name, const string& value, bool writeInTheEnd) {
     ofstream myfile;
-    string buildIndexType;
-
-    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
-        buildIndexType = "bfs";
-    #else
-        buildIndexType = "dfs";
-    #endif
+    string buildIndexType = "bfs"; // Legado
 
     string newName = config["experiments_basepath"] + name;
     newName += "_data_set_" + config["dataset"] + "_size_type_" + config["size_type"] + "_tau_" +

@@ -34,7 +34,7 @@ void Beva::reset() {
 
 void Beva::process(char ch, int prefixQueryLength) {
     this->updateBitmap(ch);
-  
+
     if (prefixQueryLength == 1) {
         this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H

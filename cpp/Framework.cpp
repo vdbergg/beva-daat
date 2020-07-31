@@ -150,12 +150,7 @@ void Framework::index(){
     readData(queryFile, this->queries);
 
     this->trie = new Trie(this->experiment);
-    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
-        this->trie->buildBfsIndex();
-    #else
-        this->trie->buildDfsIndex();
-    #endif
-
+    this->trie->buildLaatIndex();
     this->trie->shrinkToFit();
 
     this->beva = new Beva(this->trie, this->experiment, this->editDistanceThreshold);

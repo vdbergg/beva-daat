@@ -17,29 +17,27 @@ Trie::Trie(Experiment* experiment) {
     getNode(this->root).setEndRange(records.size());
     this->experiment->incrementNumberOfNodes();
 
-    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
-        this->lastNodeKnownPerRecord.reserve(records.size());
-        for (int recordId = 0; recordId < records.size(); recordId++) {
-            this->lastNodeKnownPerRecord[recordId] = this->root;
-        }
-    #endif
+    this->lastNodeKnownPerRecord.reserve(records.size());
+    for (int recordId = 0; recordId < records.size(); recordId++) {
+        this->lastNodeKnownPerRecord[recordId] = this->root;
+    }
 }
 
-void Trie::buildBfsIndex() {
+void Trie::buildLaatIndex() {
     int maxLevel = records[0].length();
 
     for (int currentIndexLevel = 0; currentIndexLevel < maxLevel; currentIndexLevel++) {
         for (int recordId = 0; recordId < records.size(); recordId++) {
 
             if (currentIndexLevel <= records[recordId].length() - 1) {
-                unsigned pattern = this->lastNodeKnownPerRecord[recordId];
+                unsigned parent = this->lastNodeKnownPerRecord[recordId];
 
                 if (records[recordId].length() > maxLevel) {
                     maxLevel = records[recordId].length();
                 }
 
                 unsigned char ch = records[recordId][currentIndexLevel];
-                unsigned node = this->insert((char) ch, recordId, pattern);
+                unsigned node = this->insert((char) ch, recordId, parent);
                 getNode(node).setEndRange(recordId + 1);
                 this->lastNodeKnownPerRecord[recordId] = node;
 
@@ -78,8 +76,6 @@ unsigned Trie::insert(char ch, int recordId, unsigned parent) {
 void Trie::shrinkToFit() {
     this->globalMemory.shrink_to_fit();
 
-    #ifdef BEVA_IS_BUILD_INDEX_BFS_H
-        this->lastNodeKnownPerRecord.clear();
-        this->lastNodeKnownPerRecord.shrink_to_fit();
-    #endif
+    this->lastNodeKnownPerRecord.clear();
+    this->lastNodeKnownPerRecord.shrink_to_fit();
 }

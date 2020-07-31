@@ -24,7 +24,7 @@ public:
 
     Trie(Experiment*);
 
-    void buildBfsIndex();
+    void buildLaatIndex();
     unsigned insert(char ch, int, unsigned);
 
     inline Node* getNodeAddr(unsigned x) {
@@ -43,7 +43,7 @@ public:
         globalMemory.emplace_back();
         return globalMemory.size() - 1;
     }
-    
+
     inline unsigned newNode(char ch) {
         globalMemory.emplace_back(ch);
         return globalMemory.size() - 1;
