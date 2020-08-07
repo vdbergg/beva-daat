@@ -10,7 +10,11 @@ vector<StaticString> records;
 
 Trie::Trie(Experiment* experiment) {
     this->experiment = experiment;
-    this->globalMemory.reserve(records.size() * 4);
+    if (this->experiment->config["dataset"] == "3") { // Medline
+        this->globalMemory.reserve(2308200000);
+    } else {
+        this->globalMemory.reserve(records.size() * 4);
+    }
 
     this->root = newNode();
     getNode(this->root).setBeginRange(0);
