@@ -30,8 +30,8 @@ public:
     void readData(string&, vector<StaticString>&);
     void readData(string&, vector<string>&);
     void index();
-    void process(string, int, int);
-    unsigned long output();
+    void process(string, int, int, vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes);
+    vector<char *> output(vector<ActiveNode>& currentActiveNodes);
     void writeExperiments();
 
     ~Framework();

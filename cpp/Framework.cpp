@@ -168,26 +168,30 @@ void Framework::index(){
 }
 
 
-void Framework::process(string query, int prefixQueryLength, int currentCountQuery) {
+void Framework::process(string query, int prefixQueryLength, int currentCountQuery,
+        vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes) {
     if (query.empty()) return;
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->initQueryProcessingTime();
     #endif
 
-    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength);
+    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength, oldActiveNodes, currentActiveNodes);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->endQueryProcessingTime(this->beva->currentActiveNodes.size(), prefixQueryLength);
+        this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
-        if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13 || prefixQueryLength == 17) {
-            this->experiment->initQueryFetchingTime();
-            unsigned long resultsSize = output();
-            this->experiment->endQueryFetchingTime(prefixQueryLength, resultsSize);
+        if (config["load_test"] == "0") {
+            if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
+            || prefixQueryLength == 17) {
+                this->experiment->initQueryFetchingTime();
+                vector<char *> results = output(currentActiveNodes);
+                this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());
+            }
         }
     #endif
 
-    this->beva->currentActiveNodes.shrink_to_fit();
+    currentActiveNodes.shrink_to_fit();
     if (query.length() == prefixQueryLength) {
         #ifdef BEVA_IS_COLLECT_MEMORY_H
             this->experiment->getMemoryUsedInProcessing();
@@ -207,11 +211,11 @@ void Framework::writeExperiments() {
     #endif
 }
 
-unsigned long Framework::output() {
+vector<char *> Framework::output(vector<ActiveNode>& currentActiveNodes) {
     vector<char *> outputs;
     string tmp;
 
-    for (ActiveNode activeNode : this->beva->currentActiveNodes) {
+    for (ActiveNode activeNode : currentActiveNodes) {
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
         unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
 
@@ -224,9 +228,5 @@ unsigned long Framework::output() {
     //     cout << record << "\n";
     // }
 
-    unsigned long size = outputs.size();
-//    cout <<  "Número de resultados: "<< size << endl;
-    outputs.clear();
-//    outputs.shrink_to_fit();
-    return size;
+    return outputs;
 }

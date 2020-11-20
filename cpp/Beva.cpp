@@ -27,26 +27,23 @@ Beva::~Beva() {
 
 void Beva::reset() {
     for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
-
-    this->currentActiveNodes.clear(); // Clean the active nodes for next query
-    this->currentActiveNodes.shrink_to_fit();
 }
 
-void Beva::process(char ch, int prefixQueryLength) {
+void Beva::process(char ch, int prefixQueryLength, vector<ActiveNode>& oldActiveNodes,
+        vector<ActiveNode>& currentActiveNodes) {
     this->updateBitmap(ch);
 
     if (prefixQueryLength == 1) {
-        this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
+        currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfActiveNodes(query.length());
         #endif
     } else if (prefixQueryLength > this->editDistanceThreshold) {
-        vector<ActiveNode> activeNodes;
-
-        for (ActiveNode oldActiveNode : this->currentActiveNodes) {
-            this->findActiveNodes(prefixQueryLength, oldActiveNode,activeNodes);
+        for (ActiveNode oldActiveNode : oldActiveNodes) {
+            this->findActiveNodes(prefixQueryLength, oldActiveNode,currentActiveNodes);
         }
-        swap(this->currentActiveNodes,activeNodes);
+    } else {
+        swap(currentActiveNodes, oldActiveNodes);
     }
 }
 
