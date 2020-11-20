@@ -32,10 +32,14 @@ int main(int argc, char** argv) {
         for (int i = indexMin; i < indexMax; ++i) {
             vector<ActiveNode> currentActiveNodes;
             vector<ActiveNode> oldActiveNodes;
+            unsigned bitmaps[CHAR_SIZE];
+            for (auto & bitmap : bitmaps) bitmap = framework->beva->bitmapZero;
+
             for (int currentPrefixQuery = 1; currentPrefixQuery <= MAX_QUERY_CHARACTER; currentPrefixQuery++) {
                 swap(oldActiveNodes, currentActiveNodes);
                 currentActiveNodes.clear();
-                framework->process(framework->queries[i], currentPrefixQuery, i, oldActiveNodes, currentActiveNodes);
+                framework->process(framework->queries[i], currentPrefixQuery, i, oldActiveNodes,
+                        currentActiveNodes, bitmaps);
                 oldActiveNodes.clear();
             }
         }
@@ -74,10 +78,14 @@ int main(int argc, char** argv) {
 
                         vector<ActiveNode> currentActiveNodes;
                         vector<ActiveNode> oldActiveNodes;
+                        unsigned bitmaps[CHAR_SIZE];
+                        for (auto & bitmap : bitmaps) bitmap = framework->beva->bitmapZero;
+
                         for (int currentPrefixQuery = 1; currentPrefixQuery <= query.size(); currentPrefixQuery++) {
                             swap(oldActiveNodes, currentActiveNodes);
                             currentActiveNodes.clear();
-                            framework->process(query, currentPrefixQuery, queryId, oldActiveNodes, currentActiveNodes);
+                            framework->process(query, currentPrefixQuery, queryId, oldActiveNodes,
+                                    currentActiveNodes, bitmaps);
 
                             #ifdef BEVA_IS_COLLECT_TIME_H
                                 if (config["load_test"] == "1" && currentPrefixQuery == 17) {

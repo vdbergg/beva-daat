@@ -169,14 +169,15 @@ void Framework::index(){
 
 
 void Framework::process(string query, int prefixQueryLength, int currentCountQuery,
-        vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes) {
+        vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
     if (query.empty()) return;
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->initQueryProcessingTime();
     #endif
 
-    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength, oldActiveNodes, currentActiveNodes);
+    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength, oldActiveNodes, currentActiveNodes,
+            bitmaps);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
@@ -200,7 +201,6 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
             string currentQuery = query.substr(0, prefixQueryLength);
             this->experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
         #endif
-        this->beva->reset(); // Reset the information from previous query
     }
 }
 
