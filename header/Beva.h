@@ -19,34 +19,33 @@ public:
     EditVectorAutomata* editVectorAutomata;
     Experiment *experiment;
     int editDistanceThreshold;
-    vector<ActiveNode> currentActiveNodes;// includes active nodes from all processed prefix since last reset
-   
+
     int bitmapSize;
-    unsigned bitmaps[CHAR_SIZE];
     unsigned bitmapZero;
     unsigned bitmapOne;
 
     Beva(Trie*, Experiment*, int);
     ~Beva();
     
-    void process(char, int);
-    void findActiveNodes(unsigned, ActiveNode&,  vector<ActiveNode>&);
+    void process(char, int, vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes,
+            unsigned (&bitmaps)[CHAR_SIZE]);
+    void findActiveNodes(unsigned, ActiveNode&, vector<ActiveNode>&, unsigned (&bitmaps)[CHAR_SIZE]);
     
-    inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c) {
+    inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c, unsigned (&bitmaps)[CHAR_SIZE]) {
         int k = (int) queryLength - (int) lastPosition;
-        return utils::leftShiftBitInDecimal(this->bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
+        return utils::leftShiftBitInDecimal(bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
     }
     
-    inline State* getNewState(unsigned queryLength, State* state, unsigned lastPosition, char c) {
-        unsigned bitmap = this->buildBitmap(queryLength, lastPosition, c);
+    inline State* getNewState(unsigned queryLength, State* state, unsigned lastPosition, char c,
+            unsigned (&bitmaps)[CHAR_SIZE]) {
+        unsigned bitmap = this->buildBitmap(queryLength, lastPosition, c, bitmaps);
 
         State* newState = state->transitions[bitmap];
         if (newState == nullptr) newState = state;
         return newState;
     }
 
-    void updateBitmap(char);
-    void reset();
+    void updateBitmap(char, unsigned (&bitmaps)[CHAR_SIZE]);
 };
 
 

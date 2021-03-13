@@ -17,48 +17,40 @@ Beva::Beva(Trie *trie, Experiment* experiment, int editDistanceThreshold) {
     this->bitmapZero = 0;
     this->bitmapOne = 1;
     this->experiment = experiment;
-
-    for (auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
 }
 
 Beva::~Beva() {
     delete this->editVectorAutomata;
 }
 
-void Beva::reset() {
-    for(auto & bitmap : this->bitmaps) bitmap = this->bitmapZero;
-
-    this->currentActiveNodes.clear(); // Clean the active nodes for next query
-    this->currentActiveNodes.shrink_to_fit();
-}
-
-void Beva::process(char ch, int prefixQueryLength) {
-    this->updateBitmap(ch);
+void Beva::process(char ch, int prefixQueryLength, vector<ActiveNode>& oldActiveNodes,
+        vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
+    this->updateBitmap(ch, bitmaps);
 
     if (prefixQueryLength == 1) {
-        this->currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
+        currentActiveNodes.emplace_back(this->trie->root, this->editVectorAutomata->initialState, 0);
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfActiveNodes(query.length());
         #endif
     } else if (prefixQueryLength > this->editDistanceThreshold) {
-        vector<ActiveNode> activeNodes;
-
-        for (ActiveNode oldActiveNode : this->currentActiveNodes) {
-            this->findActiveNodes(prefixQueryLength, oldActiveNode,activeNodes);
+        for (ActiveNode oldActiveNode : oldActiveNodes) {
+            this->findActiveNodes(prefixQueryLength, oldActiveNode, currentActiveNodes, bitmaps);
         }
-        swap(this->currentActiveNodes,activeNodes);
+    } else {
+        swap(currentActiveNodes, oldActiveNodes);
     }
 }
 
-void Beva::updateBitmap(char ch) { // query is equivalent to Q' with the last character c
-    for (auto &bitmap : this->bitmaps) {
+void Beva::updateBitmap(char ch, unsigned (&bitmaps)[CHAR_SIZE]) { // query is equivalent to Q' with the last character c
+    for (auto &bitmap : bitmaps) {
         bitmap = utils::leftShiftBitInDecimal(bitmap, 1, this->bitmapSize);
     }
   
-    this->bitmaps[ch] = this->bitmaps[ch] | 1;
+    bitmaps[ch] = bitmaps[ch] | 1;
 }
 
-void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vector<ActiveNode> &activeNodes) {
+void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode,
+        vector<ActiveNode> &activeNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
     unsigned child = this->trie->getNode(oldActiveNode.node).children;
     unsigned endChilds = child + this->trie->getNode(oldActiveNode.node).numChildren;
 
@@ -69,7 +61,7 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
         #endif
 
         State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize,
-                this->trie->getNode(child).getValue());
+                this->trie->getNode(child).getValue(), bitmaps);
 
         if (newState->isFinal) continue;
 
@@ -81,7 +73,7 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode, vect
             activeNodes.emplace_back(child, newState, tempSize);
         } else {
             ActiveNode tmp(child, newState, tempSize);
-            this->findActiveNodes(queryLength, tmp, activeNodes);
+            this->findActiveNodes(queryLength, tmp, activeNodes, bitmaps);
         }
     }
 }
