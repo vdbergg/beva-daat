@@ -139,6 +139,10 @@ void Framework::index(){
             datasetFile += "umbc/umbc" + sizeSufix + ".txt";
             queryFile += "umbc/q17_" + tau + datasetSuffix + ".txt";
             break;
+        case C::JUSBRASIL:
+            datasetFile += "jusbrasil/jusbrasil" + sizeSufix + ".txt";
+            queryFile += "jusbrasil/q.txt";
+            break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";
@@ -150,7 +154,7 @@ void Framework::index(){
     readData(queryFile, this->queries);
 
     this->trie = new Trie(this->experiment);
-    this->trie->buildLaatIndex();
+    this->trie->buildDaatIndex();
     this->trie->shrinkToFit();
 
     this->beva = new Beva(this->trie, this->experiment, this->editDistanceThreshold);
@@ -183,8 +187,9 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
         this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
         if (config["load_test"] == "0") {
-            if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
-            || prefixQueryLength == 17) {
+//            if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
+//            || prefixQueryLength == 17) {
+            if (prefixQueryLength == query.size()) {
                 this->experiment->initQueryFetchingTime();
                 vector<char *> results = output(currentActiveNodes);
                 this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());

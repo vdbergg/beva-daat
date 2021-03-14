@@ -24,7 +24,7 @@ public:
 
     Trie(Experiment*);
 
-    void buildLaatIndex();
+    void buildDaatIndex();
     unsigned insert(char ch, int, unsigned);
 
     inline Node* getNodeAddr(unsigned x) {

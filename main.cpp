@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
             unsigned bitmaps[CHAR_SIZE];
             for (auto & bitmap : bitmaps) bitmap = framework->beva->bitmapZero;
 
-            for (int currentPrefixQuery = 1; currentPrefixQuery <= MAX_QUERY_CHARACTER; currentPrefixQuery++) {
+            for (int currentPrefixQuery = 1; currentPrefixQuery <= framework->queries[i].size(); currentPrefixQuery++) {
                 swap(oldActiveNodes, currentActiveNodes);
                 currentActiveNodes.clear();
                 framework->process(framework->queries[i], currentPrefixQuery, i, oldActiveNodes,
