@@ -148,8 +148,28 @@ void Experiment::endQueryFetchingTime(int prefixQueryLength, unsigned long resul
     this->resultsSize[prefixQueryLength - 1] += resultsSize_;
 }
 
+void Experiment::endSimpleQueryFetchingTime(unsigned long resultsSize_) {
+    this->finishQueryFetchingTime = chrono::high_resolution_clock::now();
+
+    this->simpleFetchingTimes = chrono::duration_cast<chrono::nanoseconds>(
+            this->finishQueryFetchingTime - this->startQueryFetchingTime
+    ).count();
+
+    this->simpleResultsSize = resultsSize_;
+}
+
 void Experiment::initQueryProcessingTime() {
     this->startQueryProcessingTime = chrono::high_resolution_clock::now();
+}
+
+void Experiment::endSimpleQueryProcessingTime(long activeNodesSize) {
+    this->finishQueryProcessingTime = chrono::high_resolution_clock::now();
+
+    this->simpleProcessingTimes = chrono::duration_cast<chrono::nanoseconds>(
+            this->finishQueryProcessingTime - this->startQueryProcessingTime
+    ).count();
+
+    this->simpleActiveNodesSizes = activeNodesSize;
 }
 
 void Experiment::endQueryProcessingTime(long activeNodesSize, int prefixQueryLength) {
@@ -210,6 +230,14 @@ void Experiment::compileQueryProcessingTimes(int queryId) {
     writeFile("query_processing_time", value);
 }
 
+void Experiment::compileSimpleQueryProcessingTimes(string &query, bool relevantReturned) {
+    string value = query + "\t" + to_string(this->simpleProcessingTimes) + "\t" +
+                   to_string(this->simpleFetchingTimes) + "\t" + to_string(this->simpleResultsSize) + "\t" +
+                   to_string(this->simpleActiveNodesSizes) + "\t" + to_string(int(relevantReturned)) + "\n";
+
+    writeFile("all_time_values", value, true);
+}
+
 void Experiment::proportionOfBranchingSize(int size) {
     if (this->branchSize.find(size) == this->branchSize.end() ) {
         this->branchSize[size] = 1;
@@ -217,7 +245,6 @@ void Experiment::proportionOfBranchingSize(int size) {
         this->branchSize[size]++;
     }
 }
-
                         
 void Experiment::compileProportionOfBranchingSizeInBEVA2Level() {
     string value = "branch_size\tnumber_of_branches\n";

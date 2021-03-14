@@ -18,6 +18,7 @@ class Framework {
 public:
     Trie* trie;
     vector<string> queries;
+    vector<string> relevantQueries;
     int editDistanceThreshold;
     int dataset;
     Experiment* experiment;
@@ -32,6 +33,8 @@ public:
     void index();
     void process(string, int, int, vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes,
             unsigned (&bitmaps)[CHAR_SIZE]);
+    vector<char *> processFullQuery(string &query, int queryPosition = -1);
+    vector<char *> processQuery(string &query, int queryId);
     vector<char *> output(vector<ActiveNode>& currentActiveNodes);
     void writeExperiments();
 

@@ -31,10 +31,14 @@ public:
     vector<long> processingTimes;
     vector<long> fetchingTimes;
     vector<long> resultsSize;
+    unsigned long simpleProcessingTimes;
+    unsigned long simpleFetchingTimes;
+    unsigned long simpleResultsSize;
     vector<long> currentQueryProcessingTime;
     vector<long> currentQueryFetchingTime;
     vector<long> currentResultsSize;
     vector<long> activeNodesSizes;
+    unsigned long simpleActiveNodesSizes;
     vector<long> currentActiveNodesSize;
     unordered_map<int, int> branchSize;
 
@@ -64,9 +68,12 @@ public:
     void endIndexingTime();
     void initQueryProcessingTime();
     void endQueryProcessingTime(long, int);
+    void endSimpleQueryProcessingTime(long);
     void initQueryFetchingTime();
     void endQueryFetchingTime(int, unsigned long);
+    void endSimpleQueryFetchingTime(unsigned long);
     void compileQueryProcessingTimes(int);
+    void compileSimpleQueryProcessingTimes(string&, bool relevantReturned = false);
     void proportionOfBranchingSize(int size);
     void incrementNumberOfNodes();
     void incrementNumberOfActiveNodes(unsigned);
