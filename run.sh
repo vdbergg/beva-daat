@@ -38,7 +38,7 @@ do
         for st in $(seq ${size_type} 3)
         do
 
-            for ed in $(seq ${edit_distance} 4)
+            for ed in $(seq ${edit_distance} 3)
             do
 
                 if [[ "${recovery_mode}" == 1 ]] && [[ "${on_recovery_mode}" == 1 ]] ; then

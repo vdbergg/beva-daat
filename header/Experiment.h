@@ -42,8 +42,6 @@ public:
     vector<long> currentActiveNodesSize;
     unordered_map<int, int> branchSize;
 
-    bool recoveryMode = false;
-
     #ifndef BEVA_IS_MAC_H
     chrono::time_point<std::chrono::system_clock> startIndexingTime;
     chrono::time_point<std::chrono::system_clock> finishIndexingTime;
@@ -82,7 +80,6 @@ public:
     void compileNumberOfIterationInChildren();
     void compileNumberOfNodes();
     void compileProportionOfBranchingSizeInBEVA2Level();
-    void readQueryProcessingTime(string& filename);
     void saveQueryProcessingTime(string&, int);
     void getMemoryUsedInIndexing();
     void getMemoryUsedInProcessing();
