@@ -27,7 +27,7 @@ Trie::Trie(Experiment* experiment) {
     }
 }
 
-void Trie::buildLaatIndex() {
+void Trie::buildDaatIndex() {
     int maxLevel = records[0].length();
 
     for (int currentIndexLevel = 0; currentIndexLevel < maxLevel; currentIndexLevel++) {

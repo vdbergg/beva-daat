@@ -18,6 +18,7 @@ public:
     static const int MEDLINE19 = 3;
     static const int DBLP = 4;
     static const int UMBC = 5;
+    static const int JUSBRASIL = 6;
 
 };
 

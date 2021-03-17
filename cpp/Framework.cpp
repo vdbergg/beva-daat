@@ -2,6 +2,7 @@
 // Created by vdberg on 12/02/19.
 //
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -53,13 +54,13 @@ void Framework::readData(string& filename, vector<StaticString>& recs) {
     char *tmpPtr = (char*) malloc(sizeof(char)*fileSize);
     StaticString::setDataBaseMemory(tmpPtr,fileSize);
     while (getline(input, str)) {
-        for (char &c : str) {
-            if ((int) c == -61) continue;
-            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
-                c = utils::convertSpecialCharToSimpleChar(c);
-            }
-            c = tolower(c);
-        }
+//        for (char &c : str) {
+//            if ((int) c == -61) continue;
+//            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+//                c = utils::convertSpecialCharToSimpleChar(c);
+//            }
+//            c = tolower(c);
+//        }
         if (!str.empty()) recs.push_back(StaticString(str));
     }
 }
@@ -70,13 +71,13 @@ void Framework::readData(string& filename, vector<string>& recs) {
     string str;
     ifstream input(filename, ios::in);
     while (getline(input, str)) {
-        for (char &c : str) {
-            if ((int) c == -61) continue;
-            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
-                c = utils::convertSpecialCharToSimpleChar(c);
-            }
-            c = tolower(c);
-        }
+//        for (char &c : str) {
+//            if ((int) c == -61) continue;
+//            else if ((int) c < 0 || (int) c >= CHAR_SIZE) {
+//                c = utils::convertSpecialCharToSimpleChar(c);
+//            }
+//            c = tolower(c);
+//        }
         if (!str.empty()) recs.push_back(str);
     }
 }
@@ -109,6 +110,7 @@ void Framework::index(){
     
     string datasetFile = this->config["dataset_basepath"];
     string queryFile = this->config["query_basepath"];
+    string relevantQueryFile = this->config["query_basepath"];
 
     int queriesSize = stoi(config["queries_size"]);
     string datasetSuffix = queriesSize == 10 ? "_10" : "";
@@ -139,6 +141,11 @@ void Framework::index(){
             datasetFile += "umbc/umbc" + sizeSufix + ".txt";
             queryFile += "umbc/q17_" + tau + datasetSuffix + ".txt";
             break;
+        case C::JUSBRASIL:
+            datasetFile += "jusbrasil/jusbrasil" + sizeSufix + ".txt";
+            queryFile += "jusbrasil/q.txt";
+            relevantQueryFile += "jusbrasil/relevant_answers.txt";
+            break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";
@@ -148,9 +155,12 @@ void Framework::index(){
     readData(datasetFile, records);
     //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
+    if (this->config["has_relevant_queries"] == "1") {
+        readData(relevantQueryFile, this->relevantQueries);
+    }
 
     this->trie = new Trie(this->experiment);
-    this->trie->buildLaatIndex();
+    this->trie->buildDaatIndex();
     this->trie->shrinkToFit();
 
     this->beva = new Beva(this->trie, this->experiment, this->editDistanceThreshold);
@@ -167,6 +177,73 @@ void Framework::index(){
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
+vector<char *> Framework::processFullQuery(string &query, int queryPosition) {
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->initQueryProcessingTime();
+    #endif
+
+    vector<ActiveNode> currentActiveNodes;
+    vector<ActiveNode> oldActiveNodes;
+
+    unsigned bitmaps[CHAR_SIZE];
+    for (auto & bitmap : bitmaps) bitmap = this->beva->bitmapZero;
+
+    for (int currentPrefixQuery = 1; currentPrefixQuery <= query.size(); currentPrefixQuery++) {
+        swap(oldActiveNodes, currentActiveNodes);
+        currentActiveNodes.clear();
+        this->beva->process(query[currentPrefixQuery - 1], currentPrefixQuery, oldActiveNodes,
+                currentActiveNodes, bitmaps);
+        currentActiveNodes.shrink_to_fit();
+        oldActiveNodes.clear();
+    }
+
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->endSimpleQueryProcessingTime(currentActiveNodes.size());
+        this->experiment->initQueryFetchingTime();
+    #endif
+
+    vector<char *> results = this->output(currentActiveNodes);
+
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        this->experiment->endSimpleQueryFetchingTime(results.size());
+
+        bool relevantReturned = false;
+        if (queryPosition != -1 && this->config["has_relevant_queries"] == "1") {
+            vector<string> v_output;
+            v_output.resize(results.size());
+            copy(results.begin(), results.end(), v_output.begin());
+
+            relevantReturned = find(v_output.begin(), v_output.end(),
+                    this->relevantQueries[queryPosition]) != v_output.end();
+        }
+        this->experiment->compileSimpleQueryProcessingTimes(query, relevantReturned);
+    #endif
+
+    #ifdef BEVA_IS_COLLECT_MEMORY_H
+        this->experiment->getMemoryUsedInProcessing();
+    #endif
+
+    return results;
+}
+
+vector<char *> Framework::processQuery(string &query, int queryId) {
+    vector<ActiveNode> currentActiveNodes;
+    vector<ActiveNode> oldActiveNodes;
+
+    unsigned bitmaps[CHAR_SIZE];
+    for (auto & bitmap : bitmaps) bitmap = this->beva->bitmapZero;
+
+    for (int currentPrefixQuery = 1; currentPrefixQuery <= query.size(); currentPrefixQuery++) {
+        swap(oldActiveNodes, currentActiveNodes);
+        currentActiveNodes.clear();
+        this->process(query, currentPrefixQuery, queryId, oldActiveNodes, currentActiveNodes, bitmaps);
+        oldActiveNodes.clear();
+    }
+
+    vector<char *> results = this->output(currentActiveNodes);
+
+    return results;
+}
 
 void Framework::process(string query, int prefixQueryLength, int currentCountQuery,
         vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
@@ -182,13 +259,11 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
-        if (config["load_test"] == "0") {
-            if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
+        if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
             || prefixQueryLength == 17) {
-                this->experiment->initQueryFetchingTime();
-                vector<char *> results = output(currentActiveNodes);
-                this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());
-            }
+            this->experiment->initQueryFetchingTime();
+            vector<char *> results = output(currentActiveNodes);
+            this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());
         }
     #endif
 

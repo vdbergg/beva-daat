@@ -25,17 +25,20 @@ alg=${cfg_array[7]}
 dataset_basepath=${cfg_array[8]}
 query_basepath=${cfg_array[9]}
 experiments_basepath=${cfg_array[10]}
+is_server=${cfg_array[11]}
+is_full_query_instrumentation=${cfg_array[12]}
+has_relevant_queries=${cfg_array[13]}
 
 on_recovery_mode=0
 
-for dt in $(seq ${dataset} 5)
+for dt in $(seq ${dataset} 6)
 do
     if [[ "${dt}" != 1 ]] && [[ "${dt}" != 3 ]]; then # No have memory sufficient to experiment MEDLINE datasets
 
         for st in $(seq ${size_type} 3)
         do
 
-            for ed in $(seq ${edit_distance} 4)
+            for ed in $(seq ${edit_distance} 3)
             do
 
                 if [[ "${recovery_mode}" == 1 ]] && [[ "${on_recovery_mode}" == 1 ]] ; then
@@ -57,6 +60,9 @@ do
                 echo "dataset_basepath=${dataset_basepath}" >> ${cfg_path}
                 echo "query_basepath=${query_basepath}" >> ${cfg_path}
                 echo "experiments_basepath=${experiments_basepath}" >> ${cfg_path}
+                echo "is_server=${is_server}" >> ${cfg_path}
+                echo "is_full_query_instrumentation=${is_full_query_instrumentation}" >> ${cfg_path}
+                echo "has_relevant_queries=${has_relevant_queries}" >> ${cfg_path}
 
                 echo "<<<<<<<<<< Start Run >>>>>>>>>>>"
 
