@@ -245,7 +245,7 @@ vector<char *> Framework::processQuery(string &query, int queryId) {
     return results;
 }
 
-void Framework::process(string query, int prefixQueryLength, int queryId,
+void Framework::process(string query, int prefixQueryLength, int currentCountQuery,
         vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
     if (query.empty()) return;
 
@@ -259,9 +259,8 @@ void Framework::process(string query, int prefixQueryLength, int queryId,
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
-        vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
-        if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
-            prefixQuerySizeToFetching.end()) {
+        if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
+            || prefixQueryLength == 17) {
             this->experiment->initQueryFetchingTime();
             vector<char *> results = output(currentActiveNodes);
             this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());
@@ -273,9 +272,9 @@ void Framework::process(string query, int prefixQueryLength, int queryId,
         #ifdef BEVA_IS_COLLECT_MEMORY_H
             this->experiment->getMemoryUsedInProcessing();
         #else
-            this->experiment->compileQueryProcessingTimes(queryId);
+            this->experiment->compileQueryProcessingTimes(currentCountQuery);
             string currentQuery = query.substr(0, prefixQueryLength);
-            this->experiment->saveQueryProcessingTime(currentQuery, queryId, prefixQuerySizeToFetching);
+            this->experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
         #endif
     }
 }
