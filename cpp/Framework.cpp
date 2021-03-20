@@ -259,8 +259,9 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
     #ifdef BEVA_IS_COLLECT_TIME_H
         this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
-        if (prefixQueryLength == 5 || prefixQueryLength == 9 || prefixQueryLength == 13
-            || prefixQueryLength == 17) {
+        vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
+        if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
+            prefixQuerySizeToFetching.end()) {
             this->experiment->initQueryFetchingTime();
             vector<char *> results = output(currentActiveNodes);
             this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());

@@ -67,7 +67,13 @@ void setVector(int position, unsigned long value, vector<long> &v) {
     if (position < v.size()) {
         v[position] += value;
     } else {
-        v.push_back(value);
+        for (int i = v.size(); i <= position; i++) {
+            if (i == position) {
+                v.push_back(value);
+            } else {
+                v.push_back(0);
+            }
+        }
     }
 }
 
