@@ -139,26 +139,16 @@ void Experiment::endQueryProcessingTime(long activeNodesSize, int prefixQueryLen
     setVector(prefixQueryLength - 1, activeNodesSize, this->activeNodesSizes);
 }
 
-void Experiment::saveQueryProcessingTime(string& query, int queryId, vector<int> prefixQuerySizeToFetching) {
+void Experiment::saveQueryProcessingTime(string& query, int queryId) {
     string value = query + "\t" + to_string(queryId) + "\n";
 
     long accum = 0;
 
     for (int j = 0; j < this->currentQueryProcessingTime.size(); j++) {
         accum += this->currentQueryProcessingTime[j];
-
-        long queryFetchingTime = 0;
-        long resultsSize_ = 0;
-        if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), j + 1) !=
-            prefixQuerySizeToFetching.end()) {
-            queryFetchingTime = this->currentQueryFetchingTime[0];
-            resultsSize_ = this->currentResultsSize[0];
-            this->currentQueryFetchingTime.erase(this->currentQueryFetchingTime.begin());
-            this->currentResultsSize.erase(this->currentResultsSize.begin());
-        }
-
         value += to_string(j + 1) + "\t" + to_string(this->currentQueryProcessingTime[j]) + "\t" +
-          to_string(accum) + "\t" + to_string(queryFetchingTime) + "\t" + to_string(resultsSize_) + "\t" +
+          to_string(accum) + "\t" + to_string(this->currentQueryFetchingTime[j]) + "\t" +
+          to_string(this->currentResultsSize[j]) + "\t" +
           to_string(this->currentActiveNodesSize[j]) + "\n";
     }
     this->currentResultsSize.clear();
