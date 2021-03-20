@@ -80,7 +80,7 @@ public:
     void compileNumberOfIterationInChildren();
     void compileNumberOfNodes();
     void compileProportionOfBranchingSizeInBEVA2Level();
-    void saveQueryProcessingTime(string&, int);
+    void saveQueryProcessingTime(string&, int, vector<int>);
     void getMemoryUsedInIndexing();
     void getMemoryUsedInProcessing();
 
