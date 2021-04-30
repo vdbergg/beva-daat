@@ -69,6 +69,8 @@ void processingQueriesInServer() {
 
                 crow::json::wvalue response;
                 response["results"] = results;
+                cout << "<<<< Response length >>>> " + to_string(results.size()) << endl;
+
                 return response;
 //                return crow::response{os.str()};
             });
