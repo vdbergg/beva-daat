@@ -17,12 +17,13 @@
 
 using namespace std;
 
-Framework::Framework(unordered_map<string, string> config) {
+Experiment* experiment;
+
+Framework::Framework() {
     this->trie = nullptr;
     this->editDistanceThreshold = stoi(config["edit_distance"]);
     this->dataset = stoi(config["dataset"]);
-    this->experiment = new Experiment(config, editDistanceThreshold);
-    this->config = config;
+    experiment = new Experiment(config, editDistanceThreshold);
 
     index();
 }
@@ -31,7 +32,7 @@ Framework::~Framework() {
     cout << "deleting framework" << endl;
     delete this->beva;
     delete this->trie;
-    delete this->experiment;
+    delete experiment;
 }
 
 unsigned long getFileSize(string filename) {
@@ -85,7 +86,7 @@ void Framework::readData(string& filename, vector<string>& recs) {
 void Framework::index(){
     cout << "indexing... \n";
     string sizeSufix = "";
-    switch (stoi(this->config["size_type"])) {
+    switch (stoi(config["size_type"])) {
         case 0:
             sizeSufix = "_25";
             break;
@@ -105,12 +106,12 @@ void Framework::index(){
     auto start = chrono::high_resolution_clock::now();
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->initIndexingTime();
+        experiment->initIndexingTime();
     #endif
     
-    string datasetFile = this->config["dataset_basepath"];
-    string queryFile = this->config["query_basepath"];
-    string relevantQueryFile = this->config["query_basepath"];
+    string datasetFile = config["dataset_basepath"];
+    string queryFile = config["query_basepath"];
+    string relevantQueryFile = config["query_basepath"];
 
     int queriesSize = stoi(config["queries_size"]);
     string datasetSuffix = queriesSize == 10 ? "_10" : "";
@@ -155,31 +156,31 @@ void Framework::index(){
     readData(datasetFile, records);
     //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
-    if (this->config["has_relevant_queries"] == "1") {
+    if (config["has_relevant_queries"] == "1") {
         readData(relevantQueryFile, this->relevantQueries);
     }
 
-    this->trie = new Trie(this->experiment);
+    this->trie = new Trie(experiment);
     this->trie->buildDaatIndex();
     this->trie->shrinkToFit();
 
-    this->beva = new Beva(this->trie, this->experiment, this->editDistanceThreshold);
+    this->beva = new Beva(this->trie, experiment, this->editDistanceThreshold);
 
     auto done = chrono::high_resolution_clock::now();
 
     #ifdef BEVA_IS_COLLECT_MEMORY_H
         this->experiment->getMemoryUsedInIndexing();
     #else
-        this->experiment->endIndexingTime();
-        this->experiment->compileProportionOfBranchingSizeInBEVA2Level();
-        this->experiment->compileNumberOfNodes();
+        experiment->endIndexingTime();
+        experiment->compileProportionOfBranchingSizeInBEVA2Level();
+        experiment->compileNumberOfNodes();
     #endif
     cout << "<<<Index time: "<< chrono::duration_cast<chrono::milliseconds>(done - start).count() << " ms>>>\n";
 }
 
 vector<char *> Framework::processFullQuery(string &query, int queryPosition) {
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->initQueryProcessingTime();
+        experiment->initQueryProcessingTime();
     #endif
 
     vector<ActiveNode> currentActiveNodes;
@@ -198,17 +199,17 @@ vector<char *> Framework::processFullQuery(string &query, int queryPosition) {
     }
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->endSimpleQueryProcessingTime(currentActiveNodes.size());
-        this->experiment->initQueryFetchingTime();
+        experiment->endSimpleQueryProcessingTime(currentActiveNodes.size());
+        experiment->initQueryFetchingTime();
     #endif
 
     vector<char *> results = this->output(currentActiveNodes);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->endSimpleQueryFetchingTime(results.size());
+        experiment->endSimpleQueryFetchingTime(results.size());
 
         bool relevantReturned = false;
-        if (queryPosition != -1 && this->config["has_relevant_queries"] == "1") {
+        if (queryPosition != -1 && config["has_relevant_queries"] == "1") {
             vector<string> v_output;
             v_output.resize(results.size());
             copy(results.begin(), results.end(), v_output.begin());
@@ -216,7 +217,7 @@ vector<char *> Framework::processFullQuery(string &query, int queryPosition) {
             relevantReturned = find(v_output.begin(), v_output.end(),
                     this->relevantQueries[queryPosition]) != v_output.end();
         }
-        this->experiment->compileSimpleQueryProcessingTimes(query, relevantReturned);
+        experiment->compileSimpleQueryProcessingTimes(query, relevantReturned);
     #endif
 
     #ifdef BEVA_IS_COLLECT_MEMORY_H
@@ -250,21 +251,21 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
     if (query.empty()) return;
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->initQueryProcessingTime();
+        experiment->initQueryProcessingTime();
     #endif
 
     this->beva->process(query[prefixQueryLength - 1], prefixQueryLength, oldActiveNodes, currentActiveNodes,
             bitmaps);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
-        this->experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
+        experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
         vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
         if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
             prefixQuerySizeToFetching.end()) {
-            this->experiment->initQueryFetchingTime();
+            experiment->initQueryFetchingTime();
             vector<char *> results = output(currentActiveNodes);
-            this->experiment->endQueryFetchingTime(prefixQueryLength, results.size());
+            experiment->endQueryFetchingTime(prefixQueryLength, results.size());
         }
     #endif
 
@@ -273,9 +274,9 @@ void Framework::process(string query, int prefixQueryLength, int currentCountQue
         #ifdef BEVA_IS_COLLECT_MEMORY_H
             this->experiment->getMemoryUsedInProcessing();
         #else
-            this->experiment->compileQueryProcessingTimes(currentCountQuery);
+            experiment->compileQueryProcessingTimes(currentCountQuery);
             string currentQuery = query.substr(0, prefixQueryLength);
-            this->experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
+            experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
         #endif
     }
 }
@@ -290,7 +291,7 @@ void Framework::writeExperiments() {
 vector<char *> Framework::output(vector<ActiveNode>& currentActiveNodes) {
     vector<char *> outputs;
     string tmp;
-    int limit = 100;
+//    int limit = 100;
 
     for (ActiveNode activeNode : currentActiveNodes) {
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
@@ -298,7 +299,7 @@ vector<char *> Framework::output(vector<ActiveNode>& currentActiveNodes) {
 
         for (unsigned i = beginRange; i < endRange; i++) {
             outputs.push_back(records[i].c_str());
-            if (outputs.size() >= limit) return outputs;
+//            if (outputs.size() >= limit) return outputs;
         }
     }
 
