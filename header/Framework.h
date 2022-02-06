@@ -11,6 +11,7 @@
 #include "Trie.h"
 #include "Beva.h"
 #include "Experiment.h"
+#include "GlobalVariables.h"
 
 using namespace std;
 
@@ -21,12 +22,10 @@ public:
     vector<string> relevantQueries;
     int editDistanceThreshold;
     int dataset;
-    Experiment* experiment;
-    unordered_map<string, string> config;
 
     Beva* beva;
 
-    Framework(unordered_map<string, string>);
+    Framework();
 
     void readData(string&, vector<StaticString>&);
     void readData(string&, vector<string>&);

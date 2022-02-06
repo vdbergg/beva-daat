@@ -89,7 +89,7 @@ void processingQueriesInServer() {
 int main(int argc, char** argv) {
     loadConfig();
 
-    framework = new Framework(config);
+    framework = new Framework();
 
     if (config["is_server"] == "0") {
         processingQueriesOutsideServer();
