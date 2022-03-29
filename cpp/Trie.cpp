@@ -56,6 +56,14 @@ void Trie::buildDaatIndex() {
     }
 }
 
+// Trie:calculaMaxScoreRecursivo
+// se o filho é folha calcula o score daquele prefixo e atribui
+// max_score de uma folha é próprio score dele
+// os nós folha
+// nó folha é sempre o \0
+
+// nó intermedario pega o max_score do filho
+
 unsigned Trie::insert(char ch, int recordId, unsigned parent) {
     unsigned child;
     unsigned numChildren = getNode(parent).numChildren;

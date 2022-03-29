@@ -162,9 +162,15 @@ void Framework::index(){
 
     this->trie = new Trie(experiment);
     this->trie->buildDaatIndex();
+    // this->trie->calculaMaxScoreRecursivo
     this->trie->shrinkToFit();
 
+    //declarar o heap de top-k
+
     this->beva = new Beva(this->trie, experiment, this->editDistanceThreshold);
+    // this->beva = new Beva(this->trie, experiment, 0, heap);
+    // this->beva = new Beva(this->trie, experiment, 1, heap);
+    // this->beva = new Beva(this->trie, experiment, 2, heap);
 
     auto done = chrono::high_resolution_clock::now();
 

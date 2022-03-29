@@ -23,6 +23,8 @@ public:
     unsigned char numChildren;
     bool isEndOfWord;
     char value;
+    // float static_max_score;
+    // Acho que seria aqui que eu coloco o array de max score da sub-árvore do nodo
 
     Node(char value) {
         this->numChildren = 0;

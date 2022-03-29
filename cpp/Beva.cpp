@@ -23,8 +23,12 @@ Beva::~Beva() {
     delete this->editVectorAutomata;
 }
 
-void Beva::process(char ch, int prefixQueryLength, vector<ActiveNode>& oldActiveNodes,
-        vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
+void Beva::process(char ch, int prefixQueryLength,
+                   vector<ActiveNode>& oldActiveNodes,
+                   vector<ActiveNode>& currentActiveNodes,
+                   unsigned (&bitmaps)[CHAR_SIZE]
+                   ){
+
     this->updateBitmap(ch, bitmaps);
 
     if (prefixQueryLength == 1) {
@@ -49,8 +53,10 @@ void Beva::updateBitmap(char ch, unsigned (&bitmaps)[CHAR_SIZE]) { // query is e
     bitmaps[ch] = bitmaps[ch] | 1;
 }
 
-void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode,
-        vector<ActiveNode> &activeNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
+void Beva::findActiveNodes(unsigned queryLength,
+                           ActiveNode &oldActiveNode,
+                           vector<ActiveNode> &activeNodes,
+                           unsigned (&bitmaps)[CHAR_SIZE]) {
     unsigned child = this->trie->getNode(oldActiveNode.node).children;
     unsigned endChilds = child + this->trie->getNode(oldActiveNode.node).numChildren;
 
@@ -64,6 +70,9 @@ void Beva::findActiveNodes(unsigned queryLength, ActiveNode &oldActiveNode,
                 this->trie->getNode(child).getValue(), bitmaps);
 
         if (newState->isFinal) continue;
+
+//      TODO
+//      if (child->max_score < heap->min) continue;
 
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfActiveNodes(queryLength);
