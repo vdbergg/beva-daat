@@ -13,6 +13,7 @@
 using namespace std;
 
 extern vector<StaticString> records;
+extern vector<double> recordsStaticScore;
 
 class Trie {
 public:
@@ -50,6 +51,11 @@ public:
     }
 
     void shrinkToFit();
+//Todo
+//    void maxifyNodesScores();
+//    double recursiveMaxifyNodesScores(unsigned node);
+//    int search(char ch, unsigned parent);
+//    void buildMaxScores();
 };
 
 #endif //BEVA_TRIE_H
