@@ -23,7 +23,8 @@ Beva::~Beva() {
     delete this->editVectorAutomata;
 }
 
-void Beva::process(char ch, int prefixQueryLength,
+void Beva::process(char ch,
+                   int prefixQueryLength,
                    vector<ActiveNode>& oldActiveNodes,
                    vector<ActiveNode>& currentActiveNodes,
                    unsigned (&bitmaps)[CHAR_SIZE]

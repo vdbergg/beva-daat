@@ -14,6 +14,8 @@
 #include "../header/utils.h"
 #include "../header/Experiment.h"
 #include "../header/Directives.h"
+#include "../header/TopKHeap.h"
+#include "../header/TopKNode.h"
 
 using namespace std;
 
@@ -66,6 +68,18 @@ void Framework::readData(string& filename, vector<StaticString>& recs) {
     }
 }
 
+void Framework::readData(string& filename, vector<double>& recs) {
+    cout << "reading score dataset " << filename << endl;
+
+    string str;
+    ifstream input(filename, ios::in);
+    int i = 0;
+    while (getline(input, str)) {
+        if (!str.empty()) recs.push_back(std::stod(str));
+        i += 1;
+    }
+}
+
 void Framework::readData(string& filename, vector<string>& recs) {
     cout << "reading dataset " << filename << endl;
 
@@ -112,6 +126,7 @@ void Framework::index(){
     string datasetFile = config["dataset_basepath"];
     string queryFile = config["query_basepath"];
     string relevantQueryFile = config["query_basepath"];
+    string scoreFile = config["score_basepath"];
 
     int queriesSize = stoi(config["queries_size"]);
     string datasetSuffix = queriesSize == 10 ? "_10" : "";
@@ -147,6 +162,20 @@ void Framework::index(){
             queryFile += "jusbrasil/q.txt";
             relevantQueryFile += "jusbrasil/relevant_answers.txt";
             break;
+        case C::TCC:
+//            datasetFile += "tcc-dataset/tcc-suggestions" + sizeSufix + ".txt";
+            datasetFile += "tcc-dataset/tcc-suggestions-no-special.txt";
+//            datasetFile += "tcc-dataset/tcc-suggestions_one-query.txt";
+//            queryFile += "tcc-dataset/tcc-queries.txt";
+            queryFile += "tcc-dataset/tcc-queries_17_1000_no_special.txt";
+//            queryFile += "tcc-dataset/tcc-queries_one-query.txt";
+            scoreFile += "tcc-dataset/tcc-static-score-no-special.txt";
+            break;
+        case C::TCCSMALL:
+            datasetFile += "tcc-dataset/tcc-suggestions_small.txt";
+            queryFile += "tcc-dataset/tcc-queries_small.txt";
+            scoreFile += "tcc-dataset/tcc-static-score_small.txt";
+            break;
         default:
             datasetFile += "aol/aol" + sizeSufix + ".txt";
             queryFile += "aol/q17_" + tau + datasetSuffix + ".txt";
@@ -156,18 +185,26 @@ void Framework::index(){
     readData(datasetFile, records);
     //    sort(this->records.begin(), this->records.end());
     readData(queryFile, this->queries);
+
+    if(config["use_top_k"] == "1") {
+        readData(scoreFile, recordsStaticScore);
+    }
+
     if (config["has_relevant_queries"] == "1") {
         readData(relevantQueryFile, this->relevantQueries);
     }
 
     this->trie = new Trie(experiment);
     this->trie->buildDaatIndex();
-    // this->trie->calculaMaxScoreRecursivo
+    //Todo
+    // if(config["use_top_k"] == "1") this->trie->buildMaxScores();
     this->trie->shrinkToFit();
 
+    //Todo
     //declarar o heap de top-k
 
     this->beva = new Beva(this->trie, experiment, this->editDistanceThreshold);
+    //Todo
     // this->beva = new Beva(this->trie, experiment, 0, heap);
     // this->beva = new Beva(this->trie, experiment, 1, heap);
     // this->beva = new Beva(this->trie, experiment, 2, heap);
@@ -247,30 +284,42 @@ vector<char *> Framework::processQuery(string &query, int queryId) {
         oldActiveNodes.clear();
     }
 
+    // processando os nós ativos da
     vector<char *> results = this->output(currentActiveNodes);
 
     return results;
 }
 
-void Framework::process(string query, int prefixQueryLength, int currentCountQuery,
-        vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes, unsigned (&bitmaps)[CHAR_SIZE]) {
+void Framework::process(string query,
+                        int prefixQueryLength,
+                        int currentCountQuery,
+                        vector<ActiveNode>& oldActiveNodes,
+                        vector<ActiveNode>& currentActiveNodes,
+                        unsigned (&bitmaps)[CHAR_SIZE]
+                        ) {
     if (query.empty()) return;
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         experiment->initQueryProcessingTime();
     #endif
 
-    this->beva->process(query[prefixQueryLength - 1], prefixQueryLength, oldActiveNodes, currentActiveNodes,
-            bitmaps);
+    this->beva->process(query[prefixQueryLength - 1],
+                        prefixQueryLength,
+                        oldActiveNodes,
+                        currentActiveNodes,
+                        bitmaps);
 
     #ifdef BEVA_IS_COLLECT_TIME_H
         experiment->endQueryProcessingTime(currentActiveNodes.size(), prefixQueryLength);
 
         vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
         if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
-            prefixQuerySizeToFetching.end()) {
+            prefixQuerySizeToFetching.end())
+        {
             experiment->initQueryFetchingTime();
-            vector<char *> results = output(currentActiveNodes);
+//            vector<char *> results = output(currentActiveNodes);
+            TopKHeap topKHeap = buildTopK(currentActiveNodes, prefixQueryLength);
+            vector<char *> results = topKHeap.outputSuggestions();
             experiment->endQueryFetchingTime(prefixQueryLength, results.size());
         }
     #endif
@@ -292,6 +341,30 @@ void Framework::writeExperiments() {
         this->experiment->compileNumberOfActiveNodes();
         this->experiment->compileNumberOfIterationInChildren();
     #endif
+}
+
+TopKHeap Framework::buildTopK(vector<ActiveNode>& currentActiveNodes, double querySize) {
+    vector<char *> outputs;
+    TopKHeap heap;
+    string tmp;
+//    int limit = 100;
+
+    for (ActiveNode activeNode : currentActiveNodes) {
+        unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
+        unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
+
+        for (unsigned i = beginRange; i < endRange; i++) {
+            double dynamicScore = utils::dynamicScore(recordsStaticScore[i],
+                                                      this->editDistanceThreshold,
+                                                      querySize,
+                                                      this->editDistanceThreshold);
+            TopKNode nodeToInsert(i, dynamicScore);
+            heap.insertNode(nodeToInsert);
+        }
+    }
+
+
+    return heap;
 }
 
 vector<char *> Framework::output(vector<ActiveNode>& currentActiveNodes) {

@@ -7,6 +7,7 @@
 #include "../header/Directives.h"
 
 vector<StaticString> records;
+vector<double> recordsStaticScore;
 
 Trie::Trie(Experiment* experiment) {
     this->experiment = experiment;
@@ -47,6 +48,8 @@ void Trie::buildDaatIndex() {
 
                 if (currentIndexLevel == records[recordId].length() - 1) {
                     getNode(node).setIsEndOfWord(true);
+                    //Todo
+                    //  getNode(node).setMaxStaticScore(recordsStaticScore[recordId]);
                     #ifdef BEVA_IS_COLLECT_TIME_H
                         this->experiment->proportionOfBranchingSize(currentIndexLevel + 1);
                     #endif
@@ -56,13 +59,6 @@ void Trie::buildDaatIndex() {
     }
 }
 
-// Trie:calculaMaxScoreRecursivo
-// se o filho é folha calcula o score daquele prefixo e atribui
-// max_score de uma folha é próprio score dele
-// os nós folha
-// nó folha é sempre o \0
-
-// nó intermedario pega o max_score do filho
 
 unsigned Trie::insert(char ch, int recordId, unsigned parent) {
     unsigned child;
@@ -91,3 +87,48 @@ void Trie::shrinkToFit() {
     this->lastNodeKnownPerRecord.clear();
     this->lastNodeKnownPerRecord.shrink_to_fit();
 }
+
+//TODO
+//int Trie::search(char ch, unsigned parent) {
+//    unsigned numChildren = getNode(parent).numChildren;
+//
+//    if (numChildren) {
+//        unsigned firstChild = getNode(parent).children;
+//        unsigned lastChild = firstChild + getNode(parent).numChildren;
+//        for(unsigned node = firstChild; node < lastChild; node++) {
+////            cout << "'" << getNode(node).getValue() << "' == '" << ch << "'?" << endl;
+//            if (getNode(node).getValue() == ch) return node;
+//        }
+////        unsigned node = getNode(parent).children + numChildren - 1;
+//    }
+//
+//    return -1;
+//}
+//
+//void Trie::buildMaxScores() {
+//    for (int recordId = 0; recordId < records.size(); recordId++) {
+//        string record = records[recordId].c_str();
+//        unsigned parent = this->root;
+//        for (char ch : record) {
+//            unsigned node = this->search(ch, parent);
+//            if (node == -1) exit(1);
+//
+//            if (recordsStaticScore[recordId] > getNode(node).maxStaticScore) {
+//                getNode(node).maxStaticScore = recordsStaticScore[recordId];
+//            }
+//
+//            parent = node;
+//        }
+//    }
+//
+//    // atribuir o max_score do nó raiz
+//    unsigned firstChild = getNode(this->root).children;
+//    unsigned lastChild = firstChild + getNode(this->root).numChildren;
+//
+//    for(unsigned i = firstChild; i < lastChild; i++) {
+//
+//        if (getNode(this->root).getMaxStaticScore() < getNode(i).getMaxStaticScore()) {
+//            getNode(this->root).setMaxStaticScore(getNode(i).getMaxStaticScore());
+//        }
+//    }
+//}

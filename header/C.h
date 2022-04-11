@@ -19,6 +19,8 @@ public:
     static const int DBLP = 4;
     static const int UMBC = 5;
     static const int JUSBRASIL = 6;
+    static const int TCC = 7;
+    static const int TCCSMALL = 8;
 
 };
 
