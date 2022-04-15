@@ -196,18 +196,20 @@ void Framework::index(){
 
     this->trie = new Trie(experiment);
     this->trie->buildDaatIndex();
-    //Todo
-    // if(config["use_top_k"] == "1") this->trie->buildMaxScores();
+    if(config["use_top_k"] == "1") this->trie->buildMaxScores();
     this->trie->shrinkToFit();
 
-    //Todo
-    //declarar o heap de top-k
 
     this->beva = new Beva(this->trie, experiment, this->editDistanceThreshold);
     //Todo
-    // this->beva = new Beva(this->trie, experiment, 0, heap);
-    // this->beva = new Beva(this->trie, experiment, 1, heap);
-    // this->beva = new Beva(this->trie, experiment, 2, heap);
+
+    for (int i = 0; i < 3; i++) {
+        this->bevaTopK.push_back(new Beva(this->trie, experiment, i));
+    }
+
+//     this->bevaTau0 = new Beva(this->trie, experiment, 0);
+//     this->bevaTau1 = new Beva(this->trie, experiment, 1);
+//     this->bevaTau2 = new Beva(this->trie, experiment, 2);
 
     auto done = chrono::high_resolution_clock::now();
 
@@ -336,6 +338,103 @@ void Framework::process(string query,
     }
 }
 
+vector<char *> Framework::processTopKQuery(string &query, int queryId) {
+    //Todo
+    //  acho que vou ter que ter 3 bitmaps...
+    //  3 currentActiveNodes e 3 oldActiveNodes
+
+    vector<vector<ActiveNode>> currentActiveNodes;
+    vector<vector<ActiveNode>> oldActiveNodes;
+    unsigned bitmaps[3][CHAR_SIZE];
+
+    for(int i = 0; i < 3; i++) {
+        for (auto & bitmap : bitmaps[i]) {
+            bitmap = this->bevaTopK[i]->bitmapZero;
+        }
+        currentActiveNodes.emplace_back(vector<ActiveNode>());
+        oldActiveNodes.emplace_back(vector<ActiveNode>());
+    }
+
+    for (int currentPrefixQuery = 1; currentPrefixQuery <= query.size(); currentPrefixQuery++) {
+//        cout << "Prefixo: " << currentPrefixQuery << endl;
+        TopKHeap heap;
+        swap(oldActiveNodes, currentActiveNodes);
+
+        for(int i = 0; i < 3; i++) {
+            currentActiveNodes[i].clear();
+        }
+
+        #ifdef BEVA_IS_COLLECT_TIME_H
+            experiment->initQueryProcessingTime();
+        #endif
+
+        this->processTopK(query,
+                      currentPrefixQuery,
+                      queryId,
+                      oldActiveNodes,
+                      currentActiveNodes,
+                      bitmaps,
+                      heap);
+        for(int i = 0; i < 3; i++) {
+            oldActiveNodes[i].clear();
+        }
+    }
+
+    // processando os nós ativos da
+//    vector<char *> results = this->output(currentActiveNodes);
+//    só pro editor nao encher o saco
+    vector<char *> results;
+
+    return results;
+}
+
+void Framework::processTopK(string query,
+                        int prefixQueryLength,
+                        int currentCountQuery,
+                        vector<vector<ActiveNode>>& oldActiveNodes,
+                        vector<vector<ActiveNode>>& currentActiveNodes,
+                        unsigned (&bitmaps)[3][CHAR_SIZE],
+                        TopKHeap& topKHeap){
+
+    if (query.empty()) return;
+
+    for(int i = 0; i < 3; i++) {
+
+//        cout << "Processing Beva " << i << endl;
+        this->bevaTopK[i]->processTopK(query[prefixQueryLength - 1],
+                                   prefixQueryLength,
+                                   oldActiveNodes,
+                                   currentActiveNodes,
+                                   bitmaps);
+        #ifdef BEVA_IS_COLLECT_TIME_H
+
+        experiment->endQueryProcessingTime(currentActiveNodes[i].size(), prefixQueryLength);
+        vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
+
+        if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
+                prefixQuerySizeToFetching.end())
+        {
+            experiment->initQueryFetchingTime();
+            buildTopKMultiBeva(currentActiveNodes[i], prefixQueryLength, topKHeap, i);
+            vector<char *> results = topKHeap.outputSuggestions();
+            experiment->endQueryFetchingTime(prefixQueryLength, results.size());
+        }
+
+        #endif
+
+        currentActiveNodes[i].shrink_to_fit();
+        if (query.length() == prefixQueryLength) {
+            #ifdef BEVA_IS_COLLECT_MEMORY_H
+                this->experiment->getMemoryUsedInProcessing();
+            #else
+                experiment->compileQueryProcessingTimes(currentCountQuery);
+                string currentQuery = query.substr(0, prefixQueryLength);
+                experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
+            #endif
+        }
+    }
+}
+
 void Framework::writeExperiments() {
     #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->compileNumberOfActiveNodes();
@@ -344,7 +443,6 @@ void Framework::writeExperiments() {
 }
 
 TopKHeap Framework::buildTopK(vector<ActiveNode>& currentActiveNodes, double querySize) {
-    vector<char *> outputs;
     TopKHeap heap;
     string tmp;
 //    int limit = 100;
@@ -365,6 +463,37 @@ TopKHeap Framework::buildTopK(vector<ActiveNode>& currentActiveNodes, double que
 
 
     return heap;
+}
+
+void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& heap, double editDistance) {
+
+//    cout << "blz, tamo dentro do build top K do multi beva" << endl;
+//    cout << "tamanho do current active nodes " << currentActiveNodes.size() << endl;
+    for (ActiveNode activeNode : currentActiveNodes) {
+//        cout << "ok, tamo percorrendo os active nodes" << endl;
+        unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
+        unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
+        //Todo
+        // checa se é ativo de verdade, por exemplo
+        // consultamos o primeiro nodo ativo, possa
+        // ser que o segundo nodo não precise ser
+        // acessado
+
+        for (unsigned i = beginRange; i < endRange; i++) {
+            //Todo
+            //  passar os scores certinho
+            double dynamicScore = utils::dynamicScore(recordsStaticScore[i],
+                                                      editDistance,
+                                                      querySize,
+                                                      2);
+            TopKNode nodeToInsert(i, dynamicScore);
+//            cout << "executando o insert Node" << endl;
+            heap.insertNode(nodeToInsert);
+//            cout << "nó inserido" << endl;
+        }
+    }
+
+//    cout << "em teoria rodou o for" << endl;
 }
 
 vector<char *> Framework::output(vector<ActiveNode>& currentActiveNodes) {

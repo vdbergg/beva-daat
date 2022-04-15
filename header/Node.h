@@ -23,22 +23,19 @@ public:
     unsigned char numChildren;
     bool isEndOfWord;
     char value;
-// TODO
-    //double maxStaticScore;
+    double maxStaticScore;
 
     Node(char value) {
         this->numChildren = 0;
         this->setValue(value);
         this->setIsEndOfWord(false);
-//Todo
-        //this->maxStaticScore = 0.0;
+        this->maxStaticScore = 0.0;
     }
 
     Node() {
         this->numChildren = 0;
         this->setIsEndOfWord(false);
-//todo
-        //this->maxStaticScore = 0.0;
+        this->maxStaticScore = 0.0;
     }
 
     inline void setValue(char value) { this->value = value; }
@@ -49,9 +46,8 @@ public:
     inline unsigned getEndRange() { return this->endRange;}
     inline void setBeginRange(unsigned value) { this->beginRange = value; }
     inline void setEndRange(unsigned value) { this->endRange = value; }
-//TODO
-//    inline void setMaxStaticScore(double value) { this->maxStaticScore = value; }
-//    inline double getMaxStaticScore() { return this->maxStaticScore; }
+    inline void setMaxStaticScore(double value) { this->maxStaticScore = value; }
+    inline double getMaxStaticScore() { return this->maxStaticScore; }
 };
 
 #endif //BEVA_NODE_H

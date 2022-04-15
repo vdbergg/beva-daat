@@ -24,9 +24,16 @@ void processingQueriesOutsideServer() {
     #endif
 
     if (config["is_full_query_instrumentation"] == "0") {
-        for (int i = indexMin; i < indexMax; ++i) {
-            framework->processQuery(framework->queries[i], i);
+        if (config["use_top_k"] == "0") {
+            for (int i = indexMin; i < indexMax; ++i) {
+                framework->processQuery(framework->queries[i], i);
+            }
+        } else {
+            for (int i = indexMin; i < indexMax; ++i) {
+                framework->processTopKQuery(framework->queries[i], i);
+            }
         }
+
     } else {
         for (int i = indexMin; i < indexMax; ++i) {
             framework->processFullQuery(framework->queries[i], i);

@@ -51,11 +51,8 @@ public:
     }
 
     void shrinkToFit();
-//Todo
-//    void maxifyNodesScores();
-//    double recursiveMaxifyNodesScores(unsigned node);
-//    int search(char ch, unsigned parent);
-//    void buildMaxScores();
+    int search(char ch, unsigned parent);
+    void buildMaxScores();
 };
 
 #endif //BEVA_TRIE_H

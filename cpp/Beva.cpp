@@ -73,7 +73,7 @@ void Beva::findActiveNodes(unsigned queryLength,
         if (newState->isFinal) continue;
 
 //      TODO
-//      if (child->max_score < heap->min) continue;
+//          if (child->max_score < heap->min) continue;
 
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfActiveNodes(queryLength);
@@ -84,6 +84,71 @@ void Beva::findActiveNodes(unsigned queryLength,
         } else {
             ActiveNode tmp(child, newState, tempSize);
             this->findActiveNodes(queryLength, tmp, activeNodes, bitmaps);
+        }
+    }
+}
+
+void Beva::processTopK(char ch,
+                       int prefixQueryLength,
+                       vector<vector<ActiveNode>>& oldActiveNodes,
+                       vector<vector<ActiveNode>>& currentActiveNodes,
+                       unsigned (&bitmaps)[3][CHAR_SIZE]
+){
+
+    this->updateBitmap(ch, bitmaps[this->editDistanceThreshold]);
+
+
+    if (prefixQueryLength == 1) {
+        currentActiveNodes[this->editDistanceThreshold].emplace_back(ActiveNode(this->trie->root, this->editVectorAutomata->initialState, 0));
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+            this->experiment->incrementNumberOfActiveNodes(query.length());
+        #endif
+    } else if (prefixQueryLength > this->editDistanceThreshold) {
+        // a eternidade tá rolando aqui...
+        int i = 0;
+        for (ActiveNode oldActiveNode : oldActiveNodes[this->editDistanceThreshold]) {
+            this->findActiveNodesMultiBeva(prefixQueryLength, oldActiveNode, currentActiveNodes, bitmaps);
+
+            i++;
+        }
+    } else {
+        swap(currentActiveNodes[this->editDistanceThreshold], oldActiveNodes[this->editDistanceThreshold]);
+    }
+}
+
+void Beva::findActiveNodesMultiBeva(unsigned queryLength,
+                                    ActiveNode &oldActiveNode,
+                                    vector<vector<ActiveNode>> &activeNodes,
+                                    unsigned (&bitmaps)[3][CHAR_SIZE]) {
+    unsigned child = this->trie->getNode(oldActiveNode.node).children;
+    unsigned endChilds = child + this->trie->getNode(oldActiveNode.node).numChildren;
+
+    unsigned tempSize = oldActiveNode.level + 1;
+//    cout << this->trie->getNode(oldActiveNode.node).isEndOfWord << endl;
+//    cout << child << endl;
+//    cout << endChilds << endl;
+    for (; child < endChilds; child++) {
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+                this->experiment->incrementNumberOfIterationInChildren(queryLength);
+        #endif
+
+        State* newState = this->getNewState(queryLength, oldActiveNode.state, tempSize,
+                                            this->trie->getNode(child).getValue(), bitmaps[this->editDistanceThreshold]);
+
+        if (newState->isFinal) continue;
+
+        //TODO
+        //  if (child->max_score < heap->min) continue;
+
+        #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
+                this->experiment->incrementNumberOfActiveNodes(queryLength);
+        #endif
+
+        if (newState->getEditDistance((int) queryLength - (int) tempSize) <= this->editDistanceThreshold) {
+            activeNodes[this->editDistanceThreshold].emplace_back(child, newState, tempSize);
+        } else {
+            ActiveNode tmp(child, newState, tempSize);
+            this->findActiveNodesMultiBeva(queryLength, tmp, activeNodes, bitmaps);
         }
     }
 }
