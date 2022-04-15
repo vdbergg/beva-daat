@@ -364,9 +364,6 @@ vector<char *> Framework::processTopKQuery(string &query, int queryId) {
             currentActiveNodes[i].clear();
         }
 
-        #ifdef BEVA_IS_COLLECT_TIME_H
-            experiment->initQueryProcessingTime();
-        #endif
 
         this->processTopK(query,
                       currentPrefixQuery,
@@ -397,6 +394,9 @@ void Framework::processTopK(string query,
                         TopKHeap& topKHeap){
 
     if (query.empty()) return;
+    #ifdef BEVA_IS_COLLECT_TIME_H
+        experiment->initQueryProcessingTime();
+    #endif
 
     for(int i = 0; i < 3; i++) {
 
@@ -406,32 +406,34 @@ void Framework::processTopK(string query,
                                    oldActiveNodes,
                                    currentActiveNodes,
                                    bitmaps);
-        #ifdef BEVA_IS_COLLECT_TIME_H
-
-        experiment->endQueryProcessingTime(currentActiveNodes[i].size(), prefixQueryLength);
-        vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
-
-        if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
-                prefixQuerySizeToFetching.end())
-        {
-            experiment->initQueryFetchingTime();
-            buildTopKMultiBeva(currentActiveNodes[i], prefixQueryLength, topKHeap, i);
-            vector<char *> results = topKHeap.outputSuggestions();
-            experiment->endQueryFetchingTime(prefixQueryLength, results.size());
-        }
-
-        #endif
-
+        buildTopKMultiBeva(currentActiveNodes[i], prefixQueryLength, topKHeap, i);
         currentActiveNodes[i].shrink_to_fit();
-        if (query.length() == prefixQueryLength) {
-            #ifdef BEVA_IS_COLLECT_MEMORY_H
-                this->experiment->getMemoryUsedInProcessing();
-            #else
-                experiment->compileQueryProcessingTimes(currentCountQuery);
-                string currentQuery = query.substr(0, prefixQueryLength);
-                experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
-            #endif
-        }
+    }
+    #ifdef BEVA_IS_COLLECT_TIME_H
+    // checar analise de nodos ativos dos bevas
+    experiment->endQueryProcessingTime(
+            currentActiveNodes[0].size() + currentActiveNodes[1].size() + currentActiveNodes[2].size(),
+            prefixQueryLength);
+    vector<int> prefixQuerySizeToFetching = { 5, 9, 13, 17 };
+
+    if (std::find(prefixQuerySizeToFetching.begin(), prefixQuerySizeToFetching.end(), prefixQueryLength) !=
+        prefixQuerySizeToFetching.end())
+    {
+        experiment->initQueryFetchingTime();
+        vector<char *> results = topKHeap.outputSuggestions();
+        experiment->endQueryFetchingTime(prefixQueryLength, results.size());
+    }
+
+    #endif
+
+    if (query.length() == prefixQueryLength) {
+    #ifdef BEVA_IS_COLLECT_MEMORY_H
+        this->experiment->getMemoryUsedInProcessing();
+    #else
+        experiment->compileQueryProcessingTimes(currentCountQuery);
+        string currentQuery = query.substr(0, prefixQueryLength);
+        experiment->saveQueryProcessingTime(currentQuery, currentCountQuery);
+    #endif
     }
 }
 
