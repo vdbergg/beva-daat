@@ -201,7 +201,6 @@ void Framework::index(){
 
 
     this->beva = new Beva(this->trie, experiment, this->editDistanceThreshold);
-    //Todo
 
     for (int i = 0; i < 3; i++) {
         this->bevaTopK.push_back(new Beva(this->trie, experiment, i));
@@ -339,9 +338,6 @@ void Framework::process(string query,
 }
 
 vector<char *> Framework::processTopKQuery(string &query, int queryId) {
-    //Todo
-    //  acho que vou ter que ter 3 bitmaps...
-    //  3 currentActiveNodes e 3 oldActiveNodes
 
     vector<vector<ActiveNode>> currentActiveNodes;
     vector<vector<ActiveNode>> oldActiveNodes;
@@ -405,7 +401,8 @@ void Framework::processTopK(string query,
                                    prefixQueryLength,
                                    oldActiveNodes,
                                    currentActiveNodes,
-                                   bitmaps);
+                                   bitmaps,
+                                   topKHeap);
         buildTopKMultiBeva(currentActiveNodes[i], prefixQueryLength, topKHeap, i);
         currentActiveNodes[i].shrink_to_fit();
     }
@@ -467,30 +464,24 @@ TopKHeap Framework::buildTopK(vector<ActiveNode>& currentActiveNodes, double que
     return heap;
 }
 
-void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& heap, double editDistance) {
+void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& topKHeap, double editDistance) {
 
-//    cout << "blz, tamo dentro do build top K do multi beva" << endl;
-//    cout << "tamanho do current active nodes " << currentActiveNodes.size() << endl;
     for (ActiveNode activeNode : currentActiveNodes) {
-//        cout << "ok, tamo percorrendo os active nodes" << endl;
+        double activeNodeScore = this->trie->getNode(activeNode.node).maxStaticScore;
+
+        if (topKHeap.heap.size() >= 10 &&
+            activeNodeScore < topKHeap.heap.front().maxScore) continue;
+
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
         unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
-        //Todo
-        // checa se é ativo de verdade, por exemplo
-        // consultamos o primeiro nodo ativo, possa
-        // ser que o segundo nodo não precise ser
-        // acessado
-
         for (unsigned i = beginRange; i < endRange; i++) {
-            //Todo
-            //  passar os scores certinho
             double dynamicScore = utils::dynamicScore(recordsStaticScore[i],
                                                       editDistance,
                                                       querySize,
                                                       2);
             TopKNode nodeToInsert(i, dynamicScore);
 //            cout << "executando o insert Node" << endl;
-            heap.insertNode(nodeToInsert);
+            topKHeap.insertNode(nodeToInsert);
 //            cout << "nó inserido" << endl;
         }
     }

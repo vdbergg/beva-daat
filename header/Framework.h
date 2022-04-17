@@ -50,7 +50,7 @@ public:
     vector<char *> output(vector<ActiveNode>& currentActiveNodes);
     vector<char *> processTopKQuery(string &query, int queryId);
     TopKHeap buildTopK(vector<ActiveNode>& currentActiveNodes, double querySize);
-    void buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& heap, double editDistance);
+    void buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& topKHeap, double editDistance);
     void writeExperiments();
 
     ~Framework();

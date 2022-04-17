@@ -72,8 +72,6 @@ void Beva::findActiveNodes(unsigned queryLength,
 
         if (newState->isFinal) continue;
 
-//      TODO
-//          if (child->max_score < heap->min) continue;
 
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
         this->experiment->incrementNumberOfActiveNodes(queryLength);
@@ -92,7 +90,8 @@ void Beva::processTopK(char ch,
                        int prefixQueryLength,
                        vector<vector<ActiveNode>>& oldActiveNodes,
                        vector<vector<ActiveNode>>& currentActiveNodes,
-                       unsigned (&bitmaps)[3][CHAR_SIZE]
+                       unsigned (&bitmaps)[3][CHAR_SIZE],
+                       TopKHeap& heap
 ){
 
     this->updateBitmap(ch, bitmaps[this->editDistanceThreshold]);
@@ -104,12 +103,8 @@ void Beva::processTopK(char ch,
             this->experiment->incrementNumberOfActiveNodes(query.length());
         #endif
     } else if (prefixQueryLength > this->editDistanceThreshold) {
-        // a eternidade tá rolando aqui...
-        int i = 0;
         for (ActiveNode oldActiveNode : oldActiveNodes[this->editDistanceThreshold]) {
-            this->findActiveNodesMultiBeva(prefixQueryLength, oldActiveNode, currentActiveNodes, bitmaps);
-
-            i++;
+            this->findActiveNodesMultiBeva(prefixQueryLength, oldActiveNode, currentActiveNodes, bitmaps, heap);
         }
     } else {
         swap(currentActiveNodes[this->editDistanceThreshold], oldActiveNodes[this->editDistanceThreshold]);
@@ -119,7 +114,8 @@ void Beva::processTopK(char ch,
 void Beva::findActiveNodesMultiBeva(unsigned queryLength,
                                     ActiveNode &oldActiveNode,
                                     vector<vector<ActiveNode>> &activeNodes,
-                                    unsigned (&bitmaps)[3][CHAR_SIZE]) {
+                                    unsigned (&bitmaps)[3][CHAR_SIZE],
+                                    TopKHeap& topKHeap) {
     unsigned child = this->trie->getNode(oldActiveNode.node).children;
     unsigned endChilds = child + this->trie->getNode(oldActiveNode.node).numChildren;
 
@@ -137,8 +133,13 @@ void Beva::findActiveNodesMultiBeva(unsigned queryLength,
 
         if (newState->isFinal) continue;
 
-        //TODO
-        //  if (child->max_score < heap->min) continue;
+        double childScore = utils::dynamicScore(this->trie->getNode(child).maxStaticScore,
+                                                this->editDistanceThreshold,
+                                                queryLength,
+                                                2);
+
+        if (topKHeap.heap.size() >= 10 &&
+            childScore < topKHeap.heap.front().maxScore) continue;
 
         #ifdef BEVA_IS_COLLECT_COUNT_OPERATIONS_H
                 this->experiment->incrementNumberOfActiveNodes(queryLength);
@@ -148,7 +149,7 @@ void Beva::findActiveNodesMultiBeva(unsigned queryLength,
             activeNodes[this->editDistanceThreshold].emplace_back(child, newState, tempSize);
         } else {
             ActiveNode tmp(child, newState, tempSize);
-            this->findActiveNodesMultiBeva(queryLength, tmp, activeNodes, bitmaps);
+            this->findActiveNodesMultiBeva(queryLength, tmp, activeNodes, bitmaps, topKHeap);
         }
     }
 }
