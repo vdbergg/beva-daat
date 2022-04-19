@@ -10,6 +10,7 @@
 #include "Trie.h"
 #include "ActiveNode.h"
 #include "utils.h"
+#include "TopKHeap.h"
 
 #define CHAR_SIZE 128
 
@@ -51,11 +52,13 @@ public:
                      int prefixQueryLength,
                      vector<vector<ActiveNode>>& oldActiveNodes,
                      vector<vector<ActiveNode>>& currentActiveNodes,
-                     unsigned (&bitmaps)[3][CHAR_SIZE]);
+                     unsigned (&bitmaps)[3][CHAR_SIZE],
+                     TopKHeap& topKHeap);
     void findActiveNodesMultiBeva(unsigned queryLength,
                                   ActiveNode &oldActiveNode,
                                   vector<vector<ActiveNode>> &activeNodes,
-                                  unsigned (&bitmaps)[3][CHAR_SIZE]);
+                                  unsigned (&bitmaps)[3][CHAR_SIZE],
+                                  TopKHeap& topKHeap);
 };
 
 

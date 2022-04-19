@@ -405,7 +405,8 @@ void Framework::processTopK(string query,
                                    prefixQueryLength,
                                    oldActiveNodes,
                                    currentActiveNodes,
-                                   bitmaps);
+                                   bitmaps,
+                                   topKHeap);
         #ifdef BEVA_IS_COLLECT_TIME_H
 
         experiment->endQueryProcessingTime(currentActiveNodes[i].size(), prefixQueryLength);
@@ -465,12 +466,16 @@ TopKHeap Framework::buildTopK(vector<ActiveNode>& currentActiveNodes, double que
     return heap;
 }
 
-void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& heap, double editDistance) {
+void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, double querySize, TopKHeap& topKHeap, double editDistance) {
 
 //    cout << "blz, tamo dentro do build top K do multi beva" << endl;
 //    cout << "tamanho do current active nodes " << currentActiveNodes.size() << endl;
     for (ActiveNode activeNode : currentActiveNodes) {
-//        cout << "ok, tamo percorrendo os active nodes" << endl;
+        double activeNodeScore = this->trie->getNode(activeNode.node).maxStaticScore;
+
+        if (topKHeap.heap.size() >= 10 &&
+            activeNodeScore < topKHeap.heap.front().maxScore) continue;
+
         unsigned beginRange = this->trie->getNode(activeNode.node).getBeginRange();
         unsigned endRange = this->trie->getNode(activeNode.node).getEndRange();
         //Todo
@@ -488,7 +493,7 @@ void Framework::buildTopKMultiBeva(vector<ActiveNode>& currentActiveNodes, doubl
                                                       2);
             TopKNode nodeToInsert(i, dynamicScore);
 //            cout << "executando o insert Node" << endl;
-            heap.insertNode(nodeToInsert);
+            topKHeap.insertNode(nodeToInsert);
 //            cout << "nó inserido" << endl;
         }
     }

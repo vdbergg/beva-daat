@@ -36,7 +36,7 @@ void processingQueriesOutsideServer() {
             }
             auto stop = high_resolution_clock::now();
             auto duration = duration_cast<microseconds>(stop - start);
-            cout << "Duração intermediário: " << duration.count() << "ns" << endl;
+            cout << "Duração método proposto: " << duration.count() << "ns" << endl;
         }
 
     } else {
