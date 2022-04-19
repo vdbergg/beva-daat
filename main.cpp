@@ -7,6 +7,7 @@
 //#include "header/crow_all.h"
 
 //using namespace std;
+using namespace std::chrono;
 
 unordered_map<string, string> config;
 void loadConfig();
@@ -29,9 +30,13 @@ void processingQueriesOutsideServer() {
                 framework->processQuery(framework->queries[i], i);
             }
         } else {
+            auto start = high_resolution_clock::now();
             for (int i = indexMin; i < indexMax; ++i) {
                 framework->processTopKQuery(framework->queries[i], i);
             }
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<microseconds>(stop - start);
+            cout << "Duração intermediário: " << duration.count() << "ns" << endl;
         }
 
     } else {
