@@ -20,25 +20,25 @@ extern integerPointer  currFreePosition;
 extern integerPointer dataEnd;
 extern char *_data_static;
 
-const unsigned staticStringNPos=0xFFFFFFFF;
+const unsigned long staticStringNPos=0xFFFFFFFF;
 
 class StaticString {
 public:
     // one value per object
     integerPointer dataPos;
-    unsigned stringSize;
+    unsigned long stringSize;
 
-    inline string substr(unsigned inicio = 0, unsigned length = staticStringNPos) {
+    inline string substr(unsigned long start = 0, unsigned long length = staticStringNPos) {
         string tmp="";
-	    if (length ==0) return tmp;
-	    if (length> stringSize) length = stringSize;
-        if (inicio+length <=stringSize) {
+	    if (length == 0) return tmp;
+	    if (length > stringSize) length = stringSize;
+        if (start + length <= stringSize) {
             tmp.reserve(length+1);
-	        tmp = string(_data_static+dataPos).substr(inicio,length);
+	        tmp = string(_data_static+dataPos).substr(start, length);
         } else {
-            if (inicio < stringSize) {
+            if (start < stringSize) {
 	            tmp.reserve(length+1);
-	            tmp = string(_data_static+dataPos).substr(inicio,stringSize-inicio);
+	            tmp = string(_data_static+dataPos).substr(start, stringSize - start);
             } else {
                 tmp="";
             }

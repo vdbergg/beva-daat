@@ -86,21 +86,24 @@ void Framework::readData(string& filename, vector<string>& recs) {
 void Framework::index(){
     cout << "indexing... \n";
     string sizeSufix = "";
-    switch (stoi(config["size_type"])) {
+    switch (stoi(this->config["size_type"])) {
         case 0:
-            sizeSufix = "_25";
+            sizeSufix = "_20";
             break;
         case 1:
-            sizeSufix = "_50";
+            sizeSufix = "_40";
             break;
         case 2:
-            sizeSufix = "_75";
+            sizeSufix = "_60";
             break;
         case 3:
+            sizeSufix = "_80";
+            break;
+        case 4:
             sizeSufix = "";
             break;
         default:
-            sizeSufix = "_60";
+            sizeSufix = "";
     }
 
     auto start = chrono::high_resolution_clock::now();
