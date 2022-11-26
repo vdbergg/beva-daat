@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include "header/Framework.h"
 #include "header/Directives.h"
-#include "header/crow_all.h"
+//#include "header/crow_all.h"
 
-using namespace std;
+//using namespace std;
 
 unordered_map<string, string> config;
 void loadConfig();
@@ -22,9 +24,16 @@ void processingQueriesOutsideServer() {
     #endif
 
     if (config["is_full_query_instrumentation"] == "0") {
-        for (int i = indexMin; i < indexMax; ++i) {
-            framework->processQuery(framework->queries[i], i);
+        if (config["use_top_k"] == "0") {
+            for (int i = indexMin; i < indexMax; ++i) {
+                framework->processQuery(framework->queries[i], i);
+            }
+        } else {
+            for (int i = indexMin; i < indexMax; ++i) {
+                framework->processTopKQuery(framework->queries[i], i);
+            }
         }
+
     } else {
         for (int i = indexMin; i < indexMax; ++i) {
             framework->processFullQuery(framework->queries[i], i);
@@ -33,56 +42,56 @@ void processingQueriesOutsideServer() {
 }
 
 void processingQueriesInServer() {
-    crow::SimpleApp app;
+//    crow::SimpleApp app;
 
-    CROW_ROUTE(app, "/")
-            .name("hello")
-                    ([]{
-                        return "Hello World!";
-                    });
-
-    CROW_ROUTE(app, "/about")
-            ([](){
-                return "This is a server";
-            });
-
-    CROW_ROUTE(app, "/autocomplete")
-            ([](const crow::request& req) {
-                std::ostringstream os;
-                vector<char *> results;
-
-                os << "Params: " << req.url_params << "\n\n";
-
-//                if (req.url_params.get("load_config") != nullptr) {
-//                    string load_config = boost::lexical_cast<string>(req.url_params.get("load_config"));
-//                    os << "The value of 'load_config' is " << load_config << '\n';
-//                    if (load_config == "true") {
-//                        loadConfig();
-//                    }
+//    CROW_ROUTE(app, "/")
+//            .name("hello")
+//                    ([]{
+//                        return "Hello World!";
+//                    });
+//
+//    CROW_ROUTE(app, "/about")
+//            ([](){
+//                return "This is a server";
+//            });
+//
+//    CROW_ROUTE(app, "/autocomplete")
+//            ([](const crow::request& req) {
+//                std::ostringstream os;
+//                vector<char *> results;
+//
+//                os << "Params: " << req.url_params << "\n\n";
+//
+////                if (req.url_params.get("load_config") != nullptr) {
+////                    string load_config = boost::lexical_cast<string>(req.url_params.get("load_config"));
+////                    os << "The value of 'load_config' is " << load_config << '\n';
+////                    if (load_config == "true") {
+////                        loadConfig();
+////                    }
+////                }
+//
+//                if (req.url_params.get("query") != nullptr) {
+//                    string query = boost::lexical_cast<string>(req.url_params.get("query"));
+//                    os << "The value of 'query' is " <<  query << '\n';
+//                    results = framework->processFullQuery(query);
 //                }
-
-                if (req.url_params.get("query") != nullptr) {
-                    string query = boost::lexical_cast<string>(req.url_params.get("query"));
-                    os << "The value of 'query' is " <<  query << '\n';
-                    results = framework->processFullQuery(query);
-                }
-
-                crow::json::wvalue response;
-                response["results"] = results;
-                cout << "<<<< Response length >>>> " + to_string(results.size()) << endl;
-
-                return response;
-//                return crow::response{os.str()};
-            });
-
-    // ignore all log
-    crow::logger::setLogLevel(crow::LogLevel::Debug);
-    //crow::logger::setHandler(std::make_shared<ExampleLogHandler>());
-
-    app.port(18080)
-//      .concurrency(10)
-        .multithreaded()
-        .run();
+//
+//                crow::json::wvalue response;
+//                response["results"] = results;
+//                cout << "<<<< Response length >>>> " + to_string(results.size()) << endl;
+//
+//                return response;
+////                return crow::response{os.str()};
+//            });
+//
+//    // ignore all log
+//    crow::logger::setLogLevel(crow::LogLevel::Debug);
+//    //crow::logger::setHandler(std::make_shared<ExampleLogHandler>());
+//
+//    app.port(18080)
+////      .concurrency(10)
+//        .multithreaded()
+//        .run();
 }
 
 

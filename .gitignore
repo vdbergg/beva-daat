@@ -6,3 +6,5 @@ beva
 CMakeCache.txt
 .idea/
 Makefile
+experiments/*
+!experiments/.gitkeep
