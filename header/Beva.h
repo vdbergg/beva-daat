@@ -10,6 +10,7 @@
 #include "Trie.h"
 #include "ActiveNode.h"
 #include "utils.h"
+#include "TopKHeap.h"
 
 #define CHAR_SIZE 128
 
@@ -22,15 +23,16 @@ public:
 
     int bitmapSize;
     unsigned bitmapZero;
-    unsigned bitmapOne;
+    long long *preCalculatedExponentiation;
 
-    Beva(Trie*, Experiment*, int);
+    Beva(Trie*, Experiment*, int, long long *preCalculatedExponentiation);
     ~Beva();
-    
-    void process(char, int, vector<ActiveNode>& oldActiveNodes, vector<ActiveNode>& currentActiveNodes,
-            unsigned (&bitmaps)[CHAR_SIZE]);
-    void findActiveNodes(unsigned, ActiveNode&, vector<ActiveNode>&, unsigned (&bitmaps)[CHAR_SIZE]);
-    
+
+    void processNoErrors(char ch,
+                         int prefixQueryLength,
+                         vector<ActiveNode>& oldNoErrorActiveNodes,
+                         vector<ActiveNode>& currentNoErrorActiveNodes);
+
     inline unsigned buildBitmap(unsigned queryLength, unsigned lastPosition, char c, unsigned (&bitmaps)[CHAR_SIZE]) {
         int k = (int) queryLength - (int) lastPosition;
         return utils::leftShiftBitInDecimal(bitmaps[c], this->editDistanceThreshold - k, this->bitmapSize);
@@ -46,6 +48,30 @@ public:
     }
 
     void updateBitmap(char, unsigned (&bitmaps)[CHAR_SIZE]);
+
+    void process(char ch,
+                 int prefixQueryLength,
+                 vector<ActiveNode>& oldActiveNodes,
+                 vector<ActiveNode>& currentActiveNodes,
+                 unsigned (&bitmaps)[CHAR_SIZE]);
+
+    void processWithPruningV2(char ch,
+                            int prefixQueryLength,
+                            vector<ActiveNode>& oldActiveNodes,
+                            vector<ActiveNode>& currentActiveNodes,
+                            unsigned (&bitmaps)[CHAR_SIZE],
+                            TopKHeap& topKHeap);
+
+    void findActiveNodes(unsigned queryLength,
+                         ActiveNode &oldActiveNode,
+                         vector<ActiveNode> &activeNodes,
+                         unsigned (&bitmaps)[CHAR_SIZE]);
+
+    void findActiveNodesWithPruningV2(unsigned queryLength,
+                                      ActiveNode &oldActiveNode,
+                                      vector<ActiveNode> &activeNodes,
+                                      unsigned (&bitmaps)[CHAR_SIZE],
+                                      TopKHeap& topKHeap);
 };
 
 

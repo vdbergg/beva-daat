@@ -13,7 +13,9 @@ public:
     State* state;
     unsigned node;
     unsigned level;
+    unsigned editDistance;
 
+    ActiveNode(unsigned, State*, unsigned, unsigned);
     ActiveNode(unsigned, State*, unsigned);
 };
 
